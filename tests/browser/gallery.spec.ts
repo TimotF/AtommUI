@@ -21,6 +21,12 @@ test('raw decimals, errors, locale and actual Vuetify controls',async({page}) =>
 });
 test('tooltip supports label hover, focus, touch/click, Escape and escaping text',async({page}) => {
   const help = page.locator('[data-help="gallery-number"]');
+  await expect(help.locator('.v-badge__badge')).toHaveText('?');
+  await expect(help.locator('.v-badge__badge')).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await expect(help.locator('.v-badge__badge')).toHaveCSS('color','rgb(61, 62, 66)');
+  await expect(help).toHaveCSS('cursor','help');
+  const raised=await help.evaluate(el=>el.getBoundingClientRect().top < el.parentElement!.querySelector('label')!.getBoundingClientRect().top);
+  expect(raised).toBe(true);
   await help.hover(); await expect(page.getByRole('tooltip').filter({hasText:'Les valeurs incomplètes'})).toBeVisible();
   const tooltip=page.getByRole('tooltip').filter({hasText:'Les valeurs incomplètes'});
   await expect(help).toHaveAttribute('aria-describedby',await tooltip.getAttribute('id') as string);
@@ -32,13 +38,44 @@ test('tooltip supports label hover, focus, touch/click, Escape and escaping text
   await page.getByRole('tab',{name:'Détails',exact:true}).click();
   await expect(page.locator('.gallery-escaped')).toHaveText('<img src=x onerror=alert(1)>'); await expect(page.locator('.gallery-escaped img')).toHaveCount(0);
 });
-for (const width of [1280,960,600]) test(`layout ${width}px and RTL fit the container`,async({page}) => {
+test('generic example cards are selectable with mouse and keyboard',async({page})=>{
+  const first=page.getByTestId('gallery-example-A'),second=page.getByTestId('gallery-example-B'),third=page.getByTestId('gallery-example-C');
+  await expect(first).toHaveAttribute('aria-pressed','true');
+  await second.click();await expect(second).toHaveAttribute('aria-pressed','true');await expect(first).toHaveAttribute('aria-pressed','false');
+  await third.focus();await third.press('Enter');await expect(third).toHaveAttribute('aria-pressed','true');
+});
+test.describe('touch',()=>{
+  test.use({hasTouch:true,viewport:{width:600,height:900}});
+  test('help badge opens a readable popover by touch and closes on an outside touch',async({page})=>{
+    const help=page.locator('[data-help="gallery-number"]');
+    await help.tap();const tooltip=page.getByRole('tooltip').filter({hasText:'Les valeurs incomplètes'});
+    await expect(tooltip).toBeVisible();
+    const bounds=(await tooltip.boundingBox())!;expect(bounds.x).toBeGreaterThanOrEqual(0);expect(bounds.x+bounds.width).toBeLessThanOrEqual(600);
+    await page.locator('#gallery-reset').tap();await expect(tooltip).not.toBeVisible();
+  });
+});
+for (const width of [1280,960,885,600]) test(`layout ${width}px and RTL fit the container`,async({page}) => {
   await page.setViewportSize({width,height:900});
+  const boxes=await page.locator('.au-rail-lead,.au-stage,.au-rail-parameters').evaluateAll(elements=>elements.map(el=>{const r=el.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height};}));
+  expect(boxes[0].x+boxes[0].width).toBeCloseTo(boxes[1].x,1);expect(boxes[1].x+boxes[1].width).toBeCloseTo(boxes[2].x,1);
+  expect(boxes[1].width).toBeGreaterThanOrEqual(260);expect(boxes.every(r=>r.y===0&&r.height===900)).toBe(true);
+  await expect(page.locator('#gallery-action')).toHaveCSS('height','32px');
+  const alert=page.locator('.au-rail-lead .au-alert');await expect(alert).toHaveCSS('flex-grow','0');
+  expect((await alert.boundingBox())!.height).toBeLessThan(220);
+  const titles=await page.locator('.au-card-header .v-btn__content > span').evaluateAll(elements=>elements.map(el=>{
+    const range=document.createRange();range.selectNodeContents(el);const text=range.getBoundingClientRect(),header=el.closest('.au-card-header')!.getBoundingClientRect();
+    return {left:text.left-header.left,right:header.right-text.right,top:text.top-header.top,bottom:header.bottom-text.bottom};
+  }));
+  expect(titles.every(title=>title.left>=0&&title.right>=0&&title.top>=0&&title.bottom>=0)).toBe(true);
+  await page.screenshot({path:`test-results/gallery-${width}.png`});
   await page.locator('#gallery-direction').locator('..').click(); await page.getByRole('option',{name:'RTL',exact:true}).click();
   await expect(page.locator('.au-root')).toHaveAttribute('dir','rtl');
   const dimensions = await page.evaluate(() => ({viewport:innerWidth,body:document.body.scrollWidth,root:document.querySelector('.au-root')!.scrollWidth}));
   expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport); expect(dimensions.root).toBeLessThanOrEqual(dimensions.viewport);
-  await expect(page.locator('.au-layout')).toHaveCSS('display',width===1280?'flex':'grid');
-  await expect(page.locator('.au-rail-parameters')).toHaveCSS('width',width===1280?'320px':width===960?'480px':'600px');
+  await expect(page.locator('.au-layout')).toHaveCSS('display','flex');
+  const rtl=await page.locator('.au-rail-lead,.au-stage,.au-rail-parameters').evaluateAll(elements=>elements.map(el=>{const r=el.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width};}));
+  expect(rtl[2].x+rtl[2].width).toBeCloseTo(rtl[1].x,1);expect(rtl[1].x+rtl[1].width).toBeCloseTo(rtl[0].x,1);
+  expect(rtl.every(r=>r.y===0)).toBe(true);
+  await page.screenshot({path:`test-results/gallery-${width}-rtl.png`});
   await page.locator('#gallery-number').fill(''); await expect(page.locator('#gallery-action')).toBeDisabled();
 });

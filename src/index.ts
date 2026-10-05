@@ -18,3 +18,4 @@ export { default as AuAlert } from './components/AuAlert.vue';
 export { default as AuProgress } from './components/AuProgress.vue';
 export { default as AuSwatches } from './components/AuSwatches.vue';
 export { default as AuSummary } from './components/AuSummary.vue';
+export { default as AuExampleCard } from './components/AuExampleCard.vue';

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from '@vue/server-renderer';
-import { AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSummary, createAtommVuetify } from '../dist/atomm-ui.js';
+import { AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSummary, AuExampleCard, createAtommVuetify } from '../dist/atomm-ui.js';
 
 async function render(children, direction = 'ltr') {
   const app = createSSRApp(() => h(AuRoot, {direction}, () => children));
@@ -67,4 +67,17 @@ test('direction is provided to Vuetify controls as well as the root DOM', async 
   const html=await render(h(AuSlider,{id:'direction',label:'Preview',modelValue:35}),'rtl');
   assert.ok(html.includes('dir="rtl"'));
   assert.ok(html.includes('v-locale--is-rtl'));
+});
+
+test('example cards remain generic accessible actions and escape their title',async () => {
+  const title='<img src=x onerror=alert(1)>',ordinary=await render(h(AuExampleCard,{title},()=>h('svg',{'aria-hidden':'true'})));
+  assert.ok(ordinary.includes('<button'));
+  assert.ok(ordinary.includes('aria-label="&lt;img src=x onerror=alert(1)&gt;"'));
+  assert.ok(!ordinary.includes('aria-pressed'));
+  assert.ok(!ordinary.includes('<img src=x'));
+  for(const active of [true,false]) {
+    const html=await render(h(AuExampleCard,{title:'Example',active,disabled:true}));
+    assert.ok(html.includes(`aria-pressed="${active}"`));
+    assert.ok(html.includes('disabled'));
+  }
 });
