@@ -1,0 +1,68 @@
+
+> @local/atomm-ui@0.1.0 test
+> node --import ./tests/register-css-loader.mjs --test tests/contracts.test.mjs tests/component-contracts.test.mjs
+
+TAP version 13
+# Subtest: ordinary buttons are actions; only explicit toggles expose aria-pressed
+ok 1 - ordinary buttons are actions; only explicit toggles expose aria-pressed
+  ---
+  duration_ms: 19.354875
+  type: 'test'
+  ...
+# Subtest: slider readout and accessible thumb agree for malformed and out-of-range props
+ok 2 - slider readout and accessible thumb agree for malformed and out-of-range props
+  ---
+  duration_ms: 26.775334
+  type: 'test'
+  ...
+# Subtest: multiple progress controls use unique IDs and invalid progress is indeterminate
+ok 3 - multiple progress controls use unique IDs and invalid progress is indeterminate
+  ---
+  duration_ms: 4.241459
+  type: 'test'
+  ...
+# Subtest: numeric strings and metadata remain escaped text without coercing incomplete drafts
+ok 4 - numeric strings and metadata remain escaped text without coercing incomplete drafts
+  ---
+  duration_ms: 16.44925
+  type: 'test'
+  ...
+# Subtest: direction is provided to Vuetify controls as well as the root DOM
+ok 5 - direction is provided to Vuetify controls as well as the root DOM
+  ---
+  duration_ms: 2.035791
+  type: 'test'
+  ...
+# Subtest: example cards remain generic accessible actions and escape their title
+ok 6 - example cards remain generic accessible actions and escape their title
+  ---
+  duration_ms: 4.081417
+  type: 'test'
+  ...
+# Subtest: swatches accept only full hex colours, including a validated fallback
+ok 7 - swatches accept only full hex colours, including a validated fallback
+  ---
+  duration_ms: 0.683333
+  type: 'test'
+  ...
+# Subtest: slider clamps finite values and rejects coercion and malformed ranges
+ok 8 - slider clamps finite values and rejects coercion and malformed ranges
+  ---
+  duration_ms: 0.095375
+  type: 'test'
+  ...
+# Subtest: selects reject injected, absent and disabled option values
+ok 9 - selects reject injected, absent and disabled option values
+  ---
+  duration_ms: 0.101459
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 443.236583

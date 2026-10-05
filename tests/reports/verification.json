@@ -1,18 +1,19 @@
 {
-  "schemaVersion": 1,
-  "recordedAt": "2026-10-05T16:57:39.037Z",
-  "implementationCommit": "8f00799f6329ec276e6320c25d33ea813d81c8b8",
+  "schemaVersion": 2,
+  "recordedAt": "2026-10-05T20:04:05.087Z",
+  "implementationCommit": "fe5138677af24216909efc9f2f768b580898bae7",
   "node": "v22.22.0",
   "checks": {
     "realVueTypecheck": true,
     "libraryEsmAndDeclarations": true,
     "renderedComponentsAndContracts": {
-      "passed": 8,
+      "passed": 9,
       "failed": 0,
-      "logSha256": "cdb0b48e182d9ea09fef25229a65bafc76fc70a2124c3ec8870cb619051b5c05"
+      "evidence": "tests/reports/unit.log",
+      "logSha256": "017232aff100d78b35ce290677de9b6a88fb68cbb4a64b9ff9adcdbfe6095277"
     },
     "chromeGallery": {
-      "passed": 5,
+      "passed": 8,
       "failed": 0,
       "retries": 0,
       "widths": [
@@ -21,8 +22,18 @@
         600
       ],
       "rtl": true,
+      "touch": true,
       "distributedComponentsAndCss": true,
-      "logSha256": "14a7d6d72835a6a7b57eadfcc835373cc2ad590c83f8daac390b93667ad2c175"
+      "report": "tests/reports/gallery-e2e.json",
+      "reportSha256": "737c21943474422674ae5e64b417a72c63c39714cc1e4abe22e8e249f932538e",
+      "stats": {
+        "startTime": "2026-10-05T20:01:31.385Z",
+        "duration": 8527.208,
+        "expected": 8,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
     },
     "dependencyAudit": {
       "info": 0,
@@ -30,19 +41,20 @@
       "moderate": 0,
       "high": 0,
       "critical": 0,
-      "total": 0
+      "total": 0,
+      "scope": "Previously executed 2026-10-05; unchanged dependency lock, no independent penetration audit"
     }
   },
   "files": [
     {
       "path": "dist/atomm-ui.css",
-      "bytes": 9514,
-      "sha256": "b5d7996a1f08d0d4e16933e61e80409c85b6bd5d97489f0c18ac124e5db24d2f"
+      "bytes": 11502,
+      "sha256": "cf60b9f5779e91b96455fad6d4d4398aa49d5c5b4e9da61a4a3aec442307b026"
     },
     {
       "path": "dist/atomm-ui.js",
-      "bytes": 22150,
-      "sha256": "f324421f4f7912aa4dbdc4de0d8e68fcd18764c4aad0fb0b6c1321ab840aa437"
+      "bytes": 23446,
+      "sha256": "35eeae80a5fdf4722b723a109ab31fe8f56853b28bf42e9f8de3c7f1e9731946"
     },
     {
       "path": "dist/components/AuAlert.vue.d.ts",
@@ -63,6 +75,11 @@
       "path": "dist/components/AuCheckbox.vue.d.ts",
       "bytes": 658,
       "sha256": "33ffb0cf4e1619c1f4280a6ac53b82b6c3436ce4e1c66f8fbc7264ca6f1b04b5"
+    },
+    {
+      "path": "dist/components/AuExampleCard.vue.d.ts",
+      "bytes": 775,
+      "sha256": "a908672107a258d064622be7115570a1b35c71f340774bb4ecfc7b5ab003dc4d"
     },
     {
       "path": "dist/components/AuHelp.vue.d.ts",
@@ -102,7 +119,7 @@
     {
       "path": "dist/components/AuSlider.vue.d.ts",
       "bytes": 827,
-      "sha256": "143bfb0aa5ddfd24a2c9805f61dc9b20a3ca779075ce289ba2bd680abacf7a00"
+      "sha256": "722eab87d48e4f96a2cd4b68dee8ebc70b2ac9ebc37f97625ec5137ee45ab9b0"
     },
     {
       "path": "dist/components/AuSummary.vue.d.ts",
@@ -121,13 +138,13 @@
     },
     {
       "path": "dist/contracts.d.ts",
-      "bytes": 744,
-      "sha256": "2e2a4ac9554d4f064c605ced45eca7ebf5eaf232534658866933c5344c4aebfa"
+      "bytes": 771,
+      "sha256": "d00bb55367f1a29c22482e8dc5301409a5471388df96a0baff9640087f253b61"
     },
     {
       "path": "dist/index.d.ts",
-      "bytes": 1270,
-      "sha256": "f8828a68bc5a36c8843adaa090d203fc8fa93dd9ad0e86dec8495c72330114ad"
+      "bytes": 1345,
+      "sha256": "df116db16990cb2629315fc717da32e218cce32d7afa163b7a266ea454c33a56"
     },
     {
       "path": "dist/theme.d.ts",
@@ -135,19 +152,34 @@
       "sha256": "d13d09b87c0214c70e5b3a9c90fbdc213ad3c195c9e9f5ffcd77e0cb8327d4be"
     },
     {
-      "path": "gallery-dist/assets/index-CULz_cEw.js",
-      "bytes": 429169,
-      "sha256": "f9638d1a248aa0b549c014ec3684e10db7bba6ff735a4931064262dab0cb213a"
+      "path": "gallery-dist/assets/index-Djp8jVOI.js",
+      "bytes": 430717,
+      "sha256": "0e6d06df7061ca564f320456dba412649a02acd6562ebb7aa6c531120cb3f2ff"
     },
     {
-      "path": "gallery-dist/assets/index-mjSxPW38.css",
-      "bytes": 147535,
-      "sha256": "5721a3193da6ac8d936b7d78c376a4e6f7f11687f5b2ed1341ae5ba9bd6b9660"
+      "path": "gallery-dist/assets/index-Z--9zEWi.css",
+      "bytes": 150221,
+      "sha256": "3cfc31fd4d16941984c6ba2ba93a32d48d102c349019b6dd2a27802a5b168fbc"
     },
     {
       "path": "gallery-dist/index.html",
       "bytes": 620,
-      "sha256": "85cd79e7803d309a30b1cd21b717d2734527a35246a07021b90792595626d9e5"
+      "sha256": "68cfea91d1c8c828d2e9e2707894235ad0850fbff43b88a615bd312e9aa9d766"
+    },
+    {
+      "path": "gallery/Gallery.vue",
+      "bytes": 8290,
+      "sha256": "5b5bc9ef75d9bf487726c688a39f2e3a8d4e5c8b52fe624359701fffd940d187"
+    },
+    {
+      "path": "gallery/main.ts",
+      "bytes": 242,
+      "sha256": "104a6c9ef03123934c11c02060fc589fcbdd42f19177dc6b26f35dd009424e2d"
+    },
+    {
+      "path": "gallery/style.css",
+      "bytes": 3020,
+      "sha256": "e1a64132c4b0bb85c12bcfc097e78a838569802f6e23dc05390d47a861d1ae59"
     },
     {
       "path": "package-lock.json",
@@ -160,9 +192,14 @@
       "sha256": "a81545bf3e918bf725f34491cab1877115264dfb06452871379d9131742f9e7f"
     },
     {
+      "path": "playwright.config.ts",
+      "bytes": 443,
+      "sha256": "6f488312b16e6c2694d6b2e66f164125da4699926bc4ef75b41f1c55272cb07e"
+    },
+    {
       "path": "src/atomm-ui.css",
-      "bytes": 10938,
-      "sha256": "e9e452db4af57a869bf5057dd2a352136f05f1d970c47154577f5462609cd0ae"
+      "bytes": 13094,
+      "sha256": "6a0db108131d557f2b30a9966e9e58e21c9c174e4802f41ca8fb09c04ea76dbd"
     },
     {
       "path": "src/components/AuAlert.vue",
@@ -185,9 +222,14 @@
       "sha256": "5b06d71aada3f76710af3e9322beebb8fbcdf2276054fbd00bde254bfbc20269"
     },
     {
+      "path": "src/components/AuExampleCard.vue",
+      "bytes": 543,
+      "sha256": "61c839a3c9b8bb17d660145152f3f6751efc1a2dc50bc7fa50c50d0b388ca81e"
+    },
+    {
       "path": "src/components/AuHelp.vue",
-      "bytes": 3929,
-      "sha256": "029fbaae3591aaf010c416d74b1392d0cbf0b86803c91993cd0a0cb9ae23fa87"
+      "bytes": 4065,
+      "sha256": "9138478bf5fc95271a3efe87049ca6412bc198c60fdb2046efb9380d4b58a5f0"
     },
     {
       "path": "src/components/AuIcon.vue",
@@ -236,23 +278,58 @@
     },
     {
       "path": "src/components/AuTabs.vue",
-      "bytes": 781,
-      "sha256": "abb1882cef48b5d17a3c1b46c8d0965464e278e3839ad86ed81c0f7dff4c0687"
+      "bytes": 1001,
+      "sha256": "c8b85b4dc101e4345dd2e152ee5691a430529e1ae0a8ef5e1a1be4c604f7204a"
     },
     {
       "path": "src/contracts.ts",
-      "bytes": 1165,
-      "sha256": "d68be3bae84affb9d0ae8ac1d35a63d3a40f1109276dc9c8eba1f0766a960b48"
+      "bytes": 1188,
+      "sha256": "6b2caa7d6257be9e0cdffb9c5f6c7d4c343ae1e5d3bd6b2e17262ca26f1a3c15"
     },
     {
       "path": "src/index.ts",
-      "bytes": 1270,
-      "sha256": "f8828a68bc5a36c8843adaa090d203fc8fa93dd9ad0e86dec8495c72330114ad"
+      "bytes": 1345,
+      "sha256": "df116db16990cb2629315fc717da32e218cce32d7afa163b7a266ea454c33a56"
     },
     {
       "path": "src/theme.ts",
       "bytes": 1473,
       "sha256": "36cc2c437b7cb2c597b021485df5ad3be4475ec68da52c2b74a27d3d781bf183"
+    },
+    {
+      "path": "tests/browser/gallery.spec.ts",
+      "bytes": 7688,
+      "sha256": "2fe370a4b6d54cb333f21fb7c5c1fed8233e9638770c4624618636f59240a031"
+    },
+    {
+      "path": "tests/component-contracts.test.mjs",
+      "bytes": 4397,
+      "sha256": "d77f929fcfa077ce2e59b7bb93923e7c1fd989a64e123a41d6bd5ecaa2f5b25e"
+    },
+    {
+      "path": "tests/contracts.test.mjs",
+      "bytes": 1389,
+      "sha256": "4228aa16674c9a15d68076a5c677a2109f7ed8903e19289b6722b8f06596bbc6"
+    },
+    {
+      "path": "tsconfig.build.json",
+      "bytes": 209,
+      "sha256": "d6f47251c1880e2bb5c9b39b96d116c86e4c15a492c5fc324b21b27861785b25"
+    },
+    {
+      "path": "tsconfig.json",
+      "bytes": 492,
+      "sha256": "401815094b4d81936729e00538c6ac905aeb274758c214fd8125277e940e252d"
+    },
+    {
+      "path": "vite.config.ts",
+      "bytes": 351,
+      "sha256": "cbf8e8490f6f30cdde1b066bf4c2e28b23ca05bc3774f3af9e79b7b787225674"
+    },
+    {
+      "path": "vite.gallery.config.ts",
+      "bytes": 323,
+      "sha256": "e5110646cce818fb18970ac9ccf75d001b180ef18c2420b4dca5cb5525e3b629"
     }
   ],
   "pass_": true
