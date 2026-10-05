@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-05T21:46:51.496Z",
+  "scope": "UI feedback: Vuetify badges in overlays, selected tab contrast, shared panel/card tokens, safe select colour previews, example rows, raw integer keyboard mode",
+  "build": {
+    "typecheck": "vue-tsc real SFC",
+    "library": "pass",
+    "declarations": "pass",
+    "gallery": "pass"
+  },
+  "unit": {
+    "tests": 11,
+    "pass": 11,
+    "fail": 0,
+    "log": "unit.log"
+  },
+  "browser": {
+    "startTime": "2026-10-05T21:45:52.272Z",
+    "duration": 8428.684,
+    "expected": 10,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0,
+    "report": "gallery-e2e.json",
+    "log": "gallery-e2e.log",
+    "viewports": [
+      1280,
+      960,
+      885,
+      600
+    ],
+    "rtl": true,
+    "touch": true
+  },
+  "runtimeSha256": {
+    "src/atomm-ui.css": "0d880c54dd3c3f92bd2c372a745cb9e2ffb19c3110706bcdc5c7ea698a452c0b",
+    "src/contracts.ts": "0a598ff8b94a65972a7b189da7cc2f6baf9cf468431503a4b83051ae38325674",
+    "src/components/AuAlert.vue": "894180efdf1c631bc39e0a1b615a8261be3f1ef0a02ef38ebd2dcf6311c9ca04",
+    "src/components/AuButton.vue": "ccaab362be672ea7c48f9d9cddaf82c1c3ec85350c5908a7e4ac5264d1671009",
+    "src/components/AuCard.vue": "aef5f3a47bc7770ba610f9d03c1189b7747bce5c1f224dd379b2bd570e3ee7b6",
+    "src/components/AuCheckbox.vue": "5b06d71aada3f76710af3e9322beebb8fbcdf2276054fbd00bde254bfbc20269",
+    "src/components/AuExampleCard.vue": "d6449143dfbdf819fe82820673e9827fba485941382533d322dc755a16b29155",
+    "src/components/AuHelp.vue": "9138478bf5fc95271a3efe87049ca6412bc198c60fdb2046efb9380d4b58a5f0",
+    "src/components/AuIcon.vue": "4e5e209afb69690f503f27724b8f0a0db71ce840b4fc9532f2a66920398b0d39",
+    "src/components/AuLayout.vue": "108e6529b7e350e64bf6735a086cd136263d68512dbb25f4cec869ab67f2bbe8",
+    "src/components/AuNumericField.vue": "c08060fd2f79f4ec87b8a5e48a74d03e2a1a9530afa018aa29249b115970de33",
+    "src/components/AuProgress.vue": "cbf878ed068a2989b5fd4556f623b0ab158ca0311a55c22dd4c06f8c9194a6d3",
+    "src/components/AuRoot.vue": "555248c72a4143f2649c5fc4a0570a7a674df78cfbb837218c3ac107882ca92a",
+    "src/components/AuSelect.vue": "edbe3770472553381104b6ba42c7387ea8d08f4ded46b4716866a4e86b99594d",
+    "src/components/AuSlider.vue": "7c7a6c20638da634edb5fc75db463571efb737b9f3acc35b376206ee24910858",
+    "src/components/AuSummary.vue": "d44a50701231c158761266b41f4dd7607626e22d2d89487a210dc9a394694d1f",
+    "src/components/AuSwatches.vue": "cce0fc5dcecafcedc5f82830e67e9187ee048803738200cd29c2ff42222b6d43",
+    "src/components/AuTabs.vue": "c8b85b4dc101e4345dd2e152ee5691a430529e1ae0a8ef5e1a1be4c604f7204a",
+    "src/theme.ts": "36cc2c437b7cb2c597b021485df5ad3be4475ec68da52c2b74a27d3d781bf183",
+    "src/index.ts": "df116db16990cb2629315fc717da32e218cce32d7afa163b7a266ea454c33a56",
+    "dist/atomm-ui.js": "e60581537fb9f683dfd7fb441b23c45805e9cf8d0e271b4b5440162f20c6980a",
+    "dist/atomm-ui.css": "e1cf8cf5ab87cc5819308ea4d2fcbc03448698f57aa6b577ecc998de053c7dc7"
+  },
+  "verification": [
+    "Actual disabled VSelect options expose aria-disabled=true; no invalid colour CSS is rendered.",
+    "Actual VBadge help in a teleported VMenu has no native square border, supports focus and Escape.",
+    "Both panels retain lateral positions, use atomm bg-surface, and white cards use stroke-default.",
+    "Active tabs use brand-default with inverse text.",
+    "Raw decimal/integer input strings, escaping, buttons, sliders and progress contracts remain covered."
+  ],
+  "applicationValidation": "Centralised by supervisor; no application global tests or computation benchmark run by this agent.",
+  "implementationCommit": "8ac75eb5af84ec3884427c92c7c818ef271903af"
+}

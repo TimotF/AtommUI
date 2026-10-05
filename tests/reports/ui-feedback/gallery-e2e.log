@@ -1,0 +1,23 @@
+
+> @local/atomm-ui@0.1.0 test:browser
+> playwright test --reporter=list,json
+
+[WebServer] (node:10700) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 10 tests using 1 worker
+
+(node:10701) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/gallery.spec.ts:6:1 › raw decimals, errors, locale and actual Vuetify controls (992ms)
+  ✓   2 tests/browser/gallery.spec.ts:22:1 › tooltip supports label hover, focus, touch/click, Escape and escaping text (1.0s)
+  ✓   3 tests/browser/gallery.spec.ts:41:1 › generic example cards are selectable with mouse and keyboard (417ms)
+  ✓   4 tests/browser/gallery.spec.ts:49:1 › select previews show safe colours and preserve actual option semantics (502ms)
+  ✓   5 tests/browser/gallery.spec.ts:60:1 › the same Vuetify help badge and fields work inside a teleported settings menu (467ms)
+  ✓   6 tests/browser/gallery.spec.ts:73:3 › touch › help badge opens a readable popover by touch and closes on an outside touch (605ms)
+  ✓   7 tests/browser/gallery.spec.ts:81:41 › layout 1280px and RTL fit the container (767ms)
+  ✓   8 tests/browser/gallery.spec.ts:81:41 › layout 960px and RTL fit the container (781ms)
+  ✓   9 tests/browser/gallery.spec.ts:81:41 › layout 885px and RTL fit the container (747ms)
+  ✓  10 tests/browser/gallery.spec.ts:81:41 › layout 600px and RTL fit the container (667ms)
+
+  10 passed (8.4s)
