@@ -3,7 +3,7 @@ import { VTextField } from 'vuetify/components/VTextField';
 import AuHelp from './AuHelp.vue';
 import type { DecimalAdjustment } from '../contracts.js';
 defineOptions({ inheritAttrs: false });
-const props = withDefaults(defineProps<{ id: string; label: string; modelValue: string; suffix?: string; error?: string; disabled?: boolean; help?: string; helpLabel?: string; step?: number; adjust?: DecimalAdjustment }>(), { disabled: false, step: 1 });
+const props = withDefaults(defineProps<{ id: string; label: string; modelValue: string; suffix?: string; error?: string; disabled?: boolean; help?: string; helpLabel?: string; step?: number; adjust?: DecimalAdjustment; inputMode?: 'decimal' | 'numeric' }>(), { disabled: false, step: 1, inputMode: 'decimal' });
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>();
 let drag: { x: number; value: string; active: boolean; input: HTMLInputElement; pointer: number } | null = null;
 function update(value: unknown) { emit('update:modelValue',typeof value === 'string' ? value : ''); }
@@ -32,7 +32,7 @@ function end() { drag = null; }
     <div class="au-field-row field-row">
       <AuHelp v-if="help" :label="helpLabel ?? label" :text="help" :help-key="id"><label :for="id">{{ label }}</label></AuHelp>
       <label v-else :for="id">{{ label }}</label>
-      <VTextField v-bind="$attrs" :id="id" class="au-numeric-control input-number" :model-value="modelValue" type="text" inputmode="decimal" autocomplete="off" :spellcheck="false" :aria-label="label" :aria-invalid="String(!!error)" :aria-describedby="`${id}-error`" :error="!!error" :disabled="disabled" :suffix="suffix" @update:model-value="update" @keydown="key" @pointerdown="down" @pointermove="move" @pointerup="end" @pointercancel="end" />
+      <VTextField v-bind="$attrs" :id="id" class="au-numeric-control input-number" :model-value="modelValue" type="text" :inputmode="inputMode" autocomplete="off" :spellcheck="false" :aria-label="label" :aria-invalid="String(!!error)" :aria-describedby="`${id}-error`" :error="!!error" :disabled="disabled" :suffix="suffix" @update:model-value="update" @keydown="key" @pointerdown="down" @pointermove="move" @pointerup="end" @pointercancel="end" />
     </div>
     <p :id="`${id}-error`" class="au-field-error field-error" :hidden="!error" role="status">{{ error }}</p>
   </div>

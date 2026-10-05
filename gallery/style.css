@@ -2,7 +2,7 @@ html, body, #app { height: 100%; margin: 0; }
 .gallery-app .gallery-header { min-height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--color-stroke-divider); font-size: 14px; font-weight: 500; }
 .gallery-app .gallery-header small { font-size: 11px; color: var(--color-text-secondary); font-weight: 400; }
 .gallery-app .gallery-rail-content { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; min-height: 0; overflow-y: auto; }
-.gallery-app .gallery-examples { display: flex; gap: 4px; }
+.gallery-app .gallery-examples { display: flex; flex-direction: column; gap: 6px; }
 .gallery-app .gallery-intro h1 { font-size: 24px; font-weight: 500; line-height: 1.2; letter-spacing: -.6px; margin: 12px 0; }
 .gallery-app .gallery-intro p { color: var(--color-text-secondary); }
 .gallery-app .gallery-eyebrow { font-size: 9px; font-weight: 500; letter-spacing: 1.5px; color: var(--color-text-secondary); }
@@ -30,3 +30,6 @@ html, body, #app { height: 100%; margin: 0; }
   .gallery-app .gallery-slider .au-slider-field { flex-wrap: wrap; gap: 4px; }
   .gallery-app .gallery-slider .au-label-help { width: 100%; }
 }
+
+.au-overlay.gallery-settings-overlay { width: 304px; max-width: calc(100vw - 24px); }
+.au-overlay .gallery-settings-card { padding: 12px; border: 1px solid var(--au-card-stroke); border-radius: 10px; }

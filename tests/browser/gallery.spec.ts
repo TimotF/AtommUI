@@ -43,6 +43,30 @@ test('generic example cards are selectable with mouse and keyboard',async({page}
   await expect(first).toHaveAttribute('aria-pressed','true');
   await second.click();await expect(second).toHaveAttribute('aria-pressed','true');await expect(first).toHaveAttribute('aria-pressed','false');
   await third.focus();await third.press('Enter');await expect(third).toHaveAttribute('aria-pressed','true');
+  const rows=await page.locator('.gallery-examples .au-example-row').evaluateAll(elements=>elements.map(el=>{const r=el.getBoundingClientRect(),preview=el.querySelector('.au-example-preview')!.getBoundingClientRect(),title=el.querySelector('.au-example-title')!.getBoundingClientRect();return{top:r.top,bottom:r.bottom,previewRight:preview.right,titleLeft:title.left};}));
+  expect(rows).toHaveLength(3);expect(rows[0].bottom).toBeLessThanOrEqual(rows[1].top);expect(rows[1].bottom).toBeLessThanOrEqual(rows[2].top);expect(rows.every(row=>row.previewRight<=row.titleLeft)).toBe(true);
+});
+test('select previews show safe colours and preserve actual option semantics',async({page})=>{
+  const field=page.locator('#gallery-material').locator('xpath=ancestor::div[contains(@class,"au-select-control")]');
+  await expect(field.locator('.au-option-paint')).toHaveCSS('background-color','rgb(196, 67, 54)');
+  await page.locator('#gallery-material').locator('..').click();
+  const wood=page.getByRole('option',{name:'Contreplaqué',exact:true});
+  await expect(wood.locator('.au-option-paint')).toHaveCSS('background-color','rgb(210, 167, 115)');
+  const unavailable=page.getByRole('option',{name:'Indisponible',exact:true});
+  await expect(unavailable).toHaveAttribute('aria-disabled','true');await expect(unavailable.locator('.au-option-paint')).toHaveCount(0);
+  await wood.click();await expect(page.locator('#gallery-material')).toHaveValue('Contreplaqué');
+  await expect(field.locator('.au-option-paint')).toHaveCSS('background-color','rgb(210, 167, 115)');
+});
+test('the same Vuetify help badge and fields work inside a teleported settings menu',async({page})=>{
+  const trigger=page.locator('#gallery-settings-trigger');await trigger.focus();await trigger.press('Enter');
+  const menu=page.getByRole('dialog',{name:'Réglages détaillés',exact:true});await expect(menu).toBeVisible();
+  const help=menu.locator('[data-help="gallery-overlay-select"]');
+  await expect(help.locator('.v-badge__badge')).toHaveText('?');await expect(help).toHaveCSS('border-top-width','0px');await expect(help).toHaveCSS('border-radius','50%');await expect(help).toHaveCSS('cursor','help');
+  await expect(menu.locator('#gallery-overlay-number')).toHaveCSS('height','28px');
+  await help.focus();const tooltip=page.getByRole('tooltip').filter({hasText:'La même aide fonctionne'});await expect(tooltip).toBeVisible();
+  await page.keyboard.press('Escape');await expect(tooltip).not.toBeVisible();
+  if(await menu.isVisible()) {await menu.locator('#gallery-overlay-number').focus();await page.keyboard.press('Escape');}
+  await expect(menu).not.toBeVisible();await expect(trigger).toBeFocused();
 });
 test.describe('touch',()=>{
   test.use({hasTouch:true,viewport:{width:600,height:900}});
@@ -60,6 +84,11 @@ for (const width of [1280,960,885,600]) test(`layout ${width}px and RTL fit the 
   expect(boxes[0].x+boxes[0].width).toBeCloseTo(boxes[1].x,1);expect(boxes[1].x+boxes[1].width).toBeCloseTo(boxes[2].x,1);
   expect(boxes[1].width).toBeGreaterThanOrEqual(260);expect(boxes.every(r=>r.y===0&&r.height===900)).toBe(true);
   await expect(page.locator('#gallery-action')).toHaveCSS('height','32px');
+  await expect(page.getByRole('tab',{name:'Aperçu',exact:true})).toHaveCSS('background-color','rgb(41, 42, 45)');
+  await expect(page.getByRole('tab',{name:'Aperçu',exact:true})).toHaveCSS('color','rgb(255, 255, 255)');
+  for(const rail of ['.au-rail-lead','.au-rail-parameters']) await expect(page.locator(rail)).toHaveCSS('background-color','rgb(246, 246, 247)');
+  await expect(page.locator('section.au-card').first()).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await expect(page.locator('section.au-card').first()).toHaveCSS('border-top-color','rgb(214, 216, 219)');
   const alert=page.locator('.au-rail-lead .au-alert');await expect(alert).toHaveCSS('flex-grow','0');
   expect((await alert.boundingBox())!.height).toBeLessThan(220);
   const titles=await page.locator('.au-card-header .v-btn__content > span').evaluateAll(elements=>elements.map(el=>{

@@ -1,5 +1,5 @@
 export type UiLocale = 'fr' | 'en';
-export interface UiOption { value: string; title: string; disabled?: boolean }
+export interface UiOption { value: string; title: string; disabled?: boolean; color?: string }
 export interface UiTab extends UiOption { testId?: string; compactTitle?: string }
 export interface UiSwatch { value: string; color: string; title: string; dark?: boolean }
 export type DecimalAdjustment = (text: string, delta: number) => string | null;

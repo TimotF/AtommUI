@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from '@vue/server-renderer';
-import { AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSummary, AuExampleCard, createAtommVuetify } from '../dist/atomm-ui.js';
+import { AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSelect, AuSummary, AuExampleCard, createAtommVuetify } from '../dist/atomm-ui.js';
 
 async function render(children, direction = 'ltr') {
   const app = createSSRApp(() => h(AuRoot, {direction}, () => children));
@@ -80,4 +80,29 @@ test('example cards remain generic accessible actions and escape their title',as
     assert.ok(html.includes(`aria-pressed="${active}"`));
     assert.ok(html.includes('disabled'));
   }
+  const row=await render(h(AuExampleCard,{title:'Preview',layout:'row'},()=>h('img',{src:'/local-preview.png',alt:''})));
+  assert.ok(row.includes('au-example-row'));
+  assert.match(row,/<img\b[^>]*\bsrc="\/local-preview\.png"[^>]*\balt(?:="")?(?=\s|>)/);
+});
+
+test('select colour metadata is optional and cannot inject CSS or markup',async()=>{
+  const title='<img src=x onerror=alert(1)>',renderSelect=color=>render(h(AuSelect,{id:'material',label:'Material',modelValue:'first',items:[{value:'first',title,color}]}));
+  const safe=await renderSelect('#D2A773');
+  assert.ok(safe.includes('au-option-paint'));
+  assert.ok(safe.includes('background-color:#d2a773'));
+  assert.ok(safe.includes('&lt;img src=x onerror=alert(1)&gt;'));
+  for(const color of [undefined,'url(https://invalid.example/image)','#abc','var(--external)','red']) {
+    const html=await renderSelect(color);
+    assert.ok(!html.includes('au-option-paint'));
+    assert.ok(!html.includes('invalid.example'));
+    assert.ok(!html.includes('<img src=x'));
+  }
+});
+
+test('integer keyboard mode keeps raw text and explicit validation semantics',async()=>{
+  const html=await render(h(AuNumericField,{id:'count',label:'Count',modelValue:'2.5',inputMode:'numeric',error:'Use a whole number'}));
+  const input=html.match(/<input\b[^>]*\bid="count"[^>]*>/)?.[0];
+  assert.ok(input?.includes('inputmode="numeric"'));
+  assert.ok(input?.includes('value="2.5"'));
+  assert.ok(input?.includes('aria-invalid="true"'));
 });

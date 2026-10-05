@@ -41,10 +41,10 @@ Encadrer l'interface avec `AuRoot`, puis utiliser `AuLayout` et ses slots `lead`
 Seize composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`.
 
 - Les champs numériques transmettent une **chaîne brute** : une saisie vide ou incomplète reste visible. L'application fournit validation, formatage et fonction d'ajustement. Aucun nombre invalide n'est converti implicitement en zéro.
-- Les sélecteurs transmettent uniquement une option existante et disponible. Les boutons ordinaires restent des actions ; `active` est réservé aux boutons bascule.
+- Les sélecteurs transmettent uniquement une option existante et disponible. `UiOption.color` ajoute un petit aperçu de couleur au choix et à la liste ; les valeurs autres qu’un hexadécimal complet ne produisent aucun aperçu. Les boutons ordinaires restent des actions ; `active` est réservé aux boutons bascule.
 - Les curseurs bornent les valeurs finies ; une plage invalide désactive le contrôle et expose cet état au lecteur d'écran.
 - Les aides utilisent un vrai `VBadge` Vuetify « ? » en exposant, un bouton accessible et le curseur d’aide. Elles fonctionnent au survol, au clavier, au clic et au toucher, se ferment avec Échap, une action extérieure ou lorsque leur ancre sort du panneau. Textes et métadonnées sont interpolés et échappés.
-- `AuExampleCard` fournit une carte d’action illustrée par un slot, sans format de fichier ni logique métier imposés. Le chargement et la sélection restent pilotés par l’application.
+- `AuExampleCard` fournit une carte d’action illustrée par un slot, sans format de fichier ni logique métier imposés. `layout="row"` place l’illustration à côté du titre pour des exemples empilés. Le chargement et la sélection restent pilotés par l’application.
 - `AuTabs` accepte un titre abrégé optionnel pour les scènes étroites et conserve le nom accessible complet.
 - La progression possède des identifiants uniques et devient indéterminée si son avancement est inconnu. L'annulation est un événement vers l'application.
 - Les couleurs acceptent uniquement un hexadécimal complet. La bibliothèque n'injecte aucun HTML fourni par l'utilisateur.
