@@ -1,0 +1,17 @@
+
+> @local/atomm-ui@0.1.0 build
+> npm run check && vite build && vue-tsc -p tsconfig.build.json
+
+
+> @local/atomm-ui@0.1.0 check
+> vue-tsc -p tsconfig.json --noEmit
+
+vite v8.3.2 building client environment for production...
+transforming...
+✓ 40 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/atomm-ui.css  16.37 kB │ gzip: 3.61 kB
+dist/atomm-ui.js   31.50 kB │ gzip: 8.71 kB
+
+✓ built in 139ms

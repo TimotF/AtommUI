@@ -1,0 +1,14 @@
+
+> @local/atomm-ui@0.1.0 build:gallery
+> vite build --config vite.gallery.config.ts
+
+vite v8.3.2 building client environment for production...
+transforming...
+✓ 366 modules transformed.
+rendering chunks...
+computing gzip size...
+gallery-dist/index.html                   0.62 kB │ gzip:   0.39 kB
+gallery-dist/assets/index-Ce2Y8shb.css  155.29 kB │ gzip:  22.13 kB
+gallery-dist/assets/index-_rVyBKYM.js   440.70 kB │ gzip: 150.80 kB
+
+✓ built in 241ms

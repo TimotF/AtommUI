@@ -1,0 +1,33 @@
+
+> @local/atomm-ui@0.1.0 test:browser
+> playwright test --reporter=list,json
+
+[WebServer] (node:31557) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 20 tests using 1 worker
+
+(node:31558) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/gallery.spec.ts:6:1 › raw decimals, errors, locale and actual Vuetify controls (1.0s)
+  ✓   2 tests/browser/gallery.spec.ts:22:1 › tooltip opens only from the help button, with focus, touch/click, Escape and escaping text (1.2s)
+  ✓   3 tests/browser/gallery.spec.ts:45:1 › generic example cards are selectable with mouse and keyboard (573ms)
+  ✓   4 tests/browser/gallery.spec.ts:56:1 › select previews show safe colours and preserve actual option semantics (545ms)
+  ✓   5 tests/browser/gallery.spec.ts:67:1 › the same Vuetify help badge and fields work inside a teleported settings menu (758ms)
+  ✓   6 tests/browser/gallery.spec.ts:82:3 › touch › help badge opens a readable popover by touch and closes on an outside touch (642ms)
+  ✓   7 tests/browser/gallery.spec.ts:90:41 › layout 1280px and RTL fit the container (879ms)
+  ✓   8 tests/browser/gallery.spec.ts:90:41 › layout 960px and RTL fit the container (840ms)
+  ✓   9 tests/browser/gallery.spec.ts:90:41 › layout 885px and RTL fit the container (828ms)
+  ✓  10 tests/browser/gallery.spec.ts:90:41 › layout 600px and RTL fit the container (746ms)
+  ✓  11 tests/browser/numeric.spec.ts:12:1 › numeric click edits, small movement stays a click, and scrub increments exact decimals (672ms)
+  ✓  12 tests/browser/numeric.spec.ts:21:1 › scrub rounds halfway between steps equally in both directions (693ms)
+  ✓  13 tests/browser/numeric.spec.ts:26:1 › bounds constrain scrub and keyboard while raw typed drafts remain intact (1.4s)
+  ✓  14 tests/browser/numeric.spec.ts:35:1 › dragging a selected numeric value adjusts instead of starting a text transfer (582ms)
+  ✓  15 tests/browser/numeric.spec.ts:41:1 › Escape restores the exact initial draft and capture loss cancels the gesture (716ms)
+  ✓  16 tests/browser/numeric.spec.ts:50:1 › readonly, disabled and typing-only fields do not scrub, and modifiers keep decimal precision (1.1s)
+  ✓  17 tests/browser/numeric.spec.ts:57:1 › external model updates and unmount stop captured scrubs without overwriting new state (680ms)
+  ✓  18 tests/browser/numeric.spec.ts:64:1 › segmented choices use a single radio tab stop, skip disabled choices and follow RTL (1.1s)
+  ✓  19 tests/browser/numeric.spec.ts:73:1 › large example previews fit their cards and reduced motion removes hover transitions (556ms)
+  ✓  20 tests/browser/numeric.spec.ts:84:3 › native touch gestures › vertical movement scrolls the panel while horizontal movement scrubs and touchCancel restores (1.1s)
+
+  20 passed (18.3s)

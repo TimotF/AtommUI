@@ -1,0 +1,4 @@
+
+> @local/atomm-ui@0.1.0 check
+> vue-tsc -p tsconfig.json --noEmit
+

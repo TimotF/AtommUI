@@ -1,0 +1,104 @@
+
+> @local/atomm-ui@0.1.0 test
+> node --import ./tests/register-css-loader.mjs --test tests/contracts.test.mjs tests/component-contracts.test.mjs
+
+TAP version 13
+# Subtest: ordinary buttons are actions; only explicit toggles expose aria-pressed
+ok 1 - ordinary buttons are actions; only explicit toggles expose aria-pressed
+  ---
+  duration_ms: 27.823625
+  type: 'test'
+  ...
+# Subtest: slider readout and accessible thumb agree for malformed and out-of-range props
+ok 2 - slider readout and accessible thumb agree for malformed and out-of-range props
+  ---
+  duration_ms: 32.582459
+  type: 'test'
+  ...
+# Subtest: multiple progress controls use unique IDs and invalid progress is indeterminate
+ok 3 - multiple progress controls use unique IDs and invalid progress is indeterminate
+  ---
+  duration_ms: 5.691542
+  type: 'test'
+  ...
+# Subtest: numeric strings and metadata remain escaped text without coercing incomplete drafts
+ok 4 - numeric strings and metadata remain escaped text without coercing incomplete drafts
+  ---
+  duration_ms: 17.509625
+  type: 'test'
+  ...
+# Subtest: direction is provided to Vuetify controls as well as the root DOM
+ok 5 - direction is provided to Vuetify controls as well as the root DOM
+  ---
+  duration_ms: 2.887542
+  type: 'test'
+  ...
+# Subtest: example cards remain generic accessible actions and escape their title
+ok 6 - example cards remain generic accessible actions and escape their title
+  ---
+  duration_ms: 10.0475
+  type: 'test'
+  ...
+# Subtest: select colour metadata is optional and cannot inject CSS or markup
+ok 7 - select colour metadata is optional and cannot inject CSS or markup
+  ---
+  duration_ms: 45.171291
+  type: 'test'
+  ...
+# Subtest: integer keyboard mode keeps raw text and explicit validation semantics
+ok 8 - integer keyboard mode keeps raw text and explicit validation semantics
+  ---
+  duration_ms: 3.289958
+  type: 'test'
+  ...
+# Subtest: numeric constraints do not coerce drafts and readonly/disabled remain native input states
+ok 9 - numeric constraints do not coerce drafts and readonly/disabled remain native input states
+  ---
+  duration_ms: 9.522209
+  type: 'test'
+  ...
+# Subtest: segmented choices expose radios with one keyboard stop, escape labels, and honour disabled options
+ok 10 - segmented choices expose radios with one keyboard stop, escape labels, and honour disabled options
+  ---
+  duration_ms: 6.745167
+  type: 'test'
+  ...
+# Subtest: swatches accept only full hex colours, including a validated fallback
+ok 11 - swatches accept only full hex colours, including a validated fallback
+  ---
+  duration_ms: 1.389042
+  type: 'test'
+  ...
+# Subtest: slider clamps finite values and rejects coercion and malformed ranges
+ok 12 - slider clamps finite values and rejects coercion and malformed ranges
+  ---
+  duration_ms: 0.30225
+  type: 'test'
+  ...
+# Subtest: selects reject injected, absent and disabled option values
+ok 13 - selects reject injected, absent and disabled option values
+  ---
+  duration_ms: 0.892375
+  type: 'test'
+  ...
+# Subtest: numeric adjustments preserve decimal precision and clamp only complete drafts
+ok 14 - numeric adjustments preserve decimal precision and clamp only complete drafts
+  ---
+  duration_ms: 0.789042
+  type: 'test'
+  ...
+# Subtest: scrub units and speed modifiers do not accumulate binary rounding or accept malformed steps
+ok 15 - scrub units and speed modifiers do not accumulate binary rounding or accept malformed steps
+  ---
+  duration_ms: 0.152209
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 731.6235

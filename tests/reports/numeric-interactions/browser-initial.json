@@ -1,0 +1,834 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/timothefrignac/SynologyDrive/Projets/GPT-laser-cut-designs/AtommUI/node_modules/.bin/playwright",
+      "test",
+      "--reporter=list,json"
+    ],
+    "configFile": "/Users/timothefrignac/SynologyDrive/Projets/GPT-laser-cut-designs/AtommUI/playwright.config.ts",
+    "rootDir": "/Users/timothefrignac/SynologyDrive/Projets/GPT-laser-cut-designs/AtommUI/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/timothefrignac/SynologyDrive/Projets/GPT-laser-cut-designs/AtommUI/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/timothefrignac/SynologyDrive/Projets/GPT-laser-cut-designs/AtommUI/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run preview",
+      "url": "http://127.0.0.1:4174",
+      "reuseExistingServer": true
+    }
+  },
+  "suites": [
+    {
+      "title": "gallery.spec.ts",
+      "file": "gallery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "raw decimals, errors, locale and actual Vuetify controls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1180,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:37.549Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0087bd98ece4956907e4-6587610e3f255974b877",
+          "file": "gallery.spec.ts",
+          "line": 6,
+          "column": 1
+        },
+        {
+          "title": "tooltip opens only from the help button, with focus, touch/click, Escape and escaping text",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1169,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:39.639Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0087bd98ece4956907e4-65efac0bf2d04d72e4b8",
+          "file": "gallery.spec.ts",
+          "line": 22,
+          "column": 1
+        },
+        {
+          "title": "generic example cards are selectable with mouse and keyboard",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 576,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:40.817Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0087bd98ece4956907e4-6e70f80dd1e42b62043f",
+          "file": "gallery.spec.ts",
+          "line": 45,
+          "column": 1
+        },
+        {
+          "title": "select previews show safe colours and preserve actual option semantics",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 546,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:41.404Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0087bd98ece4956907e4-112033d79896c07dd8de",
+          "file": "gallery.spec.ts",
+          "line": 56,
+          "column": 1
+        },
+        {
+          "title": "the same Vuetify help badge and fields work inside a teleported settings menu",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 789,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:41.958Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0087bd98ece4956907e4-1911cb9bf40966712e3e",
+          "file": "gallery.spec.ts",
+          "line": 67,
+          "column": 1
+        },
+        {
+          "title": "layout 1280px and RTL fit the container",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 870,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:43.399Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0087bd98ece4956907e4-591703a2a092a0006eb7",
+          "file": "gallery.spec.ts",
+          "line": 90,
+          "column": 41
+        },
+        {
+          "title": "layout 960px and RTL fit the container",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 837,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:44.278Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0087bd98ece4956907e4-36404faf4f5fb9e78803",
+          "file": "gallery.spec.ts",
+          "line": 90,
+          "column": 41
+        },
+        {
+          "title": "layout 885px and RTL fit the container",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 851,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:45.123Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0087bd98ece4956907e4-b9bf7f87e2d3c30b3f3c",
+          "file": "gallery.spec.ts",
+          "line": 90,
+          "column": 41
+        },
+        {
+          "title": "layout 600px and RTL fit the container",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 755,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:45.986Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0087bd98ece4956907e4-ef3e7b4f8826f0253edf",
+          "file": "gallery.spec.ts",
+          "line": 90,
+          "column": 41
+        }
+      ],
+      "suites": [
+        {
+          "title": "touch",
+          "file": "gallery.spec.ts",
+          "line": 80,
+          "column": 6,
+          "specs": [
+            {
+              "title": "help badge opens a readable popover by touch and closes on an outside touch",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 632,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-06T08:15:42.758Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0087bd98ece4956907e4-69775386daf9ce2b564d",
+              "file": "gallery.spec.ts",
+              "line": 82,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "numeric.spec.ts",
+      "file": "numeric.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "numeric click edits, small movement stays a click, and scrub increments exact decimals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 664,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:46.758Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7ca3ee0599ab833cef9f-4e3587fc28c1faef02e7",
+          "file": "numeric.spec.ts",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "scrub rounds halfway between steps equally in both directions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 653,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:47.429Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7ca3ee0599ab833cef9f-e4ac9fdeb47f42e3eaac",
+          "file": "numeric.spec.ts",
+          "line": 21,
+          "column": 1
+        },
+        {
+          "title": "bounds constrain scrub and keyboard while raw typed drafts remain intact",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1373,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:48.090Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7ca3ee0599ab833cef9f-b59bee6de7b1b896de35",
+          "file": "numeric.spec.ts",
+          "line": 26,
+          "column": 1
+        },
+        {
+          "title": "dragging a selected numeric value adjusts instead of starting a text transfer",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 574,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:49.470Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7ca3ee0599ab833cef9f-22464a539f7efcf6216e",
+          "file": "numeric.spec.ts",
+          "line": 35,
+          "column": 1
+        },
+        {
+          "title": "Escape restores the exact initial draft and capture loss cancels the gesture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 713,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:50.054Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7ca3ee0599ab833cef9f-6086cbec4ec1103a2574",
+          "file": "numeric.spec.ts",
+          "line": 41,
+          "column": 1
+        },
+        {
+          "title": "readonly, disabled and typing-only fields do not scrub, and modifiers keep decimal precision",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 920,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:50.777Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7ca3ee0599ab833cef9f-884efbb46404c2a61fea",
+          "file": "numeric.spec.ts",
+          "line": 50,
+          "column": 1
+        },
+        {
+          "title": "external model updates and unmount stop captured scrubs without overwriting new state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 602,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:51.706Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7ca3ee0599ab833cef9f-0fa579e62eced3de22bc",
+          "file": "numeric.spec.ts",
+          "line": 57,
+          "column": 1
+        },
+        {
+          "title": "segmented choices use a single radio tab stop, skip disabled choices and follow RTL",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 699,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:52.317Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7ca3ee0599ab833cef9f-8b9066b418e3763b7d60",
+          "file": "numeric.spec.ts",
+          "line": 64,
+          "column": 1
+        },
+        {
+          "title": "large example previews fit their cards and reduced motion removes hover transitions",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 5551,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCSS\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#gallery-scrub-contract .au-card-heading')\nExpected: \u001b[32m\"0px\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveCSS\" locator('#gallery-scrub-contract .au-card-heading') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#gallery-scrub-contract .au-card-heading')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCSS\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#gallery-scrub-contract .au-card-heading')\nExpected: \u001b[32m\"0px\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveCSS\" locator('#gallery-scrub-contract .au-card-heading') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#gallery-scrub-contract .au-card-heading')\u001b[22m\n\n    at /Users/timothefrignac/SynologyDrive/Projets/GPT-laser-cut-designs/AtommUI/tests/browser/numeric.spec.ts:79:25",
+                    "location": {
+                      "file": "/Users/timothefrignac/SynologyDrive/Projets/GPT-laser-cut-designs/AtommUI/tests/browser/numeric.spec.ts",
+                      "column": 25,
+                      "line": 79
+                    },
+                    "snippet": "  77 |   await page.emulateMedia({reducedMotion:'reduce'});await expect(card).toHaveCSS('transition-duration','0s');await expect(card.locator('.au-example-preview')).toHaveCSS('transition-duration','0s');\n  78 |   const heading=page.locator('#gallery-scrub-contract .au-card-heading');\n> 79 |   await expect(heading).toHaveCSS('margin-top','0px');await expect(heading).toHaveCSS('margin-bottom','0px');await expect(heading).toHaveCSS('border-bottom-width','1px');await expect(heading).toHaveCSS('text-transform','uppercase');\n     |                         ^\n  80 | });\n  81 |\n  82 | test.describe('native touch gestures',()=>{"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/timothefrignac/SynologyDrive/Projets/GPT-laser-cut-designs/AtommUI/tests/browser/numeric.spec.ts",
+                        "column": 25,
+                        "line": 79
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCSS\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#gallery-scrub-contract .au-card-heading')\nExpected: \u001b[32m\"0px\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveCSS\" locator('#gallery-scrub-contract .au-card-heading') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#gallery-scrub-contract .au-card-heading')\u001b[22m\n\n\n  77 |   await page.emulateMedia({reducedMotion:'reduce'});await expect(card).toHaveCSS('transition-duration','0s');await expect(card.locator('.au-example-preview')).toHaveCSS('transition-duration','0s');\n  78 |   const heading=page.locator('#gallery-scrub-contract .au-card-heading');\n> 79 |   await expect(heading).toHaveCSS('margin-top','0px');await expect(heading).toHaveCSS('margin-bottom','0px');await expect(heading).toHaveCSS('border-bottom-width','1px');await expect(heading).toHaveCSS('text-transform','uppercase');\n     |                         ^\n  80 | });\n  81 |\n  82 | test.describe('native touch gestures',()=>{\n    at /Users/timothefrignac/SynologyDrive/Projets/GPT-laser-cut-designs/AtommUI/tests/browser/numeric.spec.ts:79:25"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-06T08:15:53.026Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/timothefrignac/SynologyDrive/Projets/GPT-laser-cut-designs/AtommUI/test-results/numeric-large-example-prev-83194-n-removes-hover-transitions/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/timothefrignac/SynologyDrive/Projets/GPT-laser-cut-designs/AtommUI/test-results/numeric-large-example-prev-83194-n-removes-hover-transitions/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/timothefrignac/SynologyDrive/Projets/GPT-laser-cut-designs/AtommUI/test-results/numeric-large-example-prev-83194-n-removes-hover-transitions/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/timothefrignac/SynologyDrive/Projets/GPT-laser-cut-designs/AtommUI/tests/browser/numeric.spec.ts",
+                    "column": 25,
+                    "line": 79
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7ca3ee0599ab833cef9f-a2b2760ab55771b1b805",
+          "file": "numeric.spec.ts",
+          "line": 73,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "native touch gestures",
+          "file": "numeric.spec.ts",
+          "line": 82,
+          "column": 6,
+          "specs": [
+            {
+              "title": "vertical movement scrolls the panel while horizontal movement scrubs and touchCancel restores",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1053,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-06T08:15:59.103Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7ca3ee0599ab833cef9f-9d99611b4c0078e5f587",
+              "file": "numeric.spec.ts",
+              "line": 84,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-06T08:15:36.158Z",
+    "duration": 24409.09,
+    "expected": 19,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
