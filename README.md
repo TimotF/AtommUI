@@ -38,16 +38,36 @@ Encadrer l'interface avec `AuRoot`, puis utiliser `AuLayout` et ses slots `lead`
 
 ## Contrats des composants
 
-Seize composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`.
+Dix-sept composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`, `AuSegmentedControl`.
 
-- Les champs numériques transmettent une **chaîne brute** : une saisie vide ou incomplète reste visible. L'application fournit validation, formatage et fonction d'ajustement. Aucun nombre invalide n'est converti implicitement en zéro.
+- Les champs numériques transmettent une **chaîne brute** : une saisie vide ou incomplète reste visible. L'application fournit la validation. Le clic édite le texte ; le glissement horizontal l'ajuste selon `step`. Un ajustement décimal exact est fourni, et `adjust` permet de le remplacer. Aucun nombre invalide n'est converti implicitement en zéro.
 - Les sélecteurs transmettent uniquement une option existante et disponible. `UiOption.color` ajoute un petit aperçu de couleur au choix et à la liste ; les valeurs autres qu’un hexadécimal complet ne produisent aucun aperçu. Les boutons ordinaires restent des actions ; `active` est réservé aux boutons bascule.
 - Les curseurs bornent les valeurs finies ; une plage invalide désactive le contrôle et expose cet état au lecteur d'écran.
-- Les aides utilisent un vrai `VBadge` Vuetify « ? » en exposant, un bouton accessible et le curseur d’aide. Elles fonctionnent au survol, au clavier, au clic et au toucher, se ferment avec Échap, une action extérieure ou lorsque leur ancre sort du panneau. Textes et métadonnées sont interpolés et échappés.
-- `AuExampleCard` fournit une carte d’action illustrée par un slot, sans format de fichier ni logique métier imposés. `layout="row"` place l’illustration à côté du titre pour des exemples empilés. Le chargement et la sélection restent pilotés par l’application.
+- Les aides utilisent un vrai `VBadge` Vuetify « ? » en exposant, un bouton accessible et le curseur d’aide. Seul le bouton déclenche l’aide au survol, au focus, au clic et au toucher ; le libellé conserve son comportement normal. Le popover peut être survolé et se ferme avec Échap, une action extérieure ou lorsque le bouton sort du panneau. Ce contrat est aussi testé dans un menu téléporté. Textes et métadonnées sont interpolés et échappés.
+- `AuExampleCard` fournit une carte d’action illustrée par un slot, sans format de fichier ni logique métier imposés. `layout="tile"`, valeur par défaut, offre un aperçu sur toute la largeur et une courte légende en bas. `layout="row"` place l’illustration à côté du titre. Le chargement et la sélection restent pilotés par l’application. Les transitions de survol sont supprimées avec `prefers-reduced-motion`.
+- `AuSegmentedControl` reçoit `modelValue`, `items: readonly UiOption[]`, `label` et `disabled`. Il émet uniquement une option disponible. Le groupe expose des radios, une seule étape de tabulation, les flèches adaptées à RTL, ainsi que Début/Fin. Les choix indisponibles sont ignorés.
 - `AuTabs` accepte un titre abrégé optionnel pour les scènes étroites et conserve le nom accessible complet.
 - La progression possède des identifiants uniques et devient indéterminée si son avancement est inconnu. L'annulation est un événement vers l'application.
 - Les couleurs acceptent uniquement un hexadécimal complet. La bibliothèque n'injecte aucun HTML fourni par l'utilisateur.
+
+## Saisie numérique et glissement
+
+`AuNumericField` accepte `step`, `min`, `max`, `readOnly`, `disabled`, `drag` et `dragPixelsPerStep` (8 par défaut). `min`/`max` bornent les gestes et raccourcis ; ils ne modifient jamais silencieusement la frappe. `input-mode="numeric"` limite les ajustements aux entiers et conserve les brouillons saisis pour leur validation par l'application. `:drag="false"` désactive le glissement.
+
+Le geste démarre après 6 pixels et seulement si le mouvement est nettement horizontal. Un mouvement vertical laisse défiler le panneau sur écran tactile. Le champ prend la capture du pointeur pendant le geste ; Échap, l'annulation tactile et la perte de capture restaurent exactement le texte initial. Une valeur externe nouvelle ou le démontage arrête le geste. Un champ désactivé ou en lecture seule ne change pas.
+
+Maj + flèche Haut/Bas ajuste de dix pas, Maj + Alt de 0,1 pas. Pendant le glissement, Maj multiplie le pas par dix et Alt par 0,1. Les directions gauche/droite arrondissent symétriquement. Le clic court garde l'édition et la sélection de texte.
+
+Deux helpers publics évitent le bruit des additions flottantes :
+
+```ts
+import { adjustNumericDraft, decimalStepDelta } from '@local/atomm-ui';
+
+adjustNumericDraft('0,1', 0.01, { min: 0, max: 10 }); // '0,11'
+decimalStepDelta(3, 0.1); // 0.3
+```
+
+`adjustNumericDraft(text, delta, { min?, max?, decimalSeparator? })` et `decimalStepDelta(steps, step, multiplier?)` renvoient `null` si les paramètres sont invalides. L'arithmétique décimale interne conserve la précision. Le helper accepte les virgules ou points complets ; une virgule présente est conservée, sinon `decimalSeparator` définit le séparateur du résultat. Une application imposant une langue doit valider cette langue dans son callback `adjust` avant d'appeler le helper. Les brouillons vides, `-`, `0,` ou non finis ne sont pas ajustés.
 
 Chaque changement se vérifie par sa boucle ciblée : contrat → cas positif et négatif → composants compilés → interactions Chrome et rendu à 1280, 960, 885, 600 px / RTL → correction → contrôles précédents. Les tests de rendu serveur utilisent les composants réellement distribués ; la CSS est vérifiée dans Chrome, pas dans un substitut DOM. La galerie reste une démonstration de composants.
 

@@ -19,7 +19,7 @@ test('raw decimals, errors, locale and actual Vuetify controls',async({page}) =>
   await page.locator('#gallery-checkbox').uncheck(); await expect(page.locator('#gallery-checkbox')).not.toBeChecked();
   await page.locator('#gallery-action').click(); await expect(page.getByText('Action confirmed.',{exact:true})).toBeVisible();
 });
-test('tooltip supports label hover, focus, touch/click, Escape and escaping text',async({page}) => {
+test('tooltip opens only from the help button, with focus, touch/click, Escape and escaping text',async({page}) => {
   const help = page.locator('[data-help="gallery-number"]');
   await expect(help.locator('.v-badge__badge')).toHaveText('?');
   await expect(help.locator('.v-badge__badge')).toHaveCSS('background-color','rgb(255, 255, 255)');
@@ -27,6 +27,10 @@ test('tooltip supports label hover, focus, touch/click, Escape and escaping text
   await expect(help).toHaveCSS('cursor','help');
   const raised=await help.evaluate(el=>el.getBoundingClientRect().top < el.parentElement!.querySelector('label')!.getBoundingClientRect().top);
   expect(raised).toBe(true);
+  const label=page.locator('label[for="gallery-number"]');
+  await expect(label).not.toHaveCSS('cursor','help');
+  await label.hover(); await page.waitForTimeout(180);
+  await expect(page.getByRole('tooltip').filter({hasText:'Les valeurs incomplètes'})).not.toBeVisible();
   await help.hover(); await expect(page.getByRole('tooltip').filter({hasText:'Les valeurs incomplètes'})).toBeVisible();
   const tooltip=page.getByRole('tooltip').filter({hasText:'Les valeurs incomplètes'});
   await expect(help).toHaveAttribute('aria-describedby',await tooltip.getAttribute('id') as string);
@@ -43,6 +47,9 @@ test('generic example cards are selectable with mouse and keyboard',async({page}
   await expect(first).toHaveAttribute('aria-pressed','true');
   await second.click();await expect(second).toHaveAttribute('aria-pressed','true');await expect(first).toHaveAttribute('aria-pressed','false');
   await third.focus();await third.press('Enter');await expect(third).toHaveAttribute('aria-pressed','true');
+  const tiles=await page.locator('.gallery-examples .au-example-card').evaluateAll(elements=>elements.map(el=>{const r=el.getBoundingClientRect(),preview=el.querySelector('.au-example-preview')!.getBoundingClientRect(),title=el.querySelector('.au-example-title')!.getBoundingClientRect();return{top:r.top,bottom:r.bottom,previewBottom:preview.bottom,titleTop:title.top,previewWidth:preview.width,width:r.width};}));
+  expect(tiles).toHaveLength(3);expect(tiles[0].bottom).toBeLessThanOrEqual(tiles[1].top);expect(tiles[1].bottom).toBeLessThanOrEqual(tiles[2].top);expect(tiles.every(tile=>tile.previewBottom<=tile.titleTop&&tile.previewWidth>=tile.width-20)).toBe(true);
+  await page.locator('#gallery-example-layout').getByRole('radio',{name:'Ligne',exact:true}).click();
   const rows=await page.locator('.gallery-examples .au-example-row').evaluateAll(elements=>elements.map(el=>{const r=el.getBoundingClientRect(),preview=el.querySelector('.au-example-preview')!.getBoundingClientRect(),title=el.querySelector('.au-example-title')!.getBoundingClientRect();return{top:r.top,bottom:r.bottom,previewRight:preview.right,titleLeft:title.left};}));
   expect(rows).toHaveLength(3);expect(rows[0].bottom).toBeLessThanOrEqual(rows[1].top);expect(rows[1].bottom).toBeLessThanOrEqual(rows[2].top);expect(rows.every(row=>row.previewRight<=row.titleLeft)).toBe(true);
 });
@@ -63,6 +70,8 @@ test('the same Vuetify help badge and fields work inside a teleported settings m
   const help=menu.locator('[data-help="gallery-overlay-select"]');
   await expect(help.locator('.v-badge__badge')).toHaveText('?');await expect(help).toHaveCSS('border-top-width','0px');await expect(help).toHaveCSS('border-radius','50%');await expect(help).toHaveCSS('cursor','help');
   await expect(menu.locator('#gallery-overlay-number')).toHaveCSS('height','28px');
+  await menu.locator('label[for="gallery-overlay-select"]').hover(); await page.waitForTimeout(180);
+  await expect(page.getByRole('tooltip').filter({hasText:'La même aide fonctionne'})).not.toBeVisible();
   await help.focus();const tooltip=page.getByRole('tooltip').filter({hasText:'La même aide fonctionne'});await expect(tooltip).toBeVisible();
   await page.keyboard.press('Escape');await expect(tooltip).not.toBeVisible();
   if(await menu.isVisible()) {await menu.locator('#gallery-overlay-number').focus();await page.keyboard.press('Escape');}

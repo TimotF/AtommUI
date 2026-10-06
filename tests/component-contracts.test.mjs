@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from '@vue/server-renderer';
-import { AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSelect, AuSummary, AuExampleCard, createAtommVuetify } from '../dist/atomm-ui.js';
+import { AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSelect, AuSummary, AuExampleCard, AuSegmentedControl, createAtommVuetify } from '../dist/atomm-ui.js';
 
 async function render(children, direction = 'ltr') {
   const app = createSSRApp(() => h(AuRoot, {direction}, () => children));
@@ -105,4 +105,28 @@ test('integer keyboard mode keeps raw text and explicit validation semantics',as
   assert.ok(input?.includes('inputmode="numeric"'));
   assert.ok(input?.includes('value="2.5"'));
   assert.ok(input?.includes('aria-invalid="true"'));
+});
+
+test('numeric constraints do not coerce drafts and readonly/disabled remain native input states',async()=>{
+  for(const props of [{min:2,max:100,modelValue:'101'}, {readOnly:true,modelValue:'-'}, {disabled:true,modelValue:'0,'}]) {
+    const html=await render(h(AuNumericField,{id:'bounded',label:'Value',...props}));
+    const input=html.match(/<input\b[^>]*\bid="bounded"[^>]*>/)?.[0];
+    assert.ok(input?.includes(`value="${props.modelValue}"`));
+    if(props.readOnly) assert.match(input,/\breadonly(?:="")?(?=\s|>)/);
+    if(props.disabled) assert.match(input,/\bdisabled(?:="")?(?=\s|>)/);
+  }
+});
+test('segmented choices expose radios with one keyboard stop, escape labels, and honour disabled options',async()=>{
+  const items=[{value:'spacing',title:'Spacing'},{value:'disabled',title:'Disabled',disabled:true},{value:'count',title:'<img src=x>'}];
+  const html=await render(h(AuSegmentedControl,{id:'mode',label:'Density mode',modelValue:'spacing',items}));
+  assert.ok(html.includes('role="radiogroup"'));
+  assert.equal((html.match(/role="radio"/g)??[]).length,3);
+  assert.equal((html.match(/tabindex="0"/g)??[]).length,1);
+  assert.ok(html.match(/<button[^>]*aria-checked="true"[^>]*data-value="spacing"/));
+  const unavailable=html.match(/<button[^>]*data-value="disabled"[^>]*>/)?.[0];
+  assert.match(unavailable??'',/\sdisabled(?:="")?(?=\s|>)/);
+  assert.ok(html.includes('&lt;img src=x&gt;')); assert.ok(!html.includes('<img src=x>'));
+  const disabled=await render(h(AuSegmentedControl,{label:'Density mode',modelValue:'spacing',items,disabled:true}));
+  assert.ok(disabled.includes('aria-disabled="true"'));
+  assert.equal((disabled.match(/tabindex="0"/g)??[]).length,0);
 });
