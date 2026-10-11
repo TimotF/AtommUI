@@ -23,7 +23,7 @@ Le vérificateur de composants `vue-tsc` 3.3.12 utilise TypeScript 6.0.3 : son A
 
 ## Utiliser dans une application
 
-Déclarer la version publiée de `@timotf/atomm-ui` et les versions compatibles de Vue et Vuetify dans `package.json`, puis installer avec `npm ci`. L’application consomme une archive de release épinglée dans son lockfile. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
+Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.2.0/timotf-atomm-ui-0.2.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
 
 ```ts
 import { createApp } from 'vue';
