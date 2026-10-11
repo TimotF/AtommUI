@@ -2,13 +2,25 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from '@vue/server-renderer';
-import { AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSelect, AuSummary, AuExampleCard, AuSegmentedControl, createAtommVuetify } from '../dist/atomm-ui.js';
+import { AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSelect, AuSummary, AuExampleCard, AuSegmentedControl, AuPanelHeader, AuFieldNote, createAtommVuetify } from '../dist/atomm-ui.js';
 
 async function render(children, direction = 'ltr') {
   const app = createSSRApp(() => h(AuRoot, {direction}, () => children));
   app.use(createAtommVuetify());
   return renderToString(app);
 }
+
+test('compact profile and reusable panel text keep ordinary document semantics', async () => {
+  const app = createSSRApp(() => h(AuRoot, {profile:'compact'}, () => [
+    h(AuPanelHeader, {id:'heading'}, () => h('strong', 'Settings')),
+    h(AuFieldNote, {id:'note'}, () => 'Choose a material'),
+  ]));
+  app.use(createAtommVuetify());
+  const html = await renderToString(app);
+  assert.match(html, /class="[^"]*au-root[^"]*au-profile-compact/);
+  assert.match(html, /<header[^>]*id="heading"/);
+  assert.match(html, /<p[^>]*id="note"/);
+});
 
 test('ordinary buttons are actions; only explicit toggles expose aria-pressed', async () => {
   const ordinary = await render(h(AuButton, {id:'action'}, () => 'Export'));
@@ -61,6 +73,15 @@ test('numeric strings and metadata remain escaped text without coercing incomple
   const html=await render(h(AuSummary,{label:'Result',items:[{label:'Parts',value:'<script>alert(1)</script>'}]}));
   assert.ok(html.includes('&lt;script&gt;'));
   assert.ok(!html.includes('<script>'));
+});
+
+test('numeric display formatting presents two decimals while retaining the canonical model for gestures', async () => {
+  const canonical='25.533517837524414';
+  const html=await render(h(AuNumericField,{id:'rounded-number',label:'Gap',modelValue:canonical,formatDisplay:text=>Number(text).toFixed(2)}));
+  const input=html.match(/<input\b[^>]*\bid="rounded-number"[^>]*>/)?.[0];
+  assert.ok(input?.includes('value="25.53"'));
+  assert.ok(!input.includes(canonical));
+  assert.ok(input.includes('aria-keyshortcuts="Shift+ArrowUp Shift+ArrowDown"'));
 });
 
 test('direction is provided to Vuetify controls as well as the root DOM', async () => {

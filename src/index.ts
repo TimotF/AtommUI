@@ -1,6 +1,7 @@
 import 'vuetify/styles/core';
+import './atomm-tokens.css';
 import './atomm-ui.css';
-export { createAtommVuetify, atommTheme } from './theme.js';
+export { createAtommVuetify, atommTheme, atommDarkTheme } from './theme.js';
 export { safeHexColor, finiteSliderValue, isOptionValue } from './contracts.js';
 export { adjustNumericDraft, decimalStepDelta } from './numeric.js';
 export type { NumericBounds } from './numeric.js';
@@ -22,3 +23,5 @@ export { default as AuProgress } from './components/AuProgress.vue';
 export { default as AuSwatches } from './components/AuSwatches.vue';
 export { default as AuSummary } from './components/AuSummary.vue';
 export { default as AuExampleCard } from './components/AuExampleCard.vue';
+export { default as AuPanelHeader } from './components/AuPanelHeader.vue';
+export { default as AuFieldNote } from './components/AuFieldNote.vue';

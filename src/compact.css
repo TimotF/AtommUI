@@ -1,0 +1,60 @@
+/* Opt-in shared density profile. Import after style.css and set AuRoot profile="compact".
+   Teleported controls receive the same class through their contentClass. */
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) {
+  --au-input-height: 28px;
+  --au-control-height: 32px;
+  --au-export-height: 32px;
+  --au-toolbar-height: 32px;
+  --au-scene-control-height: 32px;
+  --au-radius-control: 6px;
+  --au-radius-card: 8px;
+  --au-radius-pill: 6px;
+  --au-params-numeric-width: 92px;
+  --au-lead-numeric-width: 92px;
+  --au-params-select-width: 110px;
+  --au-lead-select-width: 110px;
+  --au-floating-bg: var(--color-bg-default);
+  --au-floating-blur: 0px;
+  --au-compact-segment-padding: 2px;
+  --au-compact-segment-radius: 4px;
+  --au-compact-dialog-radius: 12px;
+  --au-compact-overlay-layer: 2;
+  --au-compact-tooltip-layer: 3;
+}
+
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-card-body { padding: 0; }
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) :is(.au-card-header,.au-card-heading) { border-bottom: 0; }
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-field-row { min-height: 0; padding: var(--au-space-8) var(--au-space-16); }
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .v-field {
+  height: var(--au-input-height);
+  background: var(--color-bg-control);
+  border-radius: var(--au-radius-control);
+}
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .v-field__outline { --v-field-border-width: var(--au-border-width); color: transparent; }
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .v-field--focused { background: var(--color-bg-default); }
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .v-field--focused .v-field__outline { color: var(--color-stroke-active); }
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .v-field--error .v-field__outline { color: var(--color-error); }
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-numeric-control .v-field { background: var(--color-bg-control); border-color: transparent; }
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-numeric-control .v-field--focused { background: var(--color-bg-default); border-color: var(--color-stroke-active); }
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-numeric-control .v-field--error { border-color: var(--color-error); }
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .v-field__input { padding-inline: var(--au-space-8); }
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-help-trigger { border-radius: 50%; }
+
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) :is(.v-tabs,.au-segmented-control,.v-btn-toggle) {
+  height: var(--au-control-height);
+  min-height: var(--au-control-height);
+  padding: var(--au-compact-segment-padding);
+  gap: 0;
+  border-radius: var(--au-radius-control);
+}
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) :is(.v-tabs .v-tab,.au-segmented-option,.v-btn-toggle > .v-btn) {
+  height: calc(var(--au-control-height) - 2 * var(--au-compact-segment-padding));
+  min-height: 0;
+  padding-block: 0;
+  border-radius: var(--au-compact-segment-radius);
+}
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-dialog-card { border-radius: var(--au-compact-dialog-radius); }
+
+/* Vuetify adds 10 to nested popovers. Menus stay at layer 2, tips above at 3. */
+.v-overlay:has(.au-overlay.au-profile-compact) { z-index: 2 !important; }
+.v-overlay.v-tooltip:has(.au-overlay.au-profile-compact) { z-index: 3 !important; }

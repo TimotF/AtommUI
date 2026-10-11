@@ -6,15 +6,19 @@ import AuHelp from './AuHelp.vue';
 import type { DecimalAdjustment } from '../contracts.js';
 import { adjustNumericDraft, decimalStepDelta } from '../numeric.js';
 defineOptions({ inheritAttrs: false });
-const props = withDefaults(defineProps<{ id: string; label: string; modelValue: string; suffix?: string; error?: string; disabled?: boolean; readOnly?: boolean; help?: string; helpLabel?: string; step?: number; min?: number; max?: number; adjust?: DecimalAdjustment; inputMode?: 'decimal' | 'numeric'; drag?: boolean; dragPixelsPerStep?: number }>(), { disabled: false, readOnly: false, step: 1, inputMode: 'decimal', drag: true, dragPixelsPerStep: 8 });
+const props = withDefaults(defineProps<{ id: string; label: string; modelValue: string; suffix?: string; error?: string; disabled?: boolean; readOnly?: boolean; help?: string; helpLabel?: string; step?: number; min?: number; max?: number; adjust?: DecimalAdjustment; formatDisplay?: (value: string) => string; inputMode?: 'decimal' | 'numeric'; drag?: boolean; dragPixelsPerStep?: number }>(), { disabled: false, readOnly: false, step: 1, inputMode: 'decimal', drag: true, dragPixelsPerStep: 8 });
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>();
-const locale = useLocale(), dragging = ref(false);
+const locale = useLocale(), dragging = ref(false), editing = ref(false);
+const editingDraft = ref(props.modelValue);
+// Preserve incomplete decimals and trailing zeroes while the user types.
+// Formatting on every keystroke turns e.g. "0,0" into "0" before the next digit.
+const displayValue = computed(() => editing.value ? editingDraft.value : props.formatDisplay?.(props.modelValue) ?? props.modelValue);
 type Gesture = { x: number; y: number; initial: string; last: string; input: HTMLInputElement; pointer: number; active: boolean; direction: number };
 let gesture: Gesture | null = null, suppressClick = false, clickTimer: ReturnType<typeof setTimeout> | undefined;
 const validStep = computed(() => Number.isFinite(props.step) && props.step > 0 && Number.isFinite(props.dragPixelsPerStep) && props.dragPixelsPerStep > 0);
 function adjusted(text: string, delta: number): string | null {
   if (props.inputMode === 'numeric' && !/^[+-]?\d+$/.test(text)) return null;
-  const decimalSeparator = locale.current.value.startsWith('fr') ? ',' : '.';
+  const decimalSeparator = /^(fr|es)(-|$)/.test(locale.current.value) ? ',' : '.';
   try {
     const result = props.adjust ? props.adjust(text, delta) : adjustNumericDraft(text, delta, { decimalSeparator });
     const value = result === null ? null : adjustNumericDraft(result, 0, { min: props.min, max: props.max, decimalSeparator });
@@ -22,7 +26,19 @@ function adjusted(text: string, delta: number): string | null {
   } catch { return null; }
 }
 const draggable = computed(() => !props.disabled && !props.readOnly && props.drag && validStep.value && adjusted(props.modelValue, 0) !== null);
-function update(value: unknown) { if (!props.disabled && !props.readOnly) emit('update:modelValue', typeof value === 'string' ? value : ''); }
+function update(value: unknown) {
+  if (props.disabled || props.readOnly) return;
+  const text = typeof value === 'string' ? value : '';
+  // Re-emitting a rounded presentation must not round its physical source.
+  const retained = props.formatDisplay && text === displayValue.value ? props.modelValue : text;
+  if (editing.value) editingDraft.value = text;
+  emit('update:modelValue', retained);
+}
+function focus() { editingDraft.value = props.formatDisplay?.(props.modelValue) ?? props.modelValue; editing.value = true; }
+function blur(event: FocusEvent) {
+  editing.value = false;
+  if (props.formatDisplay && event.target instanceof HTMLInputElement) event.target.value = displayValue.value;
+}
 function detach() {
   window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
   window.removeEventListener('pointercancel', cancel); window.removeEventListener('keydown', escape);
@@ -77,16 +93,15 @@ function up(event: PointerEvent) {
 function cancel(event: PointerEvent) { if (gesture && event.pointerId === gesture.pointer) finish(true); }
 function lost(event: PointerEvent) { if (gesture?.active && event.pointerId === gesture.pointer) finish(true); }
 function click(event: MouseEvent) { if (suppressClick && event.detail > 0) { suppressClick = false; event.preventDefault(); event.stopPropagation(); } }
-watch(() => props.modelValue, value => { if (gesture && value !== gesture.last) finish(false); });
+watch(() => props.modelValue, value => { if (gesture && value !== gesture.last) finish(false); if (editing.value) editingDraft.value = value; });
 watch(() => [props.disabled, props.readOnly, props.drag], () => { if (props.disabled || props.readOnly || !props.drag) finish(false); });
 onBeforeUnmount(() => { finish(false); if (clickTimer !== undefined) clearTimeout(clickTimer); });
 </script>
 <template>
   <div class="au-field au-numeric" :class="{ 'au-is-draggable': draggable, 'au-is-dragging': dragging }">
     <div class="au-field-row field-row">
-      <AuHelp v-if="help" :label="helpLabel ?? label" :text="help" :help-key="id"><label :for="id">{{ label }}</label></AuHelp>
-      <label v-else :for="id">{{ label }}</label>
-      <VTextField v-bind="$attrs" :id="id" class="au-numeric-control input-number" :model-value="modelValue" type="text" :inputmode="inputMode" autocomplete="off" :spellcheck="false" :aria-label="label" :aria-invalid="String(!!error)" :aria-describedby="`${id}-error`" :aria-keyshortcuts="readOnly || disabled ? undefined : 'Shift+ArrowUp Shift+ArrowDown'" :error="!!error" :disabled="disabled" :readonly="readOnly" :suffix="suffix" @update:model-value="update" @keydown="key" @pointerdown="down" @lostpointercapture="lost" @click.capture="click" />
+      <slot name="label"><AuHelp v-if="help" :label="helpLabel ?? label" :text="help" :help-key="id"><label :for="id">{{ label }}</label></AuHelp><label v-else :for="id">{{ label }}</label></slot>
+      <VTextField v-bind="$attrs" :id="id" class="au-numeric-control input-number" :model-value="displayValue" type="text" :inputmode="inputMode" autocomplete="off" :spellcheck="false" :aria-label="label" :aria-invalid="String(!!error)" :aria-describedby="`${id}-error`" :aria-keyshortcuts="readOnly || disabled ? undefined : 'Shift+ArrowUp Shift+ArrowDown'" :error="!!error" :disabled="disabled" :readonly="readOnly" :suffix="suffix" @update:model-value="update" @focus="focus" @blur="blur" @keydown="key" @pointerdown="down" @lostpointercapture="lost" @click.capture="click" />
     </div>
     <p :id="`${id}-error`" class="au-field-error field-error" :hidden="!error" role="status">{{ error }}</p>
   </div>

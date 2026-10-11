@@ -1,6 +1,6 @@
 # AtommUI
 
-Bibliothèque locale de composants **Vue 3, Vuetify et TypeScript** pour les interfaces de générateurs atomm. Dépôt Git indépendant, voisin de `SliceformPuzzle`. Aucun calcul de géométrie, viewer 3D ou SDK dans ce package.
+Bibliothèque versionnée de composants **Vue 3, Vuetify et TypeScript** pour les interfaces de générateurs atomm. Le package `@timotf/atomm-ui` fournit 19 composants, une base et un profil compact de style, ainsi qu’un thème importable depuis Node. Aucun calcul de géométrie, viewer 3D ou SDK n’y est inclus.
 
 La direction visuelle reprend la sobriété des deux références fournies : scène dominante, cartes blanches discrètes, intitulés courts, contrôles compacts et détails dans l'aide contextuelle. Les couleurs, hauteurs et espacements suivent le guide atomm. Les couleurs des objets restent propres à chaque application.
 
@@ -17,28 +17,63 @@ npm run test:browser
 npm run dev
 ```
 
-La galerie locale utilise le port 4174 pour les contrôles Chrome. Le build distribue les composants, leur feuille de style et leurs déclarations TypeScript dans `dist/`. Vue et Vuetify sont des dépendances partagées avec l'application ; elles ne sont pas embarquées dans le bundle de la bibliothèque. Aucun CDN, police distante ou ressource d'icône distante n'est nécessaire.
+La galerie locale utilise le port 4174 pour les contrôles Chrome. Le build distribue les composants, `style.css`, `compact.css`, le thème JavaScript et leurs déclarations TypeScript dans `dist/`. Vue et Vuetify sont des dépendances partagées avec l'application ; elles ne sont pas embarquées dans le bundle de la bibliothèque. Aucun CDN, police distante ou ressource d'icône distante n'est nécessaire.
 
 Le vérificateur de composants `vue-tsc` 3.3.12 utilise TypeScript 6.0.3 : son API n'est pas compatible avec le compilateur natif TypeScript 7. Le cœur de Sliceform conserve son propre compilateur TypeScript 7.
 
 ## Utiliser dans une application
 
-Déclarer `"@local/atomm-ui": "file:../AtommUI"`, ainsi que Vue et Vuetify, dans les dépendances de l'application. Construire la bibliothèque avant l'application. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
+Déclarer la version publiée de `@timotf/atomm-ui` et les versions compatibles de Vue et Vuetify dans `package.json`, puis installer avec `npm ci`. L’application consomme une archive de release épinglée dans son lockfile. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
 
 ```ts
 import { createApp } from 'vue';
-import { createAtommVuetify } from '@local/atomm-ui';
-import '@local/atomm-ui/style.css';
+import { createAtommVuetify } from '@timotf/atomm-ui';
+import '@timotf/atomm-ui/style.css';
+import '@timotf/atomm-ui/compact.css'; // profil optionnel
 import App from './App.vue';
 
 createApp(App).use(createAtommVuetify('fr')).mount('#app');
 ```
 
-Encadrer l'interface avec `AuRoot`, puis utiliser `AuLayout` et ses slots `lead`, `stage`, `parameters`. `AuRoot` transmet aussi la direction RTL aux composants Vuetify. Les sélecteurs de style sont limités à `.au-root` et `.au-overlay`. `AuLayout` garde les panneaux sur les côtés de la scène à toutes les largeurs vérifiées : 320 px à 1280 px, puis des largeurs compactes jusqu’à 144/184 px à 600 px. Les champs deviennent verticaux dans les panneaux étroits et leurs contenus défilent en interne ; aucun panneau ne passe sous la scène. Les titres abrégés des onglets conservent leur nom accessible complet. La direction RTL inverse les côtés logiques.
+Encadrer l'interface avec `AuRoot`, puis utiliser `AuLayout` et ses slots `lead`, `stage`, `parameters`. `AuRoot profile="compact"` active les champs de 28 px, les actions de 32 px, les cartes de rayon 8 px et les segments compacts ; il faut aussi importer `compact.css`. Les menus et aides AtommUI téléportés reçoivent automatiquement le profil. Pour les menus, dialogues et tooltips Vuetify créés directement par l’application, ajouter `content-class="au-overlay au-profile-compact"`. Le placement de la scène, l’export et le responsive métier restent dans l’application. `AuRoot` transmet la direction RTL aux composants Vuetify. Les titres abrégés des onglets conservent leur nom accessible complet.
+
+Un consommateur minimal peut rendre les trois régions sans aucun code Sliceform :
+
+```vue
+<script setup lang="ts">
+import { AuRoot, AuLayout, AuPanelHeader, AuCard, AuNumericField, AuButton } from '@timotf/atomm-ui';
+import { ref } from 'vue';
+const amount = ref('2,5');
+</script>
+
+<template>
+  <AuRoot profile="compact" direction="ltr" class="my-generator">
+    <AuLayout lead-label="Exemples" stage-label="Aperçu" parameters-label="Réglages">
+      <template #lead><AuPanelHeader>Exemples</AuPanelHeader></template>
+      <template #stage><div class="my-stage">Aperçu</div></template>
+      <template #parameters>
+        <AuCard id="settings" title="Réglages">
+          <AuNumericField id="amount" v-model="amount" label="Écart" suffix="mm" />
+          <AuButton id="apply" primary>Appliquer</AuButton>
+        </AuCard>
+      </template>
+    </AuLayout>
+  </AuRoot>
+</template>
+
+<style>
+html, body, #app { height: 100%; margin: 0; }
+.my-generator { height: 100%; }
+</style>
+```
+
+`AuLayout` fournit les régions accessibles, les rails et la scène avec les largeurs configurables `--au-lead-width` et `--au-parameters-width`. L’application définit la hauteur du conteneur, la mise en colonne éventuelle sous un seuil adapté à son contenu, le défilement, le footer collant et le placement des outils sur la scène. Sliceform compose ces régions avec la scène en premier sous 960 px ; cette règle appartient à Sliceform et n’est pas imposée aux autres générateurs.
+
+Le thème peut être importé côté Node sans feuille CSS : `import { atommTheme } from '@timotf/atomm-ui/theme'`.
 
 ## Contrats des composants
 
-Dix-sept composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`, `AuSegmentedControl`.
+Dix-neuf composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`, `AuSegmentedControl`, `AuPanelHeader`, `AuFieldNote`.
 
 - Les champs numériques transmettent une **chaîne brute** : une saisie vide ou incomplète reste visible. L'application fournit la validation. Le clic édite le texte ; le glissement horizontal l'ajuste selon `step`. Un ajustement décimal exact est fourni, et `adjust` permet de le remplacer. Aucun nombre invalide n'est converti implicitement en zéro.
 - Les sélecteurs transmettent uniquement une option existante et disponible. `UiOption.color` ajoute un petit aperçu de couleur au choix et à la liste ; les valeurs autres qu’un hexadécimal complet ne produisent aucun aperçu. Les boutons ordinaires restent des actions ; `active` est réservé aux boutons bascule.
@@ -47,6 +82,7 @@ Dix-sept composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuH
 - `AuExampleCard` fournit une carte d’action illustrée par un slot, sans format de fichier ni logique métier imposés. `layout="tile"`, valeur par défaut, offre un aperçu sur toute la largeur et une courte légende en bas. `layout="row"` place l’illustration à côté du titre. Le chargement et la sélection restent pilotés par l’application. Les transitions de survol sont supprimées avec `prefers-reduced-motion`.
 - `AuSegmentedControl` reçoit `modelValue`, `items: readonly UiOption[]`, `label` et `disabled`. Il émet uniquement une option disponible. Le groupe expose des radios, une seule étape de tabulation, les flèches adaptées à RTL, ainsi que Début/Fin. Les choix indisponibles sont ignorés.
 - `AuTabs` accepte un titre abrégé optionnel pour les scènes étroites et conserve le nom accessible complet.
+- `AuPanelHeader` fournit une rangée d’en-tête avec un slot libre pour titre et actions. `AuFieldNote` rend une note secondaire sous forme de paragraphe ; les deux sont utilisés dans Sliceform et la galerie.
 - La progression possède des identifiants uniques et devient indéterminée si son avancement est inconnu. L'annulation est un événement vers l'application.
 - Les couleurs acceptent uniquement un hexadécimal complet. La bibliothèque n'injecte aucun HTML fourni par l'utilisateur.
 
@@ -61,7 +97,7 @@ Maj + flèche Haut/Bas ajuste de dix pas, Maj + Alt de 0,1 pas. Pendant le gliss
 Deux helpers publics évitent le bruit des additions flottantes :
 
 ```ts
-import { adjustNumericDraft, decimalStepDelta } from '@local/atomm-ui';
+import { adjustNumericDraft, decimalStepDelta } from '@timotf/atomm-ui';
 
 adjustNumericDraft('0,1', 0.01, { min: 0, max: 10 }); // '0,11'
 decimalStepDelta(3, 0.1); // 0.3
@@ -71,4 +107,4 @@ decimalStepDelta(3, 0.1); // 0.3
 
 Chaque changement se vérifie par sa boucle ciblée : contrat → cas positif et négatif → composants compilés → interactions Chrome et rendu à 1280, 960, 885, 600 px / RTL → correction → contrôles précédents. Les tests de rendu serveur utilisent les composants réellement distribués ; la CSS est vérifiée dans Chrome, pas dans un substitut DOM. La galerie reste une démonstration de composants.
 
-Licence du code : MIT. Dépôt local uniquement ; publication du package et intégration SDK à traiter séparément.
+Licence du code : MIT. Source : https://github.com/TimotF/AtommUI.

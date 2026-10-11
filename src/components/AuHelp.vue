@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, useId } from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, ref, useId } from 'vue';
 import { VTooltip } from 'vuetify/components/VTooltip';
 import { VBadge } from 'vuetify/components/VBadge';
+import { compactProfileKey } from '../profile.js';
 const props = defineProps<{ label: string; text: string; helpKey?: string }>();
+const compactProfile = inject(compactProfileKey, () => false);
+const contentClass = computed(() => `au-overlay au-help-popover help-popover${compactProfile() ? ' au-profile-compact' : ''}`);
 const trigger = ref<HTMLButtonElement | null>(null);
 const open = ref(false), tooltipId = `au-help-${useId()}`;
 let pinned = false, closing: ReturnType<typeof setTimeout> | undefined;
@@ -32,7 +35,7 @@ onBeforeUnmount(() => { close(); document.removeEventListener('keydown',escape);
   <span class="au-label-help field-label-group">
     <slot />
     <button ref="trigger" type="button" class="au-help-trigger help-trigger" :data-help="helpKey" :aria-label="label" :aria-describedby="tooltipId" @pointerenter="show" @pointerleave="leave" @click="click" @focus="show" @blur="leave"><VBadge inline content="?" class="au-help-badge" color="var(--color-bg-default)" text-color="var(--color-text-secondary)" :transition="false" aria-hidden="true" role="presentation" aria-live="off" /></button>
-    <VTooltip v-model="open" :activator="trigger ?? undefined" :id="`${tooltipId}-overlay`" role="presentation" :eager="false" :activator-props="{ 'aria-describedby': tooltipId }" :content-props="{ id: tooltipId, role: 'tooltip', onPointerenter: show, onPointerleave: leave }" :z-index="3" :open-on-hover="false" :open-on-focus="false" :open-on-click="false" location="top center" :max-width="300" :offset="10" :transition="false" content-class="au-overlay au-help-popover help-popover" :interactive="true">
+    <VTooltip v-model="open" :activator="trigger ?? undefined" :id="`${tooltipId}-overlay`" role="presentation" :eager="false" :activator-props="{ 'aria-describedby': tooltipId }" :content-props="{ id: tooltipId, role: 'tooltip', onPointerenter: show, onPointerleave: leave }" :z-index="3" :open-on-hover="false" :open-on-focus="false" :open-on-click="false" location="top center" :max-width="300" :offset="10" :transition="false" :content-class="contentClass" :interactive="true">
       <span @pointerenter="clearClosing" @pointerleave="leave">{{ text }}</span>
     </VTooltip>
   </span>

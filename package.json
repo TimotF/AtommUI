@@ -1,10 +1,13 @@
 {
-  "name": "@local/atomm-ui",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@timotf/atomm-ui",
+  "version": "0.2.0",
   "type": "module",
   "description": "Reusable Vue and Vuetify controls for locally computed atomm generators",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TimotF/AtommUI.git"
+  },
   "engines": {
     "node": ">=22.22.0 <23"
   },
@@ -18,7 +21,13 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/atomm-ui.js"
     },
-    "./style.css": "./dist/atomm-ui.css"
+    "./style.css": "./dist/atomm-ui.css",
+    "./compact.css": "./dist/compact.css",
+    "./theme": {
+      "types": "./dist/theme.d.ts",
+      "import": "./dist/theme.js"
+    },
+    "./package.json": "./package.json"
   },
   "sideEffects": [
     "**/*.css"

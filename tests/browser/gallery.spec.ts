@@ -11,8 +11,8 @@ test('raw decimals, errors, locale and actual Vuetify controls',async({page}) =>
   await page.locator('#gallery-language').locator('..').click(); await page.getByRole('option',{name:'English',exact:true}).click();
   await expect(input).toHaveValue('-'); await input.fill('0.35');
   await expect(input).toHaveAttribute('aria-invalid','false'); await input.press('Shift+ArrowUp'); await expect(input).toHaveValue('0.45');
-  const alignment=await input.evaluate(el=>{const unit=el.parentElement!.querySelector('.v-text-field__suffix')!.getBoundingClientRect(),value=el.getBoundingClientRect();return {offset:Math.abs(unit.top+unit.height/2-value.top-value.height/2),height:value.height};});
-  expect(alignment.height).toBe(28); expect(alignment.offset).toBeLessThanOrEqual(1);
+  const alignment=await input.evaluate(el=>{const unit=el.parentElement!.querySelector('.v-text-field__suffix')!.getBoundingClientRect(),value=el.getBoundingClientRect(),field=el.closest('.v-field')!.getBoundingClientRect();return {offset:Math.abs(unit.top+unit.height/2-value.top-value.height/2),fieldHeight:field.height};});
+  expect(alignment.fieldHeight).toBe(28); expect(alignment.offset).toBeLessThanOrEqual(1);
   await page.locator('#gallery-material').locator('..').click(); await page.getByRole('option',{name:'Plywood',exact:true}).click();
   await expect(page.locator('#gallery-material')).toHaveValue('Plywood');
   const slider = page.getByRole('slider',{name:'Preview',exact:true}); await slider.focus(); await slider.press('End'); await expect(slider).toHaveAttribute('aria-valuenow','100'); await slider.press('Home'); await expect(slider).toHaveAttribute('aria-valuenow','0');
@@ -23,7 +23,7 @@ test('tooltip opens only from the help button, with focus, touch/click, Escape a
   const help = page.locator('[data-help="gallery-number"]');
   await expect(help.locator('.v-badge__badge')).toHaveText('?');
   await expect(help.locator('.v-badge__badge')).toHaveCSS('background-color','rgb(255, 255, 255)');
-  await expect(help.locator('.v-badge__badge')).toHaveCSS('color','rgb(61, 62, 66)');
+  await expect(help.locator('.v-badge__badge')).toHaveCSS('color','rgb(91, 100, 114)');
   await expect(help).toHaveCSS('cursor','help');
   const raised=await help.evaluate(el=>el.getBoundingClientRect().top < el.parentElement!.querySelector('label')!.getBoundingClientRect().top);
   expect(raised).toBe(true);
@@ -69,7 +69,7 @@ test('the same Vuetify help badge and fields work inside a teleported settings m
   const menu=page.getByRole('dialog',{name:'Réglages détaillés',exact:true});await expect(menu).toBeVisible();
   const help=menu.locator('[data-help="gallery-overlay-select"]');
   await expect(help.locator('.v-badge__badge')).toHaveText('?');await expect(help).toHaveCSS('border-top-width','0px');await expect(help).toHaveCSS('border-radius','50%');await expect(help).toHaveCSS('cursor','help');
-  await expect(menu.locator('#gallery-overlay-number')).toHaveCSS('height','28px');
+  await expect(menu.locator('.au-numeric-control .v-field')).toHaveCSS('height','28px');
   await menu.locator('label[for="gallery-overlay-select"]').hover(); await page.waitForTimeout(180);
   await expect(page.getByRole('tooltip').filter({hasText:'La même aide fonctionne'})).not.toBeVisible();
   await help.focus();const tooltip=page.getByRole('tooltip').filter({hasText:'La même aide fonctionne'});await expect(tooltip).toBeVisible();
@@ -93,11 +93,11 @@ for (const width of [1280,960,885,600]) test(`layout ${width}px and RTL fit the 
   expect(boxes[0].x+boxes[0].width).toBeCloseTo(boxes[1].x,1);expect(boxes[1].x+boxes[1].width).toBeCloseTo(boxes[2].x,1);
   expect(boxes[1].width).toBeGreaterThanOrEqual(260);expect(boxes.every(r=>r.y===0&&r.height===900)).toBe(true);
   await expect(page.locator('#gallery-action')).toHaveCSS('height','32px');
-  await expect(page.getByRole('tab',{name:'Aperçu',exact:true})).toHaveCSS('background-color','rgb(41, 42, 45)');
-  await expect(page.getByRole('tab',{name:'Aperçu',exact:true})).toHaveCSS('color','rgb(255, 255, 255)');
-  for(const rail of ['.au-rail-lead','.au-rail-parameters']) await expect(page.locator(rail)).toHaveCSS('background-color','rgb(246, 246, 247)');
+  await expect(page.getByRole('tab',{name:'Aperçu',exact:true})).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await expect(page.getByRole('tab',{name:'Aperçu',exact:true})).toHaveCSS('color','rgb(31, 36, 48)');
+  for(const rail of ['.au-rail-lead','.au-rail-parameters']) await expect(page.locator(rail)).toHaveCSS('background-color','rgb(245, 246, 248)');
   await expect(page.locator('section.au-card').first()).toHaveCSS('background-color','rgb(255, 255, 255)');
-  await expect(page.locator('section.au-card').first()).toHaveCSS('border-top-color','rgb(214, 216, 219)');
+  await expect(page.locator('section.au-card').first()).toHaveCSS('border-top-color','rgb(230, 232, 236)');
   const alert=page.locator('.au-rail-lead .au-alert');await expect(alert).toHaveCSS('flex-grow','0');
   expect((await alert.boundingBox())!.height).toBeLessThan(220);
   const titles=await page.locator('.au-card-header .v-btn__content > span').evaluateAll(elements=>elements.map(el=>{

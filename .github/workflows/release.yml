@@ -1,0 +1,53 @@
+name: Release AtommUI package
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: 22.22.0
+          package-manager-cache: false
+      - name: Match tag to package version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: node -e 'const p = require("./package.json"); if (process.env.RELEASE_TAG !== `v${p.version}`) process.exit(1)'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build
+      - run: npm test
+      - name: Pack and install in a clean consumer
+        shell: bash
+        run: |
+          mkdir -p release
+          pack_json="$(npm pack --json --pack-destination release)"
+          pack_name="$(node -e 'console.log(JSON.parse(process.argv[1])[0].filename)' "$pack_json")"
+          node scripts/smoke-tarball.mjs "release/$pack_name"
+          (cd release && sha256sum "$pack_name" > SHA256SUMS)
+          echo "PACK_NAME=$pack_name" >> "$GITHUB_ENV"
+      - name: Publish immutable versioned asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Release $RELEASE_TAG already exists; refusing to replace its asset." >&2
+            exit 1
+          fi
+          gh release create "$RELEASE_TAG" "release/$PACK_NAME" release/SHA256SUMS \
+            --verify-tag --title "AtommUI $RELEASE_TAG" \
+            --notes "Installable npm archive with JavaScript, CSS, TypeScript declarations and MIT license."
