@@ -1,6 +1,6 @@
 # AtommUI
 
-Bibliothèque versionnée de composants **Vue 3, Vuetify et TypeScript** pour les interfaces de générateurs atomm. Le package `@timotf/atomm-ui` fournit 21 composants, une base et un profil compact de style, ainsi qu’un thème importable depuis Node. Aucun calcul de géométrie, viewer 3D ou SDK n’y est inclus.
+Bibliothèque versionnée de composants **Vue 3, Vuetify et TypeScript** pour les interfaces de générateurs atomm. Le package `@timotf/atomm-ui` fournit 22 composants, une base et un profil compact de style, ainsi qu’un thème importable depuis Node. Aucun calcul de géométrie, viewer 3D ou SDK n’y est inclus.
 
 La direction visuelle reprend la sobriété des deux références fournies : scène dominante, cartes blanches discrètes, intitulés courts, contrôles compacts et détails dans l'aide contextuelle. Les couleurs, hauteurs et espacements suivent le guide atomm. Les couleurs des objets restent propres à chaque application.
 
@@ -23,7 +23,7 @@ Le vérificateur de composants `vue-tsc` 3.3.12 utilise TypeScript 6.0.3 : son A
 
 ## Utiliser dans une application
 
-Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.3.0/timotf-atomm-ui-0.3.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
+Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.4.0/timotf-atomm-ui-0.4.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
 
 ```ts
 import { createApp } from 'vue';
@@ -73,7 +73,7 @@ Le thème peut être importé côté Node sans feuille CSS : `import { atommThem
 
 ## Contrats des composants
 
-Vingt et un composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`, `AuSegmentedControl`, `AuPanelHeader`, `AuFieldNote`, `AuSwitch`, `AuSvgViewport`.
+Vingt-deux composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`, `AuSegmentedControl`, `AuPanelHeader`, `AuFieldNote`, `AuSwitch`, `AuSvgViewport`, `AuColorField`.
 
 - Les champs numériques transmettent une **chaîne brute** : une saisie vide ou incomplète reste visible. L'application fournit la validation. Le clic édite le texte ; le glissement horizontal l'ajuste selon `step`. Un ajustement décimal exact est fourni, et `adjust` permet de le remplacer. Aucun nombre invalide n'est converti implicitement en zéro.
 - Les sélecteurs transmettent uniquement une option existante et disponible. `UiOption.color` ajoute un petit aperçu de couleur au choix et à la liste ; les valeurs autres qu’un hexadécimal complet ne produisent aucun aperçu. Les boutons ordinaires restent des actions ; `active` est réservé aux boutons bascule.
@@ -103,6 +103,16 @@ Vingt et un composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `
 La vue fournit la grille/règles de référence Family Tree, le glissement, le zoom sous la molette, les flèches, +/−, 0 pour cadrer et Échap pour annuler le glissement. Elle expose `fit()`, `setZoom(percent)` et `zoom(factor)` (facteur inférieur à 1 pour rapprocher), et émet `zoomchange(percent)`. Grille, règles et overlays restent propres à l’aperçu : exporter le résultat du moteur, jamais le DOM de ce composant. Les contours par défaut sont sans remplissage, rouges `#FE0002` et d’épaisseur constante à l’écran. Aucun texte français ni seuil de fabrication n’est imposé dans le composant.
 
 Avant tout autre composant manquant ou extension de rendu, présenter le besoin et l’impact aux consommateurs et attendre la décision de l’utilisateur. La procédure et les limites du produit restent dans son dépôt.
+
+## Couleur libre
+
+`AuColorField` fournit une rangée compacte avec un échantillon de couleur, une palette et une saisie hexadécimale. Propriétés requises : `id`, `label`, `modelValue`, `hexLabel` et `invalidMessage` ; options : `disabled`, `help`, `helpLabel`. Tous les textes appartiennent au consommateur et doivent être traduits. L’événement `update:modelValue` fournit uniquement un hexadécimal opaque complet `#rrggbb`.
+
+La saisie conserve les valeurs incomplètes et affiche `invalidMessage` sans modifier la couleur valide. Le choix dans la palette applique immédiatement une couleur valide. Fermer puis rouvrir rétablit la dernière couleur valide. L’activateur est un bouton nommé, le popover un dialogue ; Échap ferme la palette et rend le focus au bouton. L’aide est séparée de l’activateur. Le menu hérite automatiquement du profil compact et reste dans la largeur de l’écran. Les couleurs injectées dans la CSS passent par `safeHexColor`.
+
+```vue
+<AuColorField id="preview-color" v-model="color" :label="t('color')" :hex-label="t('hexColor')" :invalid-message="t('hexColorError')" />
+```
 
 ## Saisie numérique et glissement
 

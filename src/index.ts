@@ -28,3 +28,4 @@ export { default as AuFieldNote } from './components/AuFieldNote.vue';
 export { default as AuSwitch } from './components/AuSwitch.vue';
 export { default as AuSvgViewport } from './components/AuSvgViewport.vue';
 export type { SvgBounds } from './viewport.js';
+export { default as AuColorField } from './components/AuColorField.vue';

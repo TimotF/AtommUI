@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from '@vue/server-renderer';
-import { AuSvgViewport, AuSwitch, AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSelect, AuSummary, AuExampleCard, AuSegmentedControl, AuPanelHeader, AuFieldNote, createAtommVuetify } from '../dist/atomm-ui.js';
+import { AuColorField, AuSvgViewport, AuSwitch, AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSelect, AuSummary, AuExampleCard, AuSegmentedControl, AuPanelHeader, AuFieldNote, createAtommVuetify } from '../dist/atomm-ui.js';
 
 async function render(children, direction = 'ltr') {
   const app = createSSRApp(() => h(AuRoot, {direction}, () => children));
@@ -177,4 +177,17 @@ test('SVG viewport isolates preview layers, supports multiple instances and norm
  assert.ok(html.includes('data-operation="cut"'));
  assert.ok(!html.includes('NaN')&&!html.includes('Infinity'));
  assert.equal((html.match(/tabindex="0"/g)??[]).length,2);
+});
+
+test('free color field uses an accessible dialog action and sanitizes CSS without nesting help in the trigger',async()=>{
+ const props={id:'paint',label:'Color <img>',hexLabel:'Hex color',invalidMessage:'Enter six hexadecimal digits',modelValue:'#2a6b8c',help:'Change preview color'};
+ const html=await render(h(AuColorField,props));
+ assert.ok(html.includes('background-color:#2a6b8c'));
+ assert.ok(html.includes('aria-haspopup="dialog"'));
+ assert.ok(html.includes('aria-expanded="false"'));
+ assert.ok(html.includes('data-help="paint"'));
+ assert.ok(!html.includes('<img>'));
+ const unsafe=await render(h(AuColorField,{...props,disabled:true,modelValue:'url(https://invalid.example/paint)'}));
+ assert.ok(!unsafe.includes('invalid.example'));
+ assert.match(unsafe.match(/<button[^>]*id="paint"[^>]*>/)?.[0]??'',/\sdisabled(?:="")?(?=\s|>)/);
 });
