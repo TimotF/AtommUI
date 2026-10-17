@@ -23,7 +23,7 @@ Le vérificateur de composants `vue-tsc` 3.3.12 utilise TypeScript 6.0.3 : son A
 
 ## Utiliser dans une application
 
-Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.4.0/timotf-atomm-ui-0.4.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
+Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.4.1/timotf-atomm-ui-0.4.1.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
 
 ```ts
 import { createApp } from 'vue';
@@ -106,7 +106,7 @@ Avant tout autre composant manquant ou extension de rendu, présenter le besoin 
 
 ## Couleur libre
 
-`AuColorField` fournit une rangée compacte avec un échantillon de couleur, une palette et une saisie hexadécimale. Propriétés requises : `id`, `label`, `modelValue`, `hexLabel` et `invalidMessage` ; options : `disabled`, `help`, `helpLabel`. Tous les textes appartiennent au consommateur et doivent être traduits. L’événement `update:modelValue` fournit uniquement un hexadécimal opaque complet `#rrggbb`.
+`AuColorField` fournit une rangée compacte avec un échantillon de couleur, une palette et une saisie hexadécimale sur une seule ligne « HEX », comme dans le générateur de nœud papillon. Propriétés requises : `id`, `label`, `modelValue`, `hexLabel` et `invalidMessage` ; options : `disabled`, `help`, `helpLabel`. Les libellés accessibles et messages appartiennent au consommateur et doivent être traduits ; « HEX » est la notation visible du code couleur. L’événement `update:modelValue` fournit uniquement un hexadécimal opaque complet `#rrggbb`.
 
 La saisie conserve les valeurs incomplètes et affiche `invalidMessage` sans modifier la couleur valide. Le choix dans la palette applique immédiatement une couleur valide. Fermer puis rouvrir rétablit la dernière couleur valide. L’activateur est un bouton nommé, le popover un dialogue ; Échap ferme la palette et rend le focus au bouton. L’aide est séparée de l’activateur. Le menu hérite automatiquement du profil compact et reste dans la largeur de l’écran. Les couleurs injectées dans la CSS passent par `safeHexColor`.
 

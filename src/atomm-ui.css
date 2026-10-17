@@ -200,4 +200,7 @@
 .au-color-menu{border-radius:var(--au-radius-card);overflow:hidden;background:var(--color-bg-default);box-shadow:var(--au-shadow-floating)}
 .au-color-dialog{width:256px;max-width:100%;background:var(--color-bg-default)}
 .au-color-dialog .v-color-picker{max-width:100%;border-radius:0}
-.au-color-hex{display:grid;gap:6px;padding:12px;font-size:var(--au-font-size-label);color:var(--color-text-secondary)}.au-color-hex .au-field-error{margin:6px 0 0;overflow-wrap:anywhere}
+.au-color-hex{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;font-size:12px;color:var(--color-text-secondary)}
+.au-color-hex input{flex:1;min-width:0;width:100px;padding:6px 8px;border:1px solid var(--color-stroke-divider);border-radius:4px;font:inherit;color:var(--color-text-primary);background:var(--color-bg-control)}
+.au-color-hex input:focus-visible{outline:2px solid var(--color-stroke-active);outline-offset:1px}.au-color-hex input[aria-invalid="true"]{border-color:var(--color-text-error)}
+.au-color-hex .au-field-error{width:100%;margin:0;font-size:11px;overflow-wrap:anywhere}
