@@ -23,7 +23,7 @@ Le vérificateur de composants `vue-tsc` 3.3.12 utilise TypeScript 6.0.3 : son A
 
 ## Utiliser dans une application
 
-Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.4.1/timotf-atomm-ui-0.4.1.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
+Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.5.0/timotf-atomm-ui-0.5.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
 
 ```ts
 import { createApp } from 'vue';
@@ -73,7 +73,7 @@ Le thème peut être importé côté Node sans feuille CSS : `import { atommThem
 
 ## Contrats des composants
 
-Vingt-deux composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`, `AuSegmentedControl`, `AuPanelHeader`, `AuFieldNote`, `AuSwitch`, `AuSvgViewport`, `AuColorField`.
+Vingt-quatre composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`, `AuSegmentedControl`, `AuPanelHeader`, `AuFieldNote`, `AuSwitch`, `AuSvgViewport`, `AuColorField`, `AuZoomControls`, `AuTooltip`.
 
 - Les champs numériques transmettent une **chaîne brute** : une saisie vide ou incomplète reste visible. L'application fournit la validation. Le clic édite le texte ; le glissement horizontal l'ajuste selon `step`. Un ajustement décimal exact est fourni, et `adjust` permet de le remplacer. Aucun nombre invalide n'est converti implicitement en zéro.
 - Les sélecteurs transmettent uniquement une option existante et disponible. `UiOption.color` ajoute un petit aperçu de couleur au choix et à la liste ; les valeurs autres qu’un hexadécimal complet ne produisent aucun aperçu. Les boutons ordinaires restent des actions ; `active` est réservé aux boutons bascule.
@@ -136,3 +136,9 @@ decimalStepDelta(3, 0.1); // 0.3
 Chaque changement se vérifie par sa boucle ciblée : contrat → cas positif et négatif → composants compilés → interactions Chrome et rendu à 1280, 960, 885, 600 px / RTL → correction → contrôles précédents. Les tests de rendu serveur utilisent les composants réellement distribués ; la CSS est vérifiée dans Chrome, pas dans un substitut DOM. La galerie reste une démonstration de composants.
 
 Licence du code : MIT. Source : https://github.com/TimotF/AtommUI.
+
+## Zoom et infobulles sur un activateur complet
+
+`AuZoomControls` reçoit `percent`, `label`, `zoomInLabel`, `zoomOutLabel`, `recenterLabel`, et en option `min` (10), `max` (4000), `presets` ([25,50,100,150,200]), `disabled`. Il émet `zoom` (facteur .88 ou 1.12), `setZoom` (pourcentage) et `recenter`. Le consommateur reste propriétaire de la caméra. Les valeurs non finies ou bornes invalides désactivent les actions ; les préréglages hors limites sont exclus. Le menu se ferme avec Échap et rend le focus au bouton.
+
+`AuTooltip` fournit un slot `activator` avec les props à transmettre à la carte ou au bouton existant : `<template #activator="{props}"><AuButton v-bind="props">…</AuButton></template>`. Le texte vient de `text` ou du slot par défaut ; options : `disabled`, `contentClass`. Survol et focus affichent l’aide. F1 l’ouvre sans activer le bouton, Échap la ferme. Sur écran tactile, un appui long (450 ms) ouvre l’aide et bloque le clic correspondant ; un déplacement ou une annulation avant ce délai laisse le défilement normal. Le clic court conserve l’action du bouton. Pour l’aide séparée d’un réglage, utiliser `AuHelp`. Tous les textes sont traduits par le consommateur.

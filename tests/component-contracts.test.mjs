@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from '@vue/server-renderer';
-import { AuColorField, AuSvgViewport, AuSwitch, AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSelect, AuSummary, AuExampleCard, AuSegmentedControl, AuPanelHeader, AuFieldNote, createAtommVuetify } from '../dist/atomm-ui.js';
+import { AuZoomControls, AuTooltip, AuColorField, AuSvgViewport, AuSwitch, AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSelect, AuSummary, AuExampleCard, AuSegmentedControl, AuPanelHeader, AuFieldNote, createAtommVuetify } from '../dist/atomm-ui.js';
 
 async function render(children, direction = 'ltr') {
   const app = createSSRApp(() => h(AuRoot, {direction}, () => children));
@@ -190,4 +190,36 @@ test('free color field uses an accessible dialog action and sanitizes CSS withou
  const unsafe=await render(h(AuColorField,{...props,disabled:true,modelValue:'url(https://invalid.example/paint)'}));
  assert.ok(!unsafe.includes('invalid.example'));
  assert.match(unsafe.match(/<button[^>]*id="paint"[^>]*>/)?.[0]??'',/\sdisabled(?:="")?(?=\s|>)/);
+});
+
+
+test('zoom controls keep translated actions, current percentage and disable invalid camera bounds', async () => {
+ const props={percent:100,label:'Zoom <safe>',zoomInLabel:'Closer',zoomOutLabel:'Further',recenterLabel:'Fit'};
+ const html=await render(h(AuZoomControls,props));
+ for(const text of ['100 %','Closer','Further','Fit','Zoom &lt;safe&gt;'])assert.ok(html.includes(text));
+ const invalid=await render(h(AuZoomControls,{...props,min:200,max:100}));
+ assert.equal((invalid.match(/<button[^>]* disabled(?:="")?/g)||[]).length,4);
+ assert.ok(!html.includes('<safe>'));
+});
+
+test('whole-activator tooltip preserves an ordinary named action and provides an accessible description', async () => {
+ const html=await render(h(AuTooltip,{text:'<img src=x>'},{activator:({props})=>h(AuButton,{...props},()=> 'Import <SVG>')}));
+ assert.match(html,/aria-describedby="au-tooltip-[^"]+"/);
+ assert.ok(html.includes('Import &lt;SVG&gt;'));
+ assert.ok(!html.includes('<img'));
+ assert.ok(!html.includes('aria-pressed'));
+});
+
+
+test('touch help suppresses only the long-press action and cancels when the pointer moves', async (context) => {
+ let binding;
+ await render(h(AuTooltip,{text:'Help'},{activator:({props})=>{binding=props;return h(AuButton,{...props},()=> 'Choose');}}));
+ context.mock.timers.enable({apis:['setTimeout']});
+ let prevented=0;const click={preventDefault(){prevented++;},stopImmediatePropagation(){}};
+ binding.onPointerdown({pointerType:'touch'});context.mock.timers.tick(450);binding.onPointerup();binding.onClickCapture(click);
+ assert.equal(prevented,1);
+ binding.onPointerdown({pointerType:'touch'});binding.onPointermove();context.mock.timers.tick(450);binding.onClickCapture(click);
+ assert.equal(prevented,1);
+ binding.onPointerdown({pointerType:'touch'});binding.onPointerup();binding.onClickCapture(click);
+ assert.equal(prevented,1);
 });
