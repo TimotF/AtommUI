@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from '@vue/server-renderer';
-import { AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSelect, AuSummary, AuExampleCard, AuSegmentedControl, AuPanelHeader, AuFieldNote, createAtommVuetify } from '../dist/atomm-ui.js';
+import { AuSvgViewport, AuSwitch, AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSelect, AuSummary, AuExampleCard, AuSegmentedControl, AuPanelHeader, AuFieldNote, createAtommVuetify } from '../dist/atomm-ui.js';
 
 async function render(children, direction = 'ltr') {
   const app = createSSRApp(() => h(AuRoot, {direction}, () => children));
@@ -150,4 +150,31 @@ test('segmented choices expose radios with one keyboard stop, escape labels, and
   const disabled=await render(h(AuSegmentedControl,{label:'Density mode',modelValue:'spacing',items,disabled:true}));
   assert.ok(disabled.includes('aria-disabled="true"'));
   assert.equal((disabled.match(/tabindex="0"/g)??[]).length,0);
+});
+
+test('switch exposes persistent checked state, separate help, native disabled/loading and escaped copy',async()=>{
+ for(const value of [true,false]) {
+  const html=await render(h(AuSwitch,{id:'mirror',label:'Mirror <img>',modelValue:value,help:'Reflect <script>'}));
+  const input=html.match(/<input\b[^>]*\bid="mirror"[^>]*>/)?.[0];
+  assert.ok(input?.includes('role="switch"'));
+  assert.equal(/\schecked(?:="")?(?=\s|>)/.test(input),value);
+  assert.ok(html.includes('for="mirror"'));
+  assert.ok(html.includes('data-help="mirror"'));
+  assert.ok(!/<label[^>]*>[\s\S]*?<button[\s\S]*?<\/label>/.test(html));
+  assert.ok(!html.includes('<img>')&&!html.includes('<script>'));
+ }
+ for(const props of [{disabled:true},{loading:true}]) {
+  const html=await render(h(AuSwitch,{id:'busy',label:'Busy',modelValue:false,...props}));
+  assert.match(html.match(/<input\b[^>]*\bid="busy"[^>]*>/)?.[0]??'',/\sdisabled(?:="")?(?=\s|>)/);
+  if(props.loading)assert.ok(html.includes('aria-busy="true"'));
+ }
+});
+test('SVG viewport isolates preview layers, supports multiple instances and normalizes invalid bounds',async()=>{
+ const html=await render([h(AuSvgViewport,{label:'Drawing A',bounds:{x:10,y:-20,width:120,height:80}},{default:()=>h('path',{'data-operation':'cut',d:'M0 0H10'}),overlay:()=>h('circle',{cx:2,cy:2,r:1})}),h(AuSvgViewport,{label:'Drawing B',bounds:{x:NaN,y:0,width:0,height:Infinity},grid:false})]);
+ assert.ok(html.includes('aria-label="Drawing A"')&&html.includes('aria-label="Drawing B"'));
+ assert.equal((html.match(/class="au-svg-viewport-grid"/g)??[]).length,1);
+ assert.ok(html.includes('data-preview-only="true"'));
+ assert.ok(html.includes('data-operation="cut"'));
+ assert.ok(!html.includes('NaN')&&!html.includes('Infinity'));
+ assert.equal((html.match(/tabindex="0"/g)??[]).length,2);
 });

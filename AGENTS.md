@@ -6,3 +6,7 @@
 - Keep `dist/` and `node_modules/` out of Git. The release archive must contain built JavaScript, both public CSS files, TypeScript declarations, the license and package metadata. Test a clean consumer from the archive itself.
 - Do not publish to the npm registry. Consumers use an exact GitHub Release asset URL and commit the resulting lockfile with its integrity value.
 - Report analyses in the conversation unless a separate report file is explicitly requested.
+
+- Before implementing a missing shared control or changing an existing component's rendering, describe the need, why the locked published components do not cover it, the proposed addition/extension and the impact on consumers. Wait for the user's decision; do not silently create a consumer-local Vuetify/HTML replacement. Approval for a named component in the current conversation satisfies this requirement. Continue independent work while awaiting the decision.
+- Keep application copy, import limits, geometry, preset values and fabrication thresholds in consumers. Shared controls accept translated labels/help and preserve raw values; boolean settings use switches, actions use buttons. Help must work with keyboard and touch without changing the control value.
+- SVG viewport controls display millimetre geometry with display-only units. Grid, rulers and optional diagnostic overlays are preview-only; the consumer's production export stays independent. Verify pan, pointer-centred wheel zoom, keyboard, cancellation, resizing, multiple instances and invalid bounds.

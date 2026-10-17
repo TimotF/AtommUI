@@ -190,3 +190,5 @@
   .au-root .au-example-card:not(.au-example-row):not(:disabled):hover .au-example-preview { transform: none; }
   .au-root .au-example-card:not(.au-example-row):not(:disabled):hover .au-example-preview :is(img,svg) { transform: scale(var(--au-example-scale)); }
 }
+
+.au-switch-field{gap:12px;min-height:32px}.au-switch-field>label,.au-switch-field>.au-label-help{flex:1;min-width:0}.au-switch{flex:none}.au-switch .v-input__control{justify-content:flex-end}.au-switch .v-selection-control{min-height:32px}

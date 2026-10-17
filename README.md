@@ -1,6 +1,6 @@
 # AtommUI
 
-Bibliothèque versionnée de composants **Vue 3, Vuetify et TypeScript** pour les interfaces de générateurs atomm. Le package `@timotf/atomm-ui` fournit 19 composants, une base et un profil compact de style, ainsi qu’un thème importable depuis Node. Aucun calcul de géométrie, viewer 3D ou SDK n’y est inclus.
+Bibliothèque versionnée de composants **Vue 3, Vuetify et TypeScript** pour les interfaces de générateurs atomm. Le package `@timotf/atomm-ui` fournit 21 composants, une base et un profil compact de style, ainsi qu’un thème importable depuis Node. Aucun calcul de géométrie, viewer 3D ou SDK n’y est inclus.
 
 La direction visuelle reprend la sobriété des deux références fournies : scène dominante, cartes blanches discrètes, intitulés courts, contrôles compacts et détails dans l'aide contextuelle. Les couleurs, hauteurs et espacements suivent le guide atomm. Les couleurs des objets restent propres à chaque application.
 
@@ -23,7 +23,7 @@ Le vérificateur de composants `vue-tsc` 3.3.12 utilise TypeScript 6.0.3 : son A
 
 ## Utiliser dans une application
 
-Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.2.0/timotf-atomm-ui-0.2.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
+Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.3.0/timotf-atomm-ui-0.3.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
 
 ```ts
 import { createApp } from 'vue';
@@ -73,7 +73,7 @@ Le thème peut être importé côté Node sans feuille CSS : `import { atommThem
 
 ## Contrats des composants
 
-Dix-neuf composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`, `AuSegmentedControl`, `AuPanelHeader`, `AuFieldNote`.
+Vingt et un composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`, `AuSegmentedControl`, `AuPanelHeader`, `AuFieldNote`, `AuSwitch`, `AuSvgViewport`.
 
 - Les champs numériques transmettent une **chaîne brute** : une saisie vide ou incomplète reste visible. L'application fournit la validation. Le clic édite le texte ; le glissement horizontal l'ajuste selon `step`. Un ajustement décimal exact est fourni, et `adjust` permet de le remplacer. Aucun nombre invalide n'est converti implicitement en zéro.
 - Les sélecteurs transmettent uniquement une option existante et disponible. `UiOption.color` ajoute un petit aperçu de couleur au choix et à la liste ; les valeurs autres qu’un hexadécimal complet ne produisent aucun aperçu. Les boutons ordinaires restent des actions ; `active` est réservé aux boutons bascule.
@@ -85,6 +85,24 @@ Dix-neuf composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuH
 - `AuPanelHeader` fournit une rangée d’en-tête avec un slot libre pour titre et actions. `AuFieldNote` rend une note secondaire sous forme de paragraphe ; les deux sont utilisés dans Sliceform et la galerie.
 - La progression possède des identifiants uniques et devient indéterminée si son avancement est inconnu. L'annulation est un événement vers l'application.
 - Les couleurs acceptent uniquement un hexadécimal complet. La bibliothèque n'injecte aucun HTML fourni par l'utilisateur.
+
+## Options et vue SVG
+
+`AuSwitch` reçoit `id`, `label`, `modelValue: boolean`, `disabled`, `loading`, `help` et `helpLabel`. Il émet `update:modelValue`. Le libellé reste associé au switch ; le bouton d’aide est séparé et ne change pas la valeur. Le clavier et le toucher utilisent les interactions natives Vuetify. Pendant `loading`, le switch est désactivé et expose `aria-busy`. Le consommateur fournit tous les textes traduits.
+
+`AuSvgViewport` reçoit `bounds: {x,y,width,height}` en millimètres, `label` (description accessible avec les gestes), `displayUnit` (`mm` ou `in`), `locale` et `grid` (vrai par défaut). Les dimensions doivent être finies et positives ; des bornes invalides utilisent un cadre sûr de 100 × 100 mm. Le parent donne une hauteur au conteneur. Le slot principal contient des éléments SVG de production, sans HTML brut ; le slot nommé `overlay` reçoit éventuellement les repères d’analyse. La bibliothèque ne calcule aucune pièce et ne produit pas l’export métier.
+
+```vue
+<AuSwitch id="grid" v-model="grid" :label="t('showGrid')" :help="t('gridHelp')" />
+<AuSvgViewport ref="drawing" :bounds="boundsMm" :label="t('svgControls')" :grid="grid" :display-unit="unit" :locale="locale">
+  <path :d="result.path" data-operation="cut" />
+  <template #overlay><!-- repères éventuels, propres à l’aperçu --></template>
+</AuSvgViewport>
+```
+
+La vue fournit la grille/règles de référence Family Tree, le glissement, le zoom sous la molette, les flèches, +/−, 0 pour cadrer et Échap pour annuler le glissement. Elle expose `fit()`, `setZoom(percent)` et `zoom(factor)` (facteur inférieur à 1 pour rapprocher), et émet `zoomchange(percent)`. Grille, règles et overlays restent propres à l’aperçu : exporter le résultat du moteur, jamais le DOM de ce composant. Les contours par défaut sont sans remplissage, rouges `#FE0002` et d’épaisseur constante à l’écran. Aucun texte français ni seuil de fabrication n’est imposé dans le composant.
+
+Avant tout autre composant manquant ou extension de rendu, présenter le besoin et l’impact aux consommateurs et attendre la décision de l’utilisateur. La procédure et les limites du produit restent dans son dépôt.
 
 ## Saisie numérique et glissement
 

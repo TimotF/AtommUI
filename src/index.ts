@@ -25,3 +25,6 @@ export { default as AuSummary } from './components/AuSummary.vue';
 export { default as AuExampleCard } from './components/AuExampleCard.vue';
 export { default as AuPanelHeader } from './components/AuPanelHeader.vue';
 export { default as AuFieldNote } from './components/AuFieldNote.vue';
+export { default as AuSwitch } from './components/AuSwitch.vue';
+export { default as AuSvgViewport } from './components/AuSvgViewport.vue';
+export type { SvgBounds } from './viewport.js';

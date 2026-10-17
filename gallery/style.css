@@ -34,3 +34,5 @@ html, body, #app { height: 100%; margin: 0; }
 
 .au-overlay.gallery-settings-overlay { width: 304px; max-width: calc(100vw - 24px); }
 .au-overlay .gallery-settings-card { padding: 12px; border: 1px solid var(--au-card-stroke); border-radius: 10px; }
+
+.gallery-app .gallery-svg-demo{position:absolute;inset:68px 16px 76px}
