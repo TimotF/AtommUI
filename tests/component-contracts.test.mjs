@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from '@vue/server-renderer';
-import { AuZoomControls, AuTooltip, AuColorField, AuSvgViewport, AuSwitch, AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSelect, AuSummary, AuExampleCard, AuSegmentedControl, AuPanelHeader, AuFieldNote, createAtommVuetify } from '../dist/atomm-ui.js';
+import { AuTextField, AuZoomControls, AuTooltip, AuColorField, AuSvgViewport, AuSwitch, AuRoot, AuButton, AuSlider, AuProgress, AuNumericField, AuSelect, AuSummary, AuExampleCard, AuSegmentedControl, AuPanelHeader, AuFieldNote, createAtommVuetify } from '../dist/atomm-ui.js';
 
 async function render(children, direction = 'ltr') {
   const app = createSSRApp(() => h(AuRoot, {direction}, () => children));
@@ -222,4 +222,20 @@ test('touch help suppresses only the long-press action and cancels when the poin
  assert.equal(prevented,1);
  binding.onPointerdown({pointerType:'touch'});binding.onPointerup();binding.onClickCapture(click);
  assert.equal(prevented,1);
+});
+
+test('free text preserves Unicode, empty drafts and spaces with associated errors', async () => {
+ for (const value of ['', '  Érable n° 2  ', '<script>']) {
+  const html=await render(h(AuTextField,{id:'plant',label:'Nom',modelValue:value,error:'Corrigez le nom',help:'Aide'}));
+  assert.match(html, /<label for="plant">Nom<\/label>/);
+  assert.match(html, /aria-describedby="plant-error"/);
+  assert.match(html, /data-help="plant"/);
+  assert.ok(html.includes('Corrigez le nom'));
+  assert.ok(!html.includes('<script>'));
+  if(value.includes('Érable'))assert.ok(html.includes(value));
+ }
+ for(const state of [{disabled:true},{readOnly:true}]){
+  const html=await render(h(AuTextField,{id:'locked',label:'Nom',modelValue:'A',...state}));
+  assert.match(html,state.disabled?/\bdisabled\b/:/\breadonly\b/);
+ }
 });

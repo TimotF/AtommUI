@@ -31,3 +31,4 @@ export type { SvgBounds } from './viewport.js';
 export { default as AuColorField } from './components/AuColorField.vue';
 export { default as AuZoomControls } from './components/AuZoomControls.vue';
 export { default as AuTooltip } from './components/AuTooltip.vue';
+export { default as AuTextField } from './components/AuTextField.vue';

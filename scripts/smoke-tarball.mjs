@@ -58,7 +58,7 @@ try {
     import { readFileSync } from 'node:fs';
     const pkg = await import('@timotf/atomm-ui');
     const require = createRequire(import.meta.url);
-    if (!pkg.AuSwitch || !pkg.AuSvgViewport || !pkg.AuColorField || !pkg.AuZoomControls || !pkg.AuTooltip) throw new Error('Missing shared controls');
+    if (!pkg.AuTextField || !pkg.AuSwitch || !pkg.AuSvgViewport || !pkg.AuColorField || !pkg.AuZoomControls || !pkg.AuTooltip) throw new Error('Missing shared controls');
     if (typeof pkg.createAtommVuetify !== 'function') throw new Error('Invalid JS exports');
     for (const name of ['style.css', 'compact.css']) {
       if (!readFileSync(require.resolve('@timotf/atomm-ui/' + name), 'utf8').trim()) throw new Error('Empty CSS export: ' + name);

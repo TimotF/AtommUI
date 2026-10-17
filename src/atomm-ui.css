@@ -209,3 +209,13 @@
 .au-zoom-controls .au-zoom-value{min-width:70px;font-variant-numeric:tabular-nums}
 .au-zoom-menu{width:112px;padding:4px;background:var(--color-bg-default);border:1px solid var(--color-stroke-default);border-radius:8px;box-shadow:var(--au-shadow-floating)}
 .au-zoom-menu>div{display:flex;flex-direction:column}
+
+:is(.au-root,.au-overlay) .au-text-field{display:grid;gap:6px;padding:8px 16px;min-width:0}
+:is(.au-root,.au-overlay) .au-text-field>label{color:var(--color-text-secondary);font-size:var(--au-font-size-label)}
+:is(.au-root,.au-overlay) .au-text-control{min-width:0;width:100%}
+:is(.au-root,.au-overlay) .au-text-control .v-field{background:var(--color-bg-control);border:var(--au-border-width) solid transparent;border-radius:var(--au-radius-control)}
+:is(.au-root,.au-overlay) .au-text-control .v-field--focused{background:var(--color-bg-default);border-color:var(--color-stroke-active)}
+:is(.au-root,.au-overlay) .au-text-control .v-field--error{border-color:var(--color-error)}
+:is(.au-root,.au-overlay) .au-text-control .v-field__outline{display:none}
+:is(.au-root,.au-overlay) .au-text-control .v-field__input{min-height:var(--au-input-height);padding:4px 8px}
+:is(.au-root,.au-overlay) .au-text-field .au-field-error{margin:0;overflow-wrap:anywhere}
