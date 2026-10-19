@@ -1,6 +1,6 @@
 # AtommUI
 
-Bibliothèque versionnée de composants **Vue 3, Vuetify et TypeScript** pour les interfaces de générateurs atomm. Le package `@timotf/atomm-ui` fournit 22 composants, une base et un profil compact de style, ainsi qu’un thème importable depuis Node. Aucun calcul de géométrie, viewer 3D ou SDK n’y est inclus.
+Bibliothèque versionnée de composants **Vue 3, Vuetify et TypeScript** pour les interfaces de générateurs atomm. Le package `@timotf/atomm-ui` fournit 30 composants, une base et un profil compact de style, ainsi qu’un thème importable depuis Node. Aucun calcul de géométrie, viewer 3D ou SDK n’y est inclus.
 
 La direction visuelle reprend la sobriété des deux références fournies : scène dominante, cartes blanches discrètes, intitulés courts, contrôles compacts et détails dans l'aide contextuelle. Les couleurs, hauteurs et espacements suivent le guide atomm. Les couleurs des objets restent propres à chaque application.
 
@@ -23,7 +23,7 @@ Le vérificateur de composants `vue-tsc` 3.3.12 utilise TypeScript 6.0.3 : son A
 
 ## Utiliser dans une application
 
-Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.5.0/timotf-atomm-ui-0.5.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
+Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.8.0/timotf-atomm-ui-0.8.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
 
 ```ts
 import { createApp } from 'vue';
@@ -73,7 +73,7 @@ Le thème peut être importé côté Node sans feuille CSS : `import { atommThem
 
 ## Contrats des composants
 
-Vingt-quatre composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`, `AuSegmentedControl`, `AuPanelHeader`, `AuFieldNote`, `AuSwitch`, `AuSvgViewport`, `AuColorField`, `AuZoomControls`, `AuTooltip`.
+Trente composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`, `AuSegmentedControl`, `AuPanelHeader`, `AuFieldNote`, `AuSwitch`, `AuSvgViewport`, `AuColorField`, `AuZoomControls`, `AuTooltip`, `AuTextField`, `AuFieldGroups`, `AuFieldGroup`, `AuSceneControls`, `AuOnboardingCard`, `AuOnboarding`.
 
 - Les champs numériques transmettent une **chaîne brute** : une saisie vide ou incomplète reste visible. L'application fournit la validation. Le clic édite le texte ; le glissement horizontal l'ajuste selon `step`. Un ajustement décimal exact est fourni, et `adjust` permet de le remplacer. Aucun nombre invalide n'est converti implicitement en zéro.
 - Les sélecteurs transmettent uniquement une option existante et disponible. `UiOption.color` ajoute un petit aperçu de couleur au choix et à la liste ; les valeurs autres qu’un hexadécimal complet ne produisent aucun aperçu. Les boutons ordinaires restent des actions ; `active` est réservé aux boutons bascule.
@@ -146,3 +146,56 @@ Licence du code : MIT. Source : https://github.com/TimotF/AtommUI.
 `AuTextField` (0.6.0) reçoit `id`, `label`, `modelValue: string`, `error`, `disabled`, `readOnly`, `help`, `helpLabel` et `placeholder`. Il émet `update:modelValue` sans normaliser ni tronquer le texte. Le label, l’erreur et l’aide sont associés au champ ; la validation appartient au consommateur. Sa présentation empilée laisse toute la largeur aux textes longs. Aucun composant existant ne change.
 
 `AuNumericField` expose aussi le slot optionnel `prepend-inner` pour placer une indication ou une action dans le champ. Sans ce slot, le rendu reste identique. Les actions de cet emplacement ne déclenchent pas le glissement numérique ; leur libellé, leur aide et leur logique restent à la charge du consommateur.
+
+
+## Compositions et guide réutilisable (0.8.0)
+
+La démonstration `/?harmonisation` montre les cartes groupées, les vignettes, le zoom, l’éclatement et le guide. Les composants existants gardent leur rendu hors de ces compositions.
+
+### Cartes groupées
+
+`AuFieldGroups` gère le padding commun et l’écart de 24 px entre sections. `AuFieldGroup` reprend la présentation de Plant Stakes : sous-titre, règle discrète et champs alignés. Il reçoit `title`, et en option `id`, `icon`, `caption`, `help`, `helpLabel`, `collapsible`, `initialOpen`. Le repli facultatif expose un bouton accessible indépendant de l’aide. Les IDs sont uniques même sans `id` fourni. Les textes sont échappés. Un groupe peut contenir champs, vignettes, switchs ou contenu d’application ; les valeurs et leur validation restent chez le consommateur.
+
+```vue
+<AuCard id="settings" :title="t('settings')">
+  <AuFieldGroups>
+    <AuFieldGroup :title="t('dimensions')">
+      <AuNumericField id="width" v-model="widthDraft" :label="t('width')" suffix="mm" />
+    </AuFieldGroup>
+    <AuFieldGroup :title="t('appearance')">
+      <!-- AuExampleCard et AuColorField avec le catalogue du consommateur -->
+    </AuFieldGroup>
+  </AuFieldGroups>
+</AuCard>
+```
+
+### Commandes de scène
+
+`AuSceneControls` compose `AuZoomControls` et, uniquement si `explode` et `explodeLabel` sont fournis, un `AuSlider` de 0 à 100 %. Les propriétés de zoom et les événements `zoom`, `setZoom`, `recenter` sont identiques à `AuZoomControls`. `update:explode` transmet un pourcentage ; le consommateur adapte cette valeur à son viewer. `explodeHelp`, `explodeHelpLabel`, `explodeDisabled` sont facultatifs. `disabled` bloque tous les contrôles. Le slot `extra` accueille les outils propres à une application. Les commandes passent sur plusieurs lignes dans un espace étroit. Aucun calcul ou déplacement de pièce n’est inclus.
+
+Chaque vue garde son propre pourcentage réel, mis à jour par le viewer, y compris à la molette. `zoom(factor)` multiplie la distance de caméra : .88 rapproche et 1.12 éloigne. Le réglage absolu est fourni par `setZoom(percent)`. 100 % correspond au cadrage de référence ; les limites restent adaptées au viewer. Recentrer ne modifie pas l’éclatement.
+
+### Onboarding
+
+`AuOnboardingCard` reprend la carte de conseil de Sliceform : icône, titre, texte ou slot, fermer, compris et masquer. Elle reçoit les libellés traduits (`label`, `closeLabel`, `nextLabel`, `hideLabel`) et émet `close`, `next`, `hide`. C’est un dialogue non modal qui laisse les contrôles de l’application utilisables.
+
+`AuOnboarding` ajoute la bulle repère, la surbrillance de la cible, le positionnement dans la fenêtre, le suivi du défilement/redimensionnement et le retour au focus précédent lorsque nécessaire. Fournir `root`, `step`, `open` et les mêmes libellés ; relier `update:open`, `next`, `hide`, `reactivate`. Le guide s’efface lorsqu’une cible est absente, masquée ou hors écran, ainsi que pendant un menu ou dialogue. `blocked` permet aussi une suspension explicite. Une durée `autoCloseMs` positive active une fermeture différée, suspendue pendant le survol/focus ; par défaut la lecture n’est pas chronométrée. Échap ferme la carte et conserve son repère. `hidden`, `hiddenMessage`, `reactivateLabel` permettent la notification réversible « conseils masqués ». Le thème et la direction RTL suivent `AuRoot`. Le focus entre dans la carte sans y être piégé ; un bouton marqué `data-onboarding-trigger` fournit aussi un retour de focus de secours.
+
+`useOnboarding(steps, options)` accepte un tableau, un `computed` ou un getter d’étapes `{id,target,title,text,available?,complete?}`. Les conditions de disponibilité et d’achèvement sont définies par l’application. Le retour expose `current`, `open`, `hidden`, `completed`, `storageError`, et les actions `restart`, `next`, `hide`, `resume`. `next` acquitte une étape ; fermer sa carte ne la termine pas. `autoStart` est facultatif, désactivé par défaut. Avec `storageKey`, seules les préférences du guide sont conservées dans un format versionné ; une clé distincte par application évite les interférences. Un stockage indisponible ou corrompu laisse le guide utilisable. `storage` permet d’injecter un adaptateur ou `null` pour désactiver la persistance.
+
+```ts
+const guide = useOnboarding(computed(() => [
+  { id: 'size', target: '#settings', title: t('dimensions'), text: t('sizeTip') },
+  { id: 'view', target: '#scene-controls', title: t('zoom'), text: t('zoomTip') },
+]), { storageKey: 'my-generator.guide.v1' });
+```
+
+```vue
+<AuButton @click="guide.restart">{{ t('guide') }}</AuButton>
+<AuOnboarding :root="appRoot" :step="guide.current.value" :open="guide.open.value"
+  :hidden="guide.hidden.value" :label="t('tip')" :close-label="t('close')"
+  :next-label="t('gotIt')" :hide-label="t('hideTips')"
+  @update:open="guide.open.value = $event" @next="guide.next" @hide="guide.hide" />
+```
+
+Les parcours, textes, conditions et événements métier de Sliceform ne font pas partie du package. Aucune application existante n’a besoin de changer pour utiliser cette version du package ; chaque migration reste explicite et conserve son moteur et ses exports.

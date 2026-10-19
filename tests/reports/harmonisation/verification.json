@@ -1,0 +1,21 @@
+{
+  "package": "@timotf/atomm-ui",
+  "version": "0.8.0",
+  "archive_sha256": "cf4835d7ac528c89fe2c0af4b16ae2fe354aff7fb255fe5584bb16a4ce77a23d",
+  "checks": {
+    "unit_contract_tests": 31,
+    "package_build": true,
+    "clean_archive_consumer": true,
+    "browser": [
+      "group spacing and collapse",
+      "zoom absolute preset and recenter",
+      "explosion keyboard 0-100 percent",
+      "independent SVG and 3D zoom",
+      "onboarding close and keyboard focus restoration",
+      "onboarding next, hide and reactivate",
+      "390 px container and RTL",
+      "guide suspension and resumption around the color palette"
+    ]
+  },
+  "scope": "AtommUI and boilerplate only; other generators are references and have not been migrated"
+}
