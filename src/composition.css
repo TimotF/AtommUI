@@ -24,6 +24,9 @@ button.au-group-heading-line { border: 0; padding: 0; background: transparent; c
 :is(.au-root,.au-overlay).au-profile-compact .au-field-groups :is(.au-text-field,.au-select-field-stacked) { padding: 0; }
 button.au-group-heading-line:focus-visible { outline: 2px solid var(--color-stroke-active); outline-offset: 4px; border-radius: var(--au-radius-control); }
 
+.au-history-controls { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px; max-width: 100%; }
+.au-history-action { display: inline-flex; align-items: center; gap: 6px; }
+.au-root[dir="rtl"] .au-history-controls .au-icon { transform: scaleX(-1); }
 .au-scene-controls { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; min-width: 0; }
 .au-scene-controls > .au-zoom-controls { flex: none; }
 .au-scene-explode { flex: 1 1 230px; min-width: min(230px,100%); max-width: 340px; border-radius: 8px; background: var(--color-bg-default); }

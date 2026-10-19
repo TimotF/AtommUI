@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSSRApp, h, ref } from 'vue';
 import { renderToString } from '@vue/server-renderer';
-import { AuRoot, AuFieldGroups, AuFieldGroup, AuNumericField, AuSceneControls, AuOnboarding, AuOnboardingCard, useOnboarding, readOnboardingProgress, pendingOnboardingSteps, positionOnboarding, createAtommVuetify } from '../dist/atomm-ui.js';
+import { AuRoot, AuHistoryControls, AuFieldGroups, AuFieldGroup, AuNumericField, AuSceneControls, AuOnboarding, AuOnboardingCard, useOnboarding, readOnboardingProgress, pendingOnboardingSteps, positionOnboarding, createAtommVuetify } from '../dist/atomm-ui.js';
 
 async function render(children) {
   return renderToString(createSSRApp(() => h(AuRoot, {profile:'compact'}, () => children)).use(createAtommVuetify()));
@@ -73,4 +73,25 @@ test('guide placement stays inside narrow viewports and rejects hidden or invali
     assert.ok(position);assert.ok(position.left>=12);assert.ok(position.left+position.width<=width-12);assert.ok(position.top>=12&&position.top+240<=708);
   }
   for(const target of [{left:NaN,right:10,top:0,bottom:10},{left:10,right:0,top:0,bottom:10},{left:0,right:20,top:800,bottom:820}]) assert.equal(positionOnboarding(target,{width:390,height:720},200),null);
+});
+
+
+test('history controls expose independent action availability, safe copy and instance IDs', async () => {
+ const labels={label:'History',undoLabel:'Undo <img>',redoLabel:'Redo'};
+ const unavailable=await render(h(AuHistoryControls,labels));
+ assert.equal((unavailable.match(/<button[^>]*disabled/g)??[]).length,2);
+ assert.match(unavailable,/role="group" aria-label="History"/);
+ assert.ok(unavailable.includes('Undo &lt;img&gt;')&&!unavailable.includes('<img>'));
+ assert.ok(!unavailable.includes('aria-pressed'));
+ for(const [canUndo,canRedo] of [[true,false],[false,true],[true,true]]){
+  const html=await render(h(AuHistoryControls,{...labels,canUndo,canRedo,undoId:'undo',redoId:'redo'}));
+  for(const [id,enabled]of [['undo',canUndo],['redo',canRedo]]){
+   const button=html.match(new RegExp('<button[^>]*id="'+id+'"[^>]*>'))?.[0];
+   assert.ok(button);assert.equal(/\bdisabled(?:[\s=>])/.test(button),!enabled);assert.match(button,/type="button"/);
+  }
+ }
+ const allDisabled=await render(h(AuHistoryControls,{...labels,canUndo:true,canRedo:true,disabled:true}));
+ assert.equal((allDisabled.match(/<button[^>]*disabled/g)??[]).length,2);
+ const multiple=await render([h(AuHistoryControls,labels),h(AuHistoryControls,labels)]);
+ const ids=[...multiple.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(ids).size,ids.length);
 });

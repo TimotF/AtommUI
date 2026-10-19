@@ -23,7 +23,7 @@ Le vérificateur de composants `vue-tsc` 3.3.12 utilise TypeScript 6.0.3 : son A
 
 ## Utiliser dans une application
 
-Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.11.0/timotf-atomm-ui-0.11.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
+Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.12.0/timotf-atomm-ui-0.12.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
 
 ```ts
 import { createApp } from 'vue';
@@ -73,7 +73,7 @@ Le thème peut être importé côté Node sans feuille CSS : `import { atommThem
 
 ## Contrats des composants
 
-Trente composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`, `AuSegmentedControl`, `AuPanelHeader`, `AuFieldNote`, `AuSwitch`, `AuSvgViewport`, `AuColorField`, `AuZoomControls`, `AuTooltip`, `AuTextField`, `AuFieldGroups`, `AuFieldGroup`, `AuSceneControls`, `AuOnboardingCard`, `AuOnboarding`.
+Trente et un composants : `AuRoot`, `AuLayout`, `AuButton`, `AuIcon`, `AuCard`, `AuHelp`, `AuNumericField`, `AuSelect`, `AuCheckbox`, `AuSlider`, `AuTabs`, `AuAlert`, `AuProgress`, `AuSwatches`, `AuSummary`, `AuExampleCard`, `AuSegmentedControl`, `AuPanelHeader`, `AuFieldNote`, `AuSwitch`, `AuSvgViewport`, `AuColorField`, `AuZoomControls`, `AuTooltip`, `AuTextField`, `AuFieldGroups`, `AuFieldGroup`, `AuSceneControls`, `AuHistoryControls`, `AuOnboardingCard`, `AuOnboarding`.
 
 - Les champs numériques transmettent une **chaîne brute** : une saisie vide ou incomplète reste visible. L'application fournit la validation. Le clic édite le texte ; le glissement horizontal l'ajuste selon `step`. Un ajustement décimal exact est fourni, et `adjust` permet de le remplacer. Aucun nombre invalide n'est converti implicitement en zéro.
 - Les sélecteurs transmettent uniquement une option existante et disponible. `UiOption.color` ajoute un petit aperçu de couleur au choix et à la liste ; les valeurs autres qu’un hexadécimal complet ne produisent aucun aperçu. Les boutons ordinaires restent des actions ; `active` est réservé aux boutons bascule.
@@ -227,3 +227,18 @@ Le consommateur possède ces objets et leurs ressources : appeler `setOverlay(nu
 `setAssembly(object, bounds)` reçoit un `THREE.Object3D` et une `THREE.Box3` dans le même espace monde. Le cadrage initial tient compte de la perspective et du conteneur ; les appels suivants conservent la caméra, le pan et le rig. Des bornes comprenant la course d’ouverture permettent de réserver cet espace au cadrage. Le consommateur reste responsable des objets et de leur libération ; `setOverlay(null)` les détache avant remplacement ou démontage. `setAssembly` détache tout overlay précédent, et `setContent` revient au mode SVG.
 
 `project(point, relativeTo?)` donne les pixels relatifs au host et la profondeur normalisée ; `relativeTo` suit aussi les transformations du rig. `raycast(clientX,clientY,objects,recursive?)` retourne les intersections Three.js. La sélection et la signification de chaque pièce appartiennent à l’application. `materials.face` et `materials.edge` peuvent être référencés par les pièces sans être détruits par le consommateur. `geometryFromPreview(data)` crée en revanche une géométrie appartenant au consommateur. `assemblyFrame` expose le calcul de cadrage, utilisable sans contexte WebGL. Les usages SVG existants gardent leurs valeurs par défaut.
+
+### Annuler / rétablir
+
+`AuHistoryControls` mutualise uniquement les deux boutons : icônes, libellés visibles, ordre, espacement et états désactivés. Les propriétés `label` (groupe), `undoLabel` et `redoLabel` sont traduites par le consommateur ; `canUndo` et `canRedo` valent `false` par défaut. `disabled` bloque les deux actions. Les événements `undo` et `redo` n’emportent aucun modèle. `undoId` et `redoId` sont facultatifs ; fournir des IDs distincts pour plusieurs instances.
+
+```vue
+<AuHistoryControls
+  :label="`${t('undo')} / ${t('redo')}`"
+  :undo-label="t('undo')" :redo-label="t('redo')"
+  :can-undo="past.length > 0" :can-redo="future.length > 0"
+  @undo="undo" @redo="redo"
+/>
+```
+
+L’application garde ses snapshots ou commandes, ses transactions, ses limites, ses brouillons et sa persistance. Le composant n’installe aucun raccourci global : l’application reste responsable de Ctrl/Cmd+Z, Maj+Ctrl/Cmd+Z ou Ctrl/Cmd+Y, notamment pour préserver l’annulation native dans les champs. Tab, Entrée et Espace suivent le comportement des boutons natifs. Les icônes sont inversées en RTL. Aucun bouton ne soumet un formulaire. Ne pas ajouter d’historique à une application qui n’en a pas besoin.

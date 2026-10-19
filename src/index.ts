@@ -37,6 +37,7 @@ export { default as AuTextField } from './components/AuTextField.vue';
 export { default as AuFieldGroups } from './components/AuFieldGroups.vue';
 export { default as AuFieldGroup } from './components/AuFieldGroup.vue';
 export { default as AuSceneControls } from './components/AuSceneControls.vue';
+export { default as AuHistoryControls } from './components/AuHistoryControls.vue';
 export { default as AuOnboardingCard } from './components/AuOnboardingCard.vue';
 export { default as AuOnboarding } from './components/AuOnboarding.vue';
 export { useOnboarding, readOnboardingProgress, pendingOnboardingSteps } from './onboarding.js';
