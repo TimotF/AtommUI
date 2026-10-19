@@ -30,7 +30,7 @@ button.au-group-heading-line:focus-visible { outline: 2px solid var(--color-stro
 .au-scene-explode .au-slider-field { padding: 6px 12px; }
 .au-scene-extra { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
 
-.au-overlay.au-onboarding { position: fixed; inset: 0; z-index: 6; pointer-events: none; background: transparent; box-shadow: none; font-family: var(--au-font); }
+.au-overlay.au-onboarding { position: fixed; inset: 0; z-index: 2; pointer-events: none; background: transparent; box-shadow: none; font-family: var(--au-font); }
 .au-onboarding-target { position: fixed; border: 2px solid color-mix(in srgb,var(--color-brand-default) 55%,transparent); pointer-events: none; }
 .au-onboarding-position { position: fixed; pointer-events: auto; max-height: calc(100dvh - 24px); }
 .au-onboarding-card { position: relative; overflow: auto; max-height: calc(100dvh - 24px); border: 1px solid var(--color-stroke-divider); border-radius: 12px; padding: 12px 14px; background: var(--color-bg-default); color: var(--color-text-primary); box-shadow: var(--au-shadow-floating,0 4px 18px #1f243026); font: 13px/1.5 var(--au-font); }
@@ -53,8 +53,7 @@ button.au-group-heading-line:focus-visible { outline: 2px solid var(--color-stro
 .au-onboarding-beacon { position: fixed; display: grid; place-items: center; width: 28px; height: 28px; margin: -14px; padding: 0; border: 0; border-radius: 50%; background: transparent; pointer-events: auto; cursor: pointer; }
 .au-onboarding-beacon > span { width: 9px; height: 9px; border-radius: 50%; background: var(--color-brand-default); box-shadow: 0 0 0 4px color-mix(in srgb,var(--color-brand-default) 12%,transparent); }
 .au-onboarding-beacon:focus-visible { outline: 2px solid var(--color-stroke-active); outline-offset: 1px; }
-.au-onboarding-halo { position: fixed; width: 16px; height: 16px; border: 1px solid var(--color-brand-default); border-radius: 50%; animation: au-tip-pulse 2s ease-out infinite; }
-@keyframes au-tip-pulse { from { transform: scale(.5); opacity: .8; } to { transform: scale(2.1); opacity: 0; } }
-.au-onboarding-toast { position: fixed; z-index: 6; bottom: max(24px,env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; max-width: calc(100vw - 24px); padding: 8px 12px; border: 1px solid var(--color-stroke-divider); border-radius: 8px; background: var(--color-bg-default); color: var(--color-text-primary); box-shadow: var(--au-shadow-floating); font: 12px/1.5 var(--au-font); }
+.au-onboarding-halo { position: fixed; width: 16px; height: 16px; border: 1px solid var(--color-brand-default); border-radius: 50%; opacity: .35; }
+.au-onboarding-toast { position: fixed; z-index: 3; bottom: max(24px,env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; max-width: calc(100vw - 24px); padding: 8px 12px; border: 1px solid var(--color-stroke-divider); border-radius: 8px; background: var(--color-bg-default); color: var(--color-text-primary); box-shadow: var(--au-shadow-floating); font: 12px/1.5 var(--au-font); }
 @media (pointer: coarse) { .au-onboarding-beacon { width: 44px; height: 44px; margin: -22px; } .au-onboarding-card > footer > .au-button,.au-onboarding-card > header > .au-button { min-height: 44px; } }
 @media (prefers-reduced-motion: reduce) { .au-onboarding-halo { animation: none; opacity: .35; } }

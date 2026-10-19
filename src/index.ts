@@ -2,6 +2,7 @@ import 'vuetify/styles/core';
 import './atomm-tokens.css';
 import './atomm-ui.css';
 import './composition.css';
+import './standard-layout.css';
 export { createAtommVuetify, atommTheme, atommDarkTheme } from './theme.js';
 export { safeHexColor, finiteSliderValue, isOptionValue } from './contracts.js';
 export { adjustNumericDraft, decimalStepDelta } from './numeric.js';

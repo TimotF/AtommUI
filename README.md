@@ -23,7 +23,7 @@ Le vérificateur de composants `vue-tsc` 3.3.12 utilise TypeScript 6.0.3 : son A
 
 ## Utiliser dans une application
 
-Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.8.0/timotf-atomm-ui-0.8.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
+Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.9.0/timotf-atomm-ui-0.9.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
 
 ```ts
 import { createApp } from 'vue';
@@ -35,7 +35,7 @@ import App from './App.vue';
 createApp(App).use(createAtommVuetify('fr')).mount('#app');
 ```
 
-Encadrer l'interface avec `AuRoot`, puis utiliser `AuLayout` et ses slots `lead`, `stage`, `parameters`. `AuRoot profile="compact"` active les champs de 28 px, les actions de 32 px, les cartes de rayon 8 px et les segments compacts ; il faut aussi importer `compact.css`. Les menus et aides AtommUI téléportés reçoivent automatiquement le profil. Pour les menus, dialogues et tooltips Vuetify créés directement par l’application, ajouter `content-class="au-overlay au-profile-compact"`. Le placement de la scène, l’export et le responsive métier restent dans l’application. `AuRoot` transmet la direction RTL aux composants Vuetify. Les titres abrégés des onglets conservent leur nom accessible complet.
+Encadrer l'interface avec `AuRoot`, puis utiliser `AuLayout` et ses slots `lead`, `stage`, `parameters`. `AuRoot profile="compact"` active les champs de 28 px, les actions de 32 px, les cartes de rayon 8 px et les segments compacts ; il faut aussi importer `compact.css`. Les menus et aides AtommUI téléportés reçoivent automatiquement le profil. Pour les menus, dialogues et tooltips Vuetify créés directement par l’application, ajouter `content-class="au-overlay au-profile-compact"`. L’application fournit le contenu de scène et d’export ; `AuLayout standard` fournit la disposition officielle commune. `AuRoot` transmet la direction RTL aux composants Vuetify. Les titres abrégés des onglets conservent leur nom accessible complet.
 
 Un consommateur minimal peut rendre les trois régions sans aucun code Sliceform :
 
@@ -67,7 +67,7 @@ html, body, #app { height: 100%; margin: 0; }
 </style>
 ```
 
-`AuLayout` fournit les régions accessibles, les rails et la scène avec les largeurs configurables `--au-lead-width` et `--au-parameters-width`. L’application définit la hauteur du conteneur, la mise en colonne éventuelle sous un seuil adapté à son contenu, le défilement, le footer collant et le placement des outils sur la scène. Sliceform compose ces régions avec la scène en premier sous 960 px ; cette règle appartient à Sliceform et n’est pas imposée aux autres générateurs.
+`AuLayout standard` active la disposition officielle : panneau de paramètres de 320 px, empilement sous 960 px de largeur de conteneur et export collant. Utiliser les classes publiques `au-parameters-header`, `au-parameters-content`, `au-parameters-footer`, `au-preview-header`, `au-preview-views`, `au-preview-help` et `au-preview-footer` dans les slots. `lead-collapsed` masque un panneau gauche absent. Les compositions historiques sans `standard` conservent leur disposition : aucune application existante ne migre automatiquement. `AuRoot` hérite de la direction du document, ou accepte une direction explicite ; les dessins restent LTR.
 
 Le thème peut être importé côté Node sans feuille CSS : `import { atommTheme } from '@timotf/atomm-ui/theme'`.
 
@@ -199,3 +199,17 @@ const guide = useOnboarding(computed(() => [
 ```
 
 Les parcours, textes, conditions et événements métier de Sliceform ne font pas partie du package. Aucune application existante n’a besoin de changer pour utiliser cette version du package ; chaque migration reste explicite et conserve son moteur et ses exports.
+
+## Aperçu 3D optionnel (0.9.0)
+
+L’entrée `@timotf/atomm-ui/three` exporte `PreviewStage`, `previewMeshes`, `PreviewMeshData` et `springStep`. Elle est indépendante de l’entrée UI : les applications sans 3D ne chargent pas Three.js. Installer le peer optionnel `three` à la version compatible et ses types pour TypeScript.
+
+`previewMeshes({path, engraving?, thickness})` reçoit les contours du même résultat que l’export, en mm, Y vers le bas. Il utilise `SVGLoader.parse()` puis `ShapePath.toShapes()` et l’extrusion. Dans Three.js r186, `SVGLoader.createShapes()` délègue à `toShapes()` en émettant un avertissement de dépréciation ; l’appel direct conserve l’algorithme officiel sans avertissement. Un DOM XML limité aux chemins générés permet aussi cette conversion dans un Worker. Il ne s’agit pas d’un importeur de documents SVG arbitraires.
+
+Créer `new PreviewStage(host, onZoom, onLimits?)`, appeler `setContent(meshes,{width,height,thickness})`, `setAppearance({material,color})`, `setActive(active)`, puis `dispose()` au démontage. Les commandes sont `zoom(factor)`, `setZoom(percent)` et `fit()`. Le callback de limites fournit les pourcentages réellement accessibles par la caméra. Le host porte la classe `au-three-viewport`, un nom accessible, le focus clavier et les raccourcis fournis par l’application.
+
+Le contenu est centré dans un groupe avec une seule inversion Y ; un rig parent conserve le léger mouvement et le ressort à travers les reconstructions. La caméra et le pan ne sont pas réinitialisés lors d’un changement de paramètres. Le rendu utilise RoomEnvironment/PMREM, ACES, des faces et chants distincts et une texture physique de 45 mm réutilisée. Les dimensions nulles sont ignorées ; les réapparitions et redimensionnements conservent l’état. Les ressources de chaque reconstruction sont libérées séparément des ressources partagées, libérées au démontage. `prefers-reduced-motion` désactive les mouvements et l’inertie.
+
+`data-preview-diagnostics` expose uniquement les compteurs de rendu et de ressources, la caméra et le zoom pour les contrôles navigateur. Aucun paramètre métier ni texte utilisateur n’y est stocké. Le consommateur temporise les reconstructions sur 100–200 ms et conserve ses validations et exports.
+
+Le guide utilise les couches 2 et 3, sans animation pulsée permanente. Les applications en review restent sur leur archive verrouillée.

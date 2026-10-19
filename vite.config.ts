@@ -7,7 +7,7 @@ export default defineConfig({
   } }],
   build: {
     target: 'es2022',
-    lib: { entry: { index: 'src/index.ts', theme: 'src/theme.ts' }, formats: ['es'], fileName: (_format, entryName) => entryName === 'index' ? 'atomm-ui.js' : 'theme.js', cssFileName: 'atomm-ui' },
-    rolldownOptions: { external: (id: string) => /^(vue|vuetify)(\/|$)/.test(id) },
+    lib: { entry: { index: 'src/index.ts', theme: 'src/theme.ts', three: 'src/three.ts' }, formats: ['es'], fileName: (_format, entryName) => entryName === 'index' ? 'atomm-ui.js' : `${entryName}.js`, cssFileName: 'atomm-ui' },
+    rolldownOptions: { external: (id: string) => /^(vue|vuetify|three|@xmldom\/xmldom)(\/|$)/.test(id) },
   },
 });

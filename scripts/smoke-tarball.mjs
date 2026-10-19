@@ -16,6 +16,7 @@ for (const name of [
   'package/dist/atomm-ui.js', 'package/dist/index.d.ts',
   'package/dist/atomm-ui.css', 'package/dist/compact.css',
   'package/dist/theme.js', 'package/dist/theme.d.ts',
+  'package/dist/three.js', 'package/dist/three.d.ts',
 ]) {
   if (!files.has(name)) throw new Error(`Missing from npm archive: ${name}`);
 }
@@ -63,6 +64,12 @@ try {
     for (const name of ['style.css', 'compact.css']) {
       if (!readFileSync(require.resolve('@timotf/atomm-ui/' + name), 'utf8').trim()) throw new Error('Empty CSS export: ' + name);
     }
+  `], { cwd: consumer, stdio: 'inherit' });
+  execFileSync('npm', ['install', 'three@0.186.1', ...npmFlags], { cwd: consumer, stdio: 'inherit' });
+  execFileSync(process.execPath, ['--input-type=module', '-e', `
+    const {previewMeshes,PreviewStage}=await import('@timotf/atomm-ui/three');
+    const meshes=previewMeshes({path:'M0 0H10V10H0Z',thickness:3});
+    if(typeof PreviewStage!=='function'||meshes.length!==1||!meshes[0].position.every(Number.isFinite)) throw new Error('Optional 3D entry is invalid');
   `], { cwd: consumer, stdio: 'inherit' });
   const lock = JSON.parse(readFileSync(join(consumer, 'package-lock.json'), 'utf8'));
   if (!lock.packages['node_modules/@timotf/atomm-ui']?.integrity) throw new Error('Consumer lockfile lacks archive integrity.');
