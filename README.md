@@ -1,6 +1,6 @@
 # AtommUI
 
-Bibliothèque versionnée de composants **Vue 3, Vuetify et TypeScript** pour les interfaces de générateurs atomm. Le package `@timotf/atomm-ui` fournit 30 composants, une base et un profil compact de style, ainsi qu’un thème importable depuis Node. Aucun calcul de géométrie, viewer 3D ou SDK n’y est inclus.
+Bibliothèque versionnée de composants **Vue 3, Vuetify et TypeScript** pour les interfaces de générateurs atomm. Le package `@timotf/atomm-ui` fournit des composants, une base et un profil compact de style, ainsi qu’un thème importable depuis Node. Les calculs métier et le SDK restent dans les applications ; l’entrée optionnelle `/three` fournit l’aperçu 3D partagé.
 
 La direction visuelle reprend la sobriété des deux références fournies : scène dominante, cartes blanches discrètes, intitulés courts, contrôles compacts et détails dans l'aide contextuelle. Les couleurs, hauteurs et espacements suivent le guide atomm. Les couleurs des objets restent propres à chaque application.
 
@@ -23,7 +23,7 @@ Le vérificateur de composants `vue-tsc` 3.3.12 utilise TypeScript 6.0.3 : son A
 
 ## Utiliser dans une application
 
-Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.12.0/timotf-atomm-ui-0.12.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
+Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.13.0/timotf-atomm-ui-0.13.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
 
 ```ts
 import { createApp } from 'vue';
@@ -242,3 +242,29 @@ Le consommateur possède ces objets et leurs ressources : appeler `setOverlay(nu
 ```
 
 L’application garde ses snapshots ou commandes, ses transactions, ses limites, ses brouillons et sa persistance. Le composant n’installe aucun raccourci global : l’application reste responsable de Ctrl/Cmd+Z, Maj+Ctrl/Cmd+Z ou Ctrl/Cmd+Y, notamment pour préserver l’annulation native dans les champs. Tab, Entrée et Espace suivent le comportement des boutons natifs. Les icônes sont inversées en RTL. Aucun bouton ne soumet un formulaire. Ne pas ajouter d’historique à une application qui n’en a pas besoin.
+
+## Vignettes de matériaux d’aperçu
+
+`AuMaterialPicker` possède la grille de trois colonnes et compose les cartes et
+`AuMaterialThumbnail` carrées. Ne pas recopier leur SVG ou leur grille dans une
+application. Les titres traduits et les valeurs persistées restent chez le consommateur :
+
+```vue
+<AuMaterialPicker v-model="material" :label="t('material')" :color="color"
+  :items="[
+    {value:'pine', material:'pine', title:t('pine')},
+    {value:'walnut', material:'walnut', title:t('walnut')},
+    {value:'solid', material:'solid', title:t('solid')}
+  ]"/>
+<AuColorField v-if="material==='solid'" v-model="color" id="preview-color"
+  :label="t('color')" :hex-label="t('hexColor')" :invalid-message="t('hexColorError')"/>
+```
+
+Chaque option accepte `disabled` et une couleur propre facultative ; la composition
+accepte aussi `disabled`. Les valeurs ne sont pas réécrites : une application peut
+mapper sa valeur historique `Bicolore` sur `material:'pine'`. Une valeur absente des
+options ne sélectionne rien et n’est jamais corrigée silencieusement. Les images
+sont décoratives, les boutons portent le titre et l’état sélectionné, les motifs
+SVG ont des identifiants propres à chaque instance. `AuMaterialThumbnail` peut
+également être utilisé seul. Ces choix concernent l’apparence d’aperçu ; une liste
+métier de matériaux physiques peut rester un contrôle distinct.

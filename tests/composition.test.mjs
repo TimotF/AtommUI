@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSSRApp, h, ref } from 'vue';
 import { renderToString } from '@vue/server-renderer';
-import { AuRoot, AuHistoryControls, AuFieldGroups, AuFieldGroup, AuNumericField, AuSceneControls, AuOnboarding, AuOnboardingCard, useOnboarding, readOnboardingProgress, pendingOnboardingSteps, positionOnboarding, createAtommVuetify } from '../dist/atomm-ui.js';
+import { AuRoot, AuMaterialPicker, AuMaterialThumbnail, AuHistoryControls, AuFieldGroups, AuFieldGroup, AuNumericField, AuSceneControls, AuOnboarding, AuOnboardingCard, useOnboarding, readOnboardingProgress, pendingOnboardingSteps, positionOnboarding, createAtommVuetify } from '../dist/atomm-ui.js';
 
 async function render(children) {
   return renderToString(createSSRApp(() => h(AuRoot, {profile:'compact'}, () => children)).use(createAtommVuetify()));
@@ -94,4 +94,24 @@ test('history controls expose independent action availability, safe copy and ins
  assert.equal((allDisabled.match(/<button[^>]*disabled/g)??[]).length,2);
  const multiple=await render([h(AuHistoryControls,labels),h(AuHistoryControls,labels)]);
  const ids=[...multiple.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(ids).size,ids.length);
+});
+
+
+test('material pickers preserve consumer values, escaped labels, availability and unique pattern references', async () => {
+ const items=[{value:'Bicolore',material:'pine',title:'Pin <img>'},{value:'Sombre',material:'walnut',title:'Noyer',disabled:true},{value:'Couleur unie',material:'solid',title:'Couleur'}];
+ const html=await render([h(AuMaterialPicker,{label:'Arbre',modelValue:'Bicolore',items,color:'#123456'}),h(AuMaterialPicker,{label:'Couche',modelValue:'Couleur unie',items,color:'url(https://invalid.test/x)'})]);
+ assert.ok(html.includes('Pin &lt;img&gt;')&&!html.includes('<img>'));
+ assert.equal((html.match(/aria-pressed="true"/g)??[]).length,2);
+ assert.equal((html.match(/<button[^>]*disabled/g)??[]).length,2);
+ assert.ok(html.includes('fill="#123456"')&&html.includes('fill="#9ac8bb"'));
+ assert.ok(!html.includes('https://invalid.test'));
+ const ids=[...html.matchAll(/<pattern id="([^"]+)"/g)].map(m=>m[1]);
+ assert.equal(ids.length,4);assert.equal(new Set(ids).size,ids.length);
+ for(const id of ids) assert.ok(html.includes('url(#'+id+')'));
+ const disabled=await render(h(AuMaterialPicker,{label:'Matériau',modelValue:'Bicolore',items,disabled:true}));
+ assert.equal((disabled.match(/<button[^>]*disabled/g)??[]).length,3);
+ const unknown=await render(h(AuMaterialPicker,{label:'Matériau',modelValue:'old-value',items}));
+ assert.ok(!unknown.includes('aria-pressed="true"'));
+ const thumbnail=await render(h(AuMaterialThumbnail,{material:'solid',color:'#336699'}));
+ assert.ok(thumbnail.includes('aria-hidden="true"')&&thumbnail.includes('fill="#336699"'));
 });

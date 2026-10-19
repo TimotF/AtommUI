@@ -7,7 +7,7 @@ export { createAtommVuetify, atommTheme, atommDarkTheme } from './theme.js';
 export { safeHexColor, finiteSliderValue, isOptionValue } from './contracts.js';
 export { adjustNumericDraft, decimalStepDelta } from './numeric.js';
 export type { NumericBounds } from './numeric.js';
-export type { UiLocale, UiOption, UiTab, UiSwatch, DecimalAdjustment } from './contracts.js';
+export type { UiLocale, UiOption, UiTab, UiSwatch, UiMaterialKind, UiMaterialOption, DecimalAdjustment } from './contracts.js';
 export { default as AuRoot } from './components/AuRoot.vue';
 export { default as AuLayout } from './components/AuLayout.vue';
 export { default as AuButton } from './components/AuButton.vue';
@@ -44,3 +44,5 @@ export { useOnboarding, readOnboardingProgress, pendingOnboardingSteps } from '.
 export type { OnboardingStep, OnboardingProgress, OnboardingStorage } from './onboarding.js';
 export { positionOnboarding } from './onboarding-position.js';
 export type { OnboardingRect, OnboardingSide } from './onboarding-position.js';
+export { default as AuMaterialThumbnail } from './components/AuMaterialThumbnail.vue';
+export { default as AuMaterialPicker } from './components/AuMaterialPicker.vue';
