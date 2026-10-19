@@ -24,6 +24,7 @@ export class PreviewStage {
   private controls: OrbitControls;
   private rig = new THREE.Group();
   private content = new THREE.Group();
+  private overlay = new THREE.Group();
   private environment: THREE.WebGLRenderTarget;
   private texture: THREE.CanvasTexture;
   private face = new THREE.MeshStandardMaterial({ roughness: .8 });
@@ -66,8 +67,8 @@ export class PreviewStage {
     this.scene.environment = this.environment.texture;
     this.scene.environmentIntensity = .4;
     this.scene.add(this.rig);
-    this.rig.add(this.content);
-    this.content.scale.y = -1;
+    this.rig.add(this.content, this.overlay);
+    this.content.scale.y = this.overlay.scale.y = -1;
     const key = new THREE.DirectionalLight('#ffffff', 2);
     key.position.set(-120, 180, 300); this.scene.add(key);
     this.texture = this.woodTexture();
@@ -134,9 +135,17 @@ export class PreviewStage {
       this.content.add(new THREE.Mesh(geometry, data.engraved ? this.engraving : [this.face, this.edge]));
     }
     this.content.position.set(-size.width / 2, size.height / 2, 0);
+    this.overlay.position.copy(this.content.position);
     // Rebuild only the content: preserve camera, controls, pan, and the persistent motion rig.
     if (!this.ready && this.viewport) this.fit();
     this.publishDiagnostics();
+  }
+
+  /** Consumer-owned objects in SVG millimetres (Y down), sharing the persistent motion rig.
+   * Replacing/unmounting only detaches them; the consumer disposes its own resources. */
+  setOverlay(object: THREE.Object3D | null) {
+    this.overlay.clear();
+    if (object) this.overlay.add(object);
   }
 
   private updateBounds() {
@@ -221,7 +230,7 @@ export class PreviewStage {
     this.host.removeEventListener('pointerdown', this.pointerDown); this.host.removeEventListener('pointermove', this.pointerMove);
     this.host.removeEventListener('pointerup', this.pointerUp); this.host.removeEventListener('pointercancel', this.pointerUp);
     this.host.removeEventListener('lostpointercapture', this.pointerUp);
-    this.clear(); this.face.dispose(); this.edge.dispose(); this.engraving.dispose(); this.texture.dispose(); this.environment.dispose();
+    this.overlay.clear(); this.clear(); this.face.dispose(); this.edge.dispose(); this.engraving.dispose(); this.texture.dispose(); this.environment.dispose();
     this.renderer.dispose(); this.renderer.domElement.remove(); delete this.host.dataset.previewDiagnostics;
   }
 }

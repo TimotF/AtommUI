@@ -23,7 +23,7 @@ Le vérificateur de composants `vue-tsc` 3.3.12 utilise TypeScript 6.0.3 : son A
 
 ## Utiliser dans une application
 
-Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.9.0/timotf-atomm-ui-0.9.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
+Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.10.0/timotf-atomm-ui-0.10.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
 
 ```ts
 import { createApp } from 'vue';
@@ -213,3 +213,9 @@ Le contenu est centré dans un groupe avec une seule inversion Y ; un rig parent
 `data-preview-diagnostics` expose uniquement les compteurs de rendu et de ressources, la caméra et le zoom pour les contrôles navigateur. Aucun paramètre métier ni texte utilisateur n’y est stocké. Le consommateur temporise les reconstructions sur 100–200 ms et conserve ses validations et exports.
 
 Le guide utilise les couches 2 et 3, sans animation pulsée permanente. Les applications en review restent sur leur archive verrouillée.
+
+## Couches visuelles facultatives (0.10.0)
+
+`PreviewStage.setOverlay(object: THREE.Object3D | null)` attache un objet ou un groupe propre au consommateur, dans le même espace SVG (millimètres, origine en haut à gauche, Y vers le bas, Z centré dans l’épaisseur). La couche suit le centrage et le mouvement du modèle et reste attachée lors de `setContent()`. Elle permet des accessoires et diagnostics visuels sans inclure leur calcul dans AtommUI.
+
+Le consommateur possède ces objets et leurs ressources : appeler `setOverlay(null)` avant de remplacer ou libérer ses géométries, matériaux et textures. `dispose()` du stage les détache sans les détruire. Ne jamais y placer de contrôles de caméra, de source d’éclairage ou d’élément d’export. Sans appel à cette méthode, le comportement de 0.9.0 est conservé.
