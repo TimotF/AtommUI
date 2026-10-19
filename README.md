@@ -268,3 +268,14 @@ sont décoratives, les boutons portent le titre et l’état sélectionné, les 
 SVG ont des identifiants propres à chaque instance. `AuMaterialThumbnail` peut
 également être utilisé seul. Ces choix concernent l’apparence d’aperçu ; une liste
 métier de matériaux physiques peut rester un contrôle distinct.
+
+
+### Outils et passes visuelles dans la scène partagée
+
+`stage.installExtension(context => extension)` branche un outil d’orientation ou des couches propres à une app sans recréer de caméra, renderer ou OrbitControls. `context` expose `scene`, `camera`, `canvas`, `prepare(object,current)` (préparation annulable des shaders) et `navigation`. Les objets ajoutés et leurs ressources restent à la charge du consommateur.
+
+`navigation.target()` retourne une copie ; `focus(point)` recentre la cible en conservant l’angle et la distance. `setEnabled(false)` suspend et déconnecte le geste de navigation durant une manipulation ; `setPanEnabled(false)` interdit le panoramique ; `setMotionEnabled(false)` suspend le mouvement ambiant pendant une orientation précise. Le mode inactif et les préférences de mouvement restent respectés.
+
+L’extension fournit `dispose()` et, facultativement, `beforeRender()`, `resize(width,height,pixelRatio)` et `render(renderer,scene,camera)` pour une passe visuelle comme l’occlusion. La passe doit restaurer les états du renderer qu’elle modifie. Elle reçoit exclusivement le renderer du stage ; aucun renderer supplémentaire n’est nécessaire. `prepare()` doit recevoir une fonction de validité qui devient fausse lors de l’abandon du calcul.
+
+Une seule extension est active par stage : le remplacement et le démontage libèrent l’ancienne, rétablissent la navigation et détachent ses outils via `dispose()`. Le dispose retourné est idempotent et ne libère pas une extension installée ensuite. Les contrôles partagés, les matériaux et les assemblages existants restent compatibles.

@@ -4,6 +4,26 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import {geometryFromPreview,type PreviewMeshData} from './geometry.js';
 import {assemblyFrame} from './assembly.js';
 
+/** Scoped access for display tools. The stage owns camera, renderer and navigation.
+ * Extensions own only the objects/resources they add; dispose them in dispose(). */
+export type PreviewStageContext = {
+  scene: THREE.Scene; camera: THREE.PerspectiveCamera; canvas: HTMLCanvasElement;
+  navigation: {
+    target: () => THREE.Vector3;
+    focus: (point: THREE.Vector3) => void;
+    setEnabled: (enabled: boolean) => void;
+    setPanEnabled: (enabled: boolean) => void;
+    setMotionEnabled: (enabled: boolean) => void;
+  };
+  prepare: (object: THREE.Object3D, current: () => boolean) => Promise<boolean>;
+};
+export type PreviewStageExtension = {
+  beforeRender?: () => void;
+  /** Optional display pass, using the shared renderer. Restore any renderer state you change. */
+  render?: (renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) => void;
+  resize?: (width: number, height: number, pixelRatio: number) => void;
+  dispose: () => void;
+};
 export type PreviewStageOptions = {up?:[number,number,number];direction?:[number,number,number];onFrame?:()=>void};
 export type PreviewSize = { width: number; height: number; thickness: number };
 export type PreviewAppearance = { material: string; color: string };
@@ -57,6 +77,9 @@ export class PreviewStage {
   private maxStepMs = 0;
   private lastPercent = -1;
   private ready = false;
+  private extension?: PreviewStageExtension;
+  private navigationEnabled = true;
+  private motionEnabled = true;
   private diagnosticsTimer: ReturnType<typeof setInterval>;
 
   constructor(private host: HTMLElement, private onZoom: (percent: number) => void, private onLimits?: (limits: { min: number; max: number }) => void, private options:PreviewStageOptions = {}) {
@@ -96,6 +119,7 @@ export class PreviewStage {
       this.viewport = `${width}:${height}`;
       const percent = this.percent();
       this.renderer.setSize(width, height);
+      this.extension?.resize?.(width, height, this.renderer.getPixelRatio());
       this.camera.aspect = width / height; this.camera.updateProjectionMatrix();
       this.updateBounds();
       if (!this.ready && (this.dimensions || this.assemblyBounds)) this.fit();
@@ -106,6 +130,63 @@ export class PreviewStage {
     // DOM diagnostics allow browser checks without reaching into Vue/three private state.
     this.diagnosticsTimer = setInterval(() => this.publishDiagnostics(), 1000);
     this.animate(0);
+  }
+
+  /** Replacing an extension first releases its tools; the returned disposer is idempotent. */
+  installExtension(setup: (context: PreviewStageContext) => PreviewStageExtension) {
+    if (this.disposed) throw new Error('PreviewStage is disposed');
+    this.releaseExtension();
+    const extension = setup({scene: this.scene, camera: this.camera, canvas: this.renderer.domElement,
+      navigation: {
+        target: () => this.controls.target.clone(),
+        focus: point => {
+          if (![point.x, point.y, point.z].every(Number.isFinite)) return;
+          this.drainNavigation();
+          this.camera.position.add(point.clone().sub(this.controls.target));
+          this.controls.target.copy(point); this.controls.update(); this.reportZoom();
+        },
+        setEnabled: enabled => this.setNavigationEnabled(enabled),
+        setPanEnabled: enabled => { this.controls.enablePan = enabled; },
+        setMotionEnabled: enabled => { this.motionEnabled = enabled; if (!enabled) this.resetMotion(); },
+      },
+      prepare: async (object, current) => {
+        const active = () => !this.disposed && current() && !this.renderer.getContext().isContextLost();
+        if (!active()) return false;
+        let timer: ReturnType<typeof setInterval> | undefined;
+        try {
+          await Promise.race([this.renderer.compileAsync(object, this.camera, this.scene),
+            new Promise<void>(resolve => { timer = setInterval(() => { if (!active()) resolve(); }, 8); })]);
+          return active();
+        } finally { if (timer !== undefined) clearInterval(timer); }
+      },
+    });
+    this.extension = extension;
+    const {width, height} = this.host.getBoundingClientRect();
+    if (width > 0 && height > 0) extension.resize?.(width, height, this.renderer.getPixelRatio());
+    return () => { if (this.extension === extension) this.releaseExtension(); };
+  }
+  private releaseExtension() {
+    const extension = this.extension; this.extension = undefined;
+    try { extension?.dispose(); } finally {
+      this.setNavigationEnabled(true); this.controls.enablePan = true; this.motionEnabled = true; this.resetMotion();
+    }
+  }
+  private drainNavigation() {
+    const position = this.camera.position.clone(), target = this.controls.target.clone(), damping = this.controls.enableDamping;
+    this.controls.enableDamping = false; this.controls.update();
+    this.camera.position.copy(position); this.controls.target.copy(target); this.controls.update();
+    this.controls.enableDamping = damping;
+  }
+  private setNavigationEnabled(enabled: boolean) {
+    if (this.navigationEnabled === enabled) return;
+    this.drainNavigation(); this.navigationEnabled = enabled;
+    if (enabled) this.controls.connect(this.renderer.domElement); else this.controls.disconnect();
+    this.controls.enabled = this.active && enabled;
+    this.renderer.domElement.style.touchAction = 'none'; this.pointerUp(); this.resetMotion();
+  }
+  private resetMotion() {
+    this.springX = this.springY = this.velocityX = this.velocityY = 0;
+    this.rig.rotation.set(0, 0, 0); this.rig.position.set(0, 0, 0);
   }
 
   private woodTexture() {
@@ -197,6 +278,7 @@ export class PreviewStage {
 
   fit() {
     if ((!this.dimensions&&!this.assemblyBounds) || !this.viewport) return;
+    this.drainNavigation(); this.resetMotion();
     this.updateBounds();
     this.controls.target.copy(this.framingCenter);
     this.camera.position.fromArray(this.options.direction??[.12,.13,1]).normalize().multiplyScalar(this.fitDistance).add(this.framingCenter);
@@ -215,7 +297,7 @@ export class PreviewStage {
     this.controls.update(); this.reportZoom(); this.publishDiagnostics();
   }
   zoom(factor: number) { if (Number.isFinite(factor) && factor > 0) this.setZoom(this.percent() / factor); }
-  setActive(active: boolean) { this.active = active; this.controls.enabled = active; }
+  setActive(active: boolean) { this.active = active; this.controls.enabled = active && this.navigationEnabled; }
 
   private motionChanged = () => {
     this.controls.enableDamping = !this.motion.matches;
@@ -224,7 +306,7 @@ export class PreviewStage {
   };
   private pointerDown = (event: PointerEvent) => { this.dragging = true; this.dragX = event.clientX; this.dragY = event.clientY; };
   private pointerMove = (event: PointerEvent) => {
-    if (this.dragging && !this.motion.matches) {
+    if (this.dragging && this.navigationEnabled && this.motionEnabled && !this.motion.matches) {
       this.springX += THREE.MathUtils.clamp((event.clientY - this.dragY) * .0006, -.025, .025);
       this.springY += THREE.MathUtils.clamp((event.clientX - this.dragX) * .0006, -.025, .025);
       this.dragX = event.clientX; this.dragY = event.clientY;
@@ -239,13 +321,17 @@ export class PreviewStage {
     this.previousTime = now;
     if (!this.active || document.visibilityState === 'hidden') return;
     if (dt) this.maxStepMs = Math.max(this.maxStepMs, dt * 1000);
-    if (!this.motion.matches) {
+    if (this.motionEnabled && !this.motion.matches) {
       this.time += dt;
       const x = springStep(this.springX, this.velocityX, 0, dt), y = springStep(this.springY, this.velocityY, 0, dt);
       this.springX = x.value; this.velocityX = x.velocity; this.springY = y.value; this.velocityY = y.velocity;
       this.rig.rotation.set(this.springX + Math.sin(this.time * .61) * .004, this.springY + Math.sin(this.time * .83) * .005, 0);
     }
-    this.controls.update(); this.renderer.render(this.scene, this.camera); this.renders++;this.options.onFrame?.();
+    if (this.navigationEnabled) this.controls.update();
+    this.extension?.beforeRender?.();
+    if (this.extension?.render) this.extension.render(this.renderer, this.scene, this.camera);
+    else this.renderer.render(this.scene, this.camera);
+    this.renders++;this.options.onFrame?.();
   };
 
   diagnostics(): PreviewDiagnostics {
@@ -260,12 +346,13 @@ export class PreviewStage {
   }
   dispose() {
     this.disposed = true; cancelAnimationFrame(this.frame); clearInterval(this.diagnosticsTimer); this.observer.disconnect();
+    this.releaseExtension();
     this.controls.removeEventListener('change', this.reportZoom); this.controls.dispose();
     this.motion.removeEventListener('change', this.motionChanged);
     this.host.removeEventListener('pointerdown', this.pointerDown); this.host.removeEventListener('pointermove', this.pointerMove);
     this.host.removeEventListener('pointerup', this.pointerUp); this.host.removeEventListener('pointercancel', this.pointerUp);
     this.host.removeEventListener('lostpointercapture', this.pointerUp);
     this.overlay.clear(); this.clear(); this.face.dispose(); this.edge.dispose(); this.engraving.dispose(); this.texture.dispose(); this.environment.dispose();
-    this.renderer.dispose(); this.renderer.domElement.remove(); delete this.host.dataset.previewDiagnostics;
+    this.renderer.dispose(); this.renderer.forceContextLoss(); this.renderer.domElement.remove(); delete this.host.dataset.previewDiagnostics;
   }
 }

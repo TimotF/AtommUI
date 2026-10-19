@@ -51,3 +51,28 @@ test('owned preview geometry retains holes, indices, groups and physical millime
  const {geometryFromPreview}=await import('../dist/three.js');const data=previewMeshes({path:'M0 0H20V10H0Z M8 3V7H12V3Z',thickness:3})[0],geometry=geometryFromPreview(data);
  assert.deepEqual(geometry.groups,data.groups);assert.deepEqual(geometry.getAttribute('position').array,data.position);geometry.computeBoundingBox();assert.deepEqual(geometry.boundingBox.min.toArray(),[0,0,-1.5]);assert.deepEqual(geometry.boundingBox.max.toArray(),[20,10,1.5]);geometry.dispose();
 });
+
+test('display extensions release replaced tools, restore navigation and cannot dispose their successor', async () => {
+  const {PreviewStage}=await import('../dist/three.js');
+  const {Scene,PerspectiveCamera,Group,Vector3}=await import('three');
+  const camera=new PerspectiveCamera(),target=new Vector3(),canvas={style:{}},calls=[];
+  const stage=Object.assign(Object.create(PreviewStage.prototype),{
+    disposed:false,active:true,navigationEnabled:true,motionEnabled:true, pointerUp(){}, reportZoom(){},
+    scene:new Scene(),camera,rig:new Group(),renderer:{domElement:canvas,getPixelRatio:()=>2},
+    controls:{target,enableDamping:true,enabled:true,update(){},disconnect(){calls.push('disconnect');},connect(){calls.push('connect');}},
+    host:{getBoundingClientRect:()=>({width:320,height:200})},
+  });
+  let firstContext;
+  const removeFirst=stage.installExtension(context=>{firstContext=context;return {resize:(...size)=>calls.push(size),dispose:()=>calls.push('first')};});
+  assert.deepEqual(calls,[[320,200,2]]);
+  firstContext.navigation.setEnabled(false);assert.equal(stage.controls.enabled,false);
+  firstContext.navigation.setPanEnabled(false);firstContext.navigation.setMotionEnabled(false);
+  const targetCopy=firstContext.navigation.target();targetCopy.set(9,9,9);assert.deepEqual(target.toArray(),[0,0,0]);
+  camera.position.set(1,2,3);firstContext.navigation.focus(new Vector3(4,5,6));
+  assert.deepEqual(camera.position.toArray(),[5,7,9]);assert.deepEqual(target.toArray(),[4,5,6]);
+  const removeSecond=stage.installExtension(()=>({dispose:()=>calls.push('second')}));
+  assert.equal(stage.controls.enabled,true);assert.equal(stage.controls.enablePan,true);assert.equal(stage.motionEnabled,true);
+  removeFirst();assert.equal(calls.filter(x=>x==='first').length,1);assert(!calls.includes('second'));
+  removeSecond();removeSecond();assert.equal(calls.filter(x=>x==='second').length,1);
+  stage.disposed=true;assert.throws(()=>stage.installExtension(()=>({dispose(){}})),/disposed/);
+});
