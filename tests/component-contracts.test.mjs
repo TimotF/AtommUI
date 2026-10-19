@@ -239,3 +239,14 @@ test('free text preserves Unicode, empty drafts and spaces with associated error
   assert.match(html,state.disabled?/\bdisabled\b/:/\breadonly\b/);
  }
 });
+
+
+test('numeric inner accessories preserve the input and do not appear unless supplied',async()=>{
+ const props={id:'dimension',label:'Width',modelValue:'25',suffix:'mm'};
+ const ordinary=await render(h(AuNumericField,props));
+ const accessory=await render(h(AuNumericField,props,{'prepend-inner':()=>h(AuButton,{'aria-label':'Return to automatic'},()=> '↺')}));
+ assert.ok(!ordinary.includes('Return to automatic'));
+ assert.match(accessory,/<button[^>]*aria-label="Return to automatic"/);
+ assert.match(accessory.match(/<input[^>]*id="dimension"[^>]*>/)?.[0]??'',/value="25"/);
+ assert.ok(accessory.includes('v-field__prepend-inner'));
+});

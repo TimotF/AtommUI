@@ -51,6 +51,7 @@ function finish(restore: boolean) {
 }
 function escape(event: KeyboardEvent) { if (event.key === 'Escape' && gesture) { event.preventDefault(); event.stopPropagation(); finish(true); } }
 function key(event: KeyboardEvent) {
+  if (event.target instanceof Element && event.target.closest('button, a, [role="button"]')) return;
   escape(event);
   if (!event.shiftKey || !['ArrowUp', 'ArrowDown'].includes(event.key) || props.disabled || props.readOnly || !validStep.value || (event.target instanceof HTMLInputElement && (event.target.disabled || event.target.readOnly))) return;
   const delta = decimalStepDelta(event.key === 'ArrowUp' ? 1 : -1, props.step, event.altKey ? .1 : 10);
@@ -58,6 +59,8 @@ function key(event: KeyboardEvent) {
   if (value !== null) { event.preventDefault(); emit('update:modelValue', value); }
 }
 function down(event: PointerEvent) {
+  // Accessory actions must not begin a numeric drag gesture.
+  if (event.target instanceof Element && event.target.closest('button, a, [role="button"]')) return;
   const input = event.target instanceof Element ? event.target.closest('.au-numeric-control')?.querySelector<HTMLInputElement>('input') : null;
   if (!event.isPrimary || event.button !== 0 || !draggable.value || !input || input.disabled || input.readOnly) return;
   finish(false);
@@ -101,7 +104,7 @@ onBeforeUnmount(() => { finish(false); if (clickTimer !== undefined) clearTimeou
   <div class="au-field au-numeric" :class="{ 'au-is-draggable': draggable, 'au-is-dragging': dragging }">
     <div class="au-field-row field-row">
       <slot name="label"><AuHelp v-if="help" :label="helpLabel ?? label" :text="help" :help-key="id"><label :for="id">{{ label }}</label></AuHelp><label v-else :for="id">{{ label }}</label></slot>
-      <VTextField v-bind="$attrs" :id="id" class="au-numeric-control input-number" :model-value="displayValue" type="text" :inputmode="inputMode" autocomplete="off" :spellcheck="false" :aria-label="label" :aria-invalid="String(!!error)" :aria-describedby="`${id}-error`" :aria-keyshortcuts="readOnly || disabled ? undefined : 'Shift+ArrowUp Shift+ArrowDown'" :error="!!error" :disabled="disabled" :readonly="readOnly" :suffix="suffix" @update:model-value="update" @focus="focus" @blur="blur" @keydown="key" @pointerdown="down" @lostpointercapture="lost" @click.capture="click" />
+      <VTextField v-bind="$attrs" :id="id" class="au-numeric-control input-number" :model-value="displayValue" type="text" :inputmode="inputMode" autocomplete="off" :spellcheck="false" :aria-label="label" :aria-invalid="String(!!error)" :aria-describedby="`${id}-error`" :aria-keyshortcuts="readOnly || disabled ? undefined : 'Shift+ArrowUp Shift+ArrowDown'" :error="!!error" :disabled="disabled" :readonly="readOnly" :suffix="suffix" @update:model-value="update" @focus="focus" @blur="blur" @keydown="key" @pointerdown="down" @lostpointercapture="lost" @click.capture="click"><template v-if="$slots['prepend-inner']" #prepend-inner><slot name="prepend-inner" /></template></VTextField>
     </div>
     <p :id="`${id}-error`" class="au-field-error field-error" :hidden="!error" role="status">{{ error }}</p>
   </div>
