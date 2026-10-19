@@ -37,3 +37,17 @@ test('the display spring overshoots once and settles without depending on frame 
     assert(result.min<0,'one small overshoot'); assert(Math.abs(result.value)<.001); assert(Math.abs(result.velocity)<.005);
   }
 });
+
+test('world assemblies fit all bounding corners in wide and narrow viewports',async()=>{
+ const {assemblyFrame}=await import('../dist/three.js');const {Box3,Vector3,PerspectiveCamera}=await import('three');
+ for(const aspect of [.5,1,2.5])for(const bounds of [new Box3(new Vector3(-120,-90,-35),new Vector3(120,90,35)),new Box3(new Vector3(0,0,0),new Vector3(300,200,260))]){
+  const up=new Vector3(0,0,1),f=assemblyFrame(bounds,aspect,35,up,new Vector3(.7,-1,1.1));
+  const camera=new PerspectiveCamera(35,aspect,.01,f.distance*40);camera.up.copy(up);camera.position.copy(f.center).addScaledVector(f.direction,f.distance);camera.lookAt(f.center);camera.updateMatrixWorld();
+  for(const x of [bounds.min.x,bounds.max.x])for(const y of [bounds.min.y,bounds.max.y])for(const z of [bounds.min.z,bounds.max.z]){const p=new Vector3(x,y,z).project(camera);assert(Math.abs(p.x)<1&&Math.abs(p.y)<1&&p.z<1);}
+ }
+ assert.throws(()=>assemblyFrame(new Box3(),1,35,new Vector3(0,0,1),new Vector3(0,0,1)));
+});
+test('owned preview geometry retains holes, indices, groups and physical millimetre coordinates',async()=>{
+ const {geometryFromPreview}=await import('../dist/three.js');const data=previewMeshes({path:'M0 0H20V10H0Z M8 3V7H12V3Z',thickness:3})[0],geometry=geometryFromPreview(data);
+ assert.deepEqual(geometry.groups,data.groups);assert.deepEqual(geometry.getAttribute('position').array,data.position);geometry.computeBoundingBox();assert.deepEqual(geometry.boundingBox.min.toArray(),[0,0,-1.5]);assert.deepEqual(geometry.boundingBox.max.toArray(),[20,10,1.5]);geometry.dispose();
+});

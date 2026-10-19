@@ -1,5 +1,5 @@
 import { DOMParser as XmlDOMParser } from '@xmldom/xmldom';
-import { ExtrudeGeometry, ShapeGeometry, type BufferGeometry } from 'three';
+import { ExtrudeGeometry, ShapeGeometry, BufferGeometry, BufferAttribute } from 'three';
 import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
 
 export type PreviewMeshData = {
@@ -50,4 +50,11 @@ export function previewMeshes(outline: PreviewOutline): PreviewMeshData[] {
   const meshes = [pack(new ExtrudeGeometry(shapes(outline.path), { depth: outline.thickness, bevelEnabled: false, curveSegments: 96 }), false)];
   if (outline.engraving?.length) meshes.push(pack(new ShapeGeometry(outline.engraving.flatMap(shapes), 96), true));
   return meshes;
+}
+
+/** The caller owns and disposes this geometry; buffer coordinates and material groups are retained. */
+export function geometryFromPreview(data:PreviewMeshData):BufferGeometry {
+ const geometry=new BufferGeometry();
+ geometry.setAttribute('position',new BufferAttribute(data.position,3));geometry.setAttribute('normal',new BufferAttribute(data.normal,3));geometry.setAttribute('uv',new BufferAttribute(data.uv,2));
+ if(data.index)geometry.setIndex(new BufferAttribute(data.index,1));for(const group of data.groups)geometry.addGroup(group.start,group.count,group.materialIndex);return geometry;
 }

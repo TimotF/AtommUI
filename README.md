@@ -23,7 +23,7 @@ Le vérificateur de composants `vue-tsc` 3.3.12 utilise TypeScript 6.0.3 : son A
 
 ## Utiliser dans une application
 
-Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.10.0/timotf-atomm-ui-0.10.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
+Pour une nouvelle application, installer la version publiée avec `npm install https://github.com/TimotF/AtommUI/releases/download/v0.11.0/timotf-atomm-ui-0.11.0.tgz` et déclarer les versions compatibles de Vue et Vuetify. Cette première installation crée le lockfile qui épingle l’archive ; après avoir enregistré `package.json` et le lockfile, utiliser `npm ci` pour les installations suivantes. Dédupliquer `vue` et `vuetify` dans le bundler pour partager une seule instance.
 
 ```ts
 import { createApp } from 'vue';
@@ -219,3 +219,11 @@ Le guide utilise les couches 2 et 3, sans animation pulsée permanente. Les appl
 `PreviewStage.setOverlay(object: THREE.Object3D | null)` attache un objet ou un groupe propre au consommateur, dans le même espace SVG (millimètres, origine en haut à gauche, Y vers le bas, Z centré dans l’épaisseur). La couche suit le centrage et le mouvement du modèle et reste attachée lors de `setContent()`. Elle permet des accessoires et diagnostics visuels sans inclure leur calcul dans AtommUI.
 
 Le consommateur possède ces objets et leurs ressources : appeler `setOverlay(null)` avant de remplacer ou libérer ses géométries, matériaux et textures. `dispose()` du stage les détache sans les détruire. Ne jamais y placer de contrôles de caméra, de source d’éclairage ou d’élément d’export. Sans appel à cette méthode, le comportement de 0.9.0 est conservé.
+
+## Assemblages interactifs (0.11.0)
+
+`PreviewStage` accepte un quatrième argument facultatif `{up, direction, onFrame}`. Les vecteurs définissent le repère de caméra ; `onFrame` permet de mettre à jour une annotation pendant le mouvement du rig. Le consommateur peut limiter la fréquence de ce callback.
+
+`setAssembly(object, bounds)` reçoit un `THREE.Object3D` et une `THREE.Box3` dans le même espace monde. Le cadrage initial tient compte de la perspective et du conteneur ; les appels suivants conservent la caméra, le pan et le rig. Des bornes comprenant la course d’ouverture permettent de réserver cet espace au cadrage. Le consommateur reste responsable des objets et de leur libération ; `setOverlay(null)` les détache avant remplacement ou démontage. `setAssembly` détache tout overlay précédent, et `setContent` revient au mode SVG.
+
+`project(point, relativeTo?)` donne les pixels relatifs au host et la profondeur normalisée ; `relativeTo` suit aussi les transformations du rig. `raycast(clientX,clientY,objects,recursive?)` retourne les intersections Three.js. La sélection et la signification de chaque pièce appartiennent à l’application. `materials.face` et `materials.edge` peuvent être référencés par les pièces sans être détruits par le consommateur. `geometryFromPreview(data)` crée en revanche une géométrie appartenant au consommateur. `assemblyFrame` expose le calcul de cadrage, utilisable sans contexte WebGL. Les usages SVG existants gardent leurs valeurs par défaut.

@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import type { PreviewMeshData } from './geometry.js';
+import {geometryFromPreview,type PreviewMeshData} from './geometry.js';
+import {assemblyFrame} from './assembly.js';
 
+export type PreviewStageOptions = {up?:[number,number,number];direction?:[number,number,number];onFrame?:()=>void};
 export type PreviewSize = { width: number; height: number; thickness: number };
 export type PreviewAppearance = { material: string; color: string };
 export type PreviewDiagnostics = {
@@ -33,6 +35,9 @@ export class PreviewStage {
   private observer: ResizeObserver;
   private motion = matchMedia('(prefers-reduced-motion: reduce)');
   private dimensions?: PreviewSize;
+  private assemblyBounds?: THREE.Box3;
+  private framingCenter = new THREE.Vector3();
+  private raycaster = new THREE.Raycaster();
   private fitDistance = 0;
   private viewport = '';
   private active = true;
@@ -54,7 +59,8 @@ export class PreviewStage {
   private ready = false;
   private diagnosticsTimer: ReturnType<typeof setInterval>;
 
-  constructor(private host: HTMLElement, private onZoom: (percent: number) => void, private onLimits?: (limits: { min: number; max: number }) => void) {
+  constructor(private host: HTMLElement, private onZoom: (percent: number) => void, private onLimits?: (limits: { min: number; max: number }) => void, private options:PreviewStageOptions = {}) {
+    if(options.up)this.camera.up.fromArray(options.up).normalize();
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     this.renderer.setClearColor('#f1f2f4');
@@ -92,7 +98,7 @@ export class PreviewStage {
       this.renderer.setSize(width, height);
       this.camera.aspect = width / height; this.camera.updateProjectionMatrix();
       this.updateBounds();
-      if (!this.ready && this.dimensions) this.fit();
+      if (!this.ready && (this.dimensions || this.assemblyBounds)) this.fit();
       else if (this.ready) this.setZoom(percent);
       this.publishDiagnostics();
     });
@@ -124,14 +130,12 @@ export class PreviewStage {
 
   setContent(meshes: readonly PreviewMeshData[], size: PreviewSize) {
     if (![size.width, size.height, size.thickness].every(x => Number.isFinite(x) && x > 0)) return;
+    if(this.assemblyBounds)this.overlay.clear();
+    this.assemblyBounds=undefined;
+    this.content.scale.y=this.overlay.scale.y=-1;
     this.clear(); this.dimensions = { ...size }; this.rebuilds++;
     for (const data of meshes) {
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute('position', new THREE.BufferAttribute(data.position, 3));
-      geometry.setAttribute('normal', new THREE.BufferAttribute(data.normal, 3));
-      geometry.setAttribute('uv', new THREE.BufferAttribute(data.uv, 2));
-      if (data.index) geometry.setIndex(new THREE.BufferAttribute(data.index, 1));
-      for (const group of data.groups) geometry.addGroup(group.start, group.count, group.materialIndex);
+      const geometry = geometryFromPreview(data);
       this.content.add(new THREE.Mesh(geometry, data.engraved ? this.engraving : [this.face, this.edge]));
     }
     this.content.position.set(-size.width / 2, size.height / 2, 0);
@@ -148,8 +152,39 @@ export class PreviewStage {
     if (object) this.overlay.add(object);
   }
 
+  /** Consumer-owned world-space assembly. Only its reference/bounds change; camera and rig persist. */
+  setAssembly(object:THREE.Object3D,bounds:THREE.Box3){
+    assemblyFrame(bounds,this.camera.aspect,this.camera.fov,this.camera.up,new THREE.Vector3(...(this.options.direction??[.12,.13,1])));
+    this.clear();this.dimensions=undefined;this.assemblyBounds=bounds.clone();this.rebuilds++;
+    this.overlay.clear();this.overlay.scale.set(1,1,1);this.overlay.position.set(0,0,0);this.overlay.add(object);
+    if(!this.ready&&this.viewport)this.fit();this.publishDiagnostics();
+  }
+  /** Shared appearance materials may be referenced by consumer meshes, never disposed by them. */
+  get materials(){return {face:this.face,edge:this.edge} as const;}
+  project(point:THREE.Vector3,relativeTo?:THREE.Object3D){
+    if(!this.ready)return undefined;
+    this.scene.updateMatrixWorld(true);this.camera.updateMatrixWorld();
+    const p=point.clone();if(relativeTo)p.applyMatrix4(relativeTo.matrixWorld);p.project(this.camera);
+    const rect=this.host.getBoundingClientRect();return {x:(p.x+1)*rect.width/2,y:(1-p.y)*rect.height/2,depth:p.z};
+  }
+  raycast(clientX:number,clientY:number,objects:THREE.Object3D[],recursive=false){
+    if(!this.ready)return [];
+    const rect=this.renderer.domElement.getBoundingClientRect();if(!rect.width||!rect.height)return [];
+    this.scene.updateMatrixWorld(true);this.camera.updateMatrixWorld();
+    this.raycaster.setFromCamera(new THREE.Vector2((clientX-rect.left)/rect.width*2-1,1-(clientY-rect.top)/rect.height*2),this.camera);
+    return this.raycaster.intersectObjects(objects,recursive);
+  }
+
   private updateBounds() {
+    if(this.assemblyBounds){
+      const frame=assemblyFrame(this.assemblyBounds,this.camera.aspect,this.camera.fov,this.camera.up,new THREE.Vector3(...(this.options.direction??[.12,.13,1])));
+      this.framingCenter.copy(frame.center);this.fitDistance=frame.distance;
+      this.camera.near=Math.max(.01,frame.radius/1000);this.camera.far=this.fitDistance*40;this.camera.updateProjectionMatrix();
+      this.controls.minDistance=frame.radius*1.2;this.controls.maxDistance=Math.max(frame.radius*8,this.fitDistance*2);
+      this.onLimits?.({min:Math.ceil(this.fitDistance/this.controls.maxDistance*100),max:Math.floor(this.fitDistance/this.controls.minDistance*100)});return;
+    }
     if (!this.dimensions) return;
+    this.framingCenter.set(0,0,0);
     const s = this.dimensions, radius = Math.hypot(s.width, s.height, s.thickness) / 2;
     const vertical = THREE.MathUtils.degToRad(this.camera.fov) / 2;
     const angle = Math.min(vertical, Math.atan(Math.tan(vertical) * this.camera.aspect));
@@ -161,10 +196,10 @@ export class PreviewStage {
   }
 
   fit() {
-    if (!this.dimensions || !this.viewport) return;
+    if ((!this.dimensions&&!this.assemblyBounds) || !this.viewport) return;
     this.updateBounds();
-    this.controls.target.set(0, 0, 0);
-    this.camera.position.set(.12, .13, 1).normalize().multiplyScalar(this.fitDistance);
+    this.controls.target.copy(this.framingCenter);
+    this.camera.position.fromArray(this.options.direction??[.12,.13,1]).normalize().multiplyScalar(this.fitDistance).add(this.framingCenter);
     this.controls.update(); this.ready = true; this.reportZoom(); this.publishDiagnostics();
   }
 
@@ -210,7 +245,7 @@ export class PreviewStage {
       this.springX = x.value; this.velocityX = x.velocity; this.springY = y.value; this.velocityY = y.velocity;
       this.rig.rotation.set(this.springX + Math.sin(this.time * .61) * .004, this.springY + Math.sin(this.time * .83) * .005, 0);
     }
-    this.controls.update(); this.renderer.render(this.scene, this.camera); this.renders++;
+    this.controls.update(); this.renderer.render(this.scene, this.camera); this.renders++;this.options.onFrame?.();
   };
 
   diagnostics(): PreviewDiagnostics {
