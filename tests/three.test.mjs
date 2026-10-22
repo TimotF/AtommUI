@@ -93,7 +93,7 @@ test('photographic maps retain physical scale, separate colour/data spaces and r
   assert.equal(pine.color.colorSpace,SRGBColorSpace);
   assert.equal(pine.normal.colorSpace,NoColorSpace);assert.equal(pine.roughness.colorSpace,NoColorSpace);
   for(const texture of [pine.color,pine.normal,pine.roughness]){
-   assert.equal(texture.repeat.x,1/180);assert.equal(texture.repeat.y,1/180);
+   assert.equal(texture.repeat.x,1/90);assert.equal(texture.repeat.y,1/90);
    assert.equal(texture.offset.x,.15);assert.equal(texture.offset.y,.2);assert.equal(texture.anisotropy,16);
   }
   requests.forEach(request=>request.onLoad());assert.equal(await pine.ready,true);

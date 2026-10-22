@@ -7,8 +7,8 @@
       196,
       148
     ],
-    "tileMm": 180,
-    "contrast": 0.75,
+    "tileMm": 90,
+    "contrast": 0.45,
     "maps": {
       "Diffuse": {
         "filename": "plywood-Diffuse.jpg",
@@ -31,7 +31,7 @@
     }
   },
   "walnut": {
-    "source": "https://polyhaven.com/a/black_walnut_veneer_01",
+    "source": "https://polyhaven.com/a/walnut_veneer_02",
     "license": "CC0-1.0",
     "previewMeanRgb": [
       119,
@@ -39,25 +39,25 @@
       65
     ],
     "tileMm": 180,
-    "contrast": 1.1,
+    "contrast": 0.7,
     "maps": {
       "Diffuse": {
-        "filename": "black_walnut_veneer_01-Diffuse.jpg",
-        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/black_walnut_veneer_01/black_walnut_veneer_01_diff_4k.jpg",
-        "md5": "53218c6071a6c7328c6906b4db1c0840",
-        "size": 9812423
+        "filename": "walnut_veneer_02-Diffuse.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/walnut_veneer_02/walnut_veneer_02_diff_4k.jpg",
+        "md5": "9294085775080be7c3467837bc2f60d2",
+        "size": 9631919
       },
       "nor_gl": {
-        "filename": "black_walnut_veneer_01-nor_gl.jpg",
-        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/black_walnut_veneer_01/black_walnut_veneer_01_nor_gl_2k.jpg",
-        "md5": "a1f0b0e1e0988cf2ebc9b62b7a9c3603",
-        "size": 1897687
+        "filename": "walnut_veneer_02-nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer_02/walnut_veneer_02_nor_gl_2k.jpg",
+        "md5": "8e8cc0500f7b1a9ae03942b87eb52438",
+        "size": 1759588
       },
       "Rough": {
-        "filename": "black_walnut_veneer_01-Rough.jpg",
-        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/black_walnut_veneer_01/black_walnut_veneer_01_rough_2k.jpg",
-        "md5": "4e59273813751a0becc93cba9706bed7",
-        "size": 3012578
+        "filename": "walnut_veneer_02-Rough.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/walnut_veneer_02/walnut_veneer_02_rough_2k.jpg",
+        "md5": "ed2c75c283b26c5ed003fd0050df07df",
+        "size": 3083152
       }
     }
   }

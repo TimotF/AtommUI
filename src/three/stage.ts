@@ -210,7 +210,7 @@ export class PreviewStage {
       // A late image decode must not replace a newer material or revive a disposed stage.
       if (!ready || this.disposed || revision !== this.appearanceRevision) return;
       this.face.color.set('#ffffff'); this.face.map = maps.color;
-      this.face.normalMap = maps.normal; this.face.normalScale.set(.08, .08);
+      this.face.normalMap = maps.normal; this.face.normalScale.set(surface.normalScale, surface.normalScale);
       this.face.roughnessMap = maps.roughness; this.face.needsUpdate = true;
     });
   }

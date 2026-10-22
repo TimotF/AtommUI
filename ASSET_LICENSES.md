@@ -5,8 +5,8 @@ assets, licensed CC0 1.0 and free to use and redistribute, including commerciall
 
 - **Plywood** — Rob Tuytel.
   https://polyhaven.com/a/plywood
-- **Black Walnut Veneer 01** — Jenelle van Heerden.
-  https://polyhaven.com/a/black_walnut_veneer_01
+- **Walnut Veneer 02** — Jenelle van Heerden.
+  https://polyhaven.com/a/walnut_veneer_02
 
 License: https://polyhaven.com/license
 CC0 text: https://creativecommons.org/publicdomain/zero/1.0/legalcode
@@ -20,7 +20,7 @@ WebP encoding and tone-adjusted for golden light plywood and walnut veneer. Orig
 Roughness is remapped to a matte finish. These are artistic preview finishes,
 not calibrated representations of a purchased sheet or fabrication presets.
 256px JPEG thumbnails come from the same prepared colour photographs.
-The grain uses a fixed 180mm tile; it does not stretch with part dimensions.
+The grain uses a fixed 90mm tile for light plywood and a 180mm tile for walnut; it does not stretch with part dimensions.
 
 Source URLs and original hashes: src/assets/materials/sources.json in the source
 repository. Reproduction: scripts/prepare-material-textures.py with a directory
