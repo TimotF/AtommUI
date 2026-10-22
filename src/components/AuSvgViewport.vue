@@ -29,7 +29,13 @@ function fit(){center.value={x:canvas.value.x+canvas.value.width/2,y:canvas.valu
 function setZoom(percent:number,anchor?:{x:number;y:number}){if(!Number.isFinite(percent))return;const next=Math.max(.1,Math.min(40,percent/100));if(anchor){const before=pixelsPerMm.value,world={x:viewport.value.x+anchor.x/before,y:viewport.value.y+anchor.y/before},after=fittedPixelsPerMm.value*next;center.value={x:world.x-(anchor.x-plotWidth.value/2)/after,y:world.y-(anchor.y-plotHeight.value/2)/after};}scale.value=next;emit('zoomchange',Math.round(next*100));}
 /** factor < 1 zooms in, matching the reference generator. */
 function zoom(factor:number){if(Number.isFinite(factor)&&factor>0)setZoom(scale.value*100/factor);}
-function wheel(event:WheelEvent){const rect=mount.value?.getBoundingClientRect();if(!rect)return;setZoom(scale.value*100/Math.exp(Math.max(-500,Math.min(500,event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?plotHeight.value:1)))*.0015),{x:event.clientX-rect.left-rulerWidth,y:event.clientY-rect.top-rulerHeight});}
+function wheel(event:WheelEvent){
+ const rect=mount.value?.getBoundingClientRect();if(!rect)return;
+ // Trackpad pinch arrives as Ctrl+wheel with small deltas. Match the 3D
+ // preview's tenfold pinch gain without changing ordinary wheel scrolling.
+ const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?plotHeight.value:1)*(event.ctrlKey?10:1);
+ setZoom(scale.value*100/Math.exp(Math.max(-500,Math.min(500,delta))*.0015),{x:event.clientX-rect.left-rulerWidth,y:event.clientY-rect.top-rulerHeight});
+}
 function pointerDown(event:PointerEvent){if(down||!event.isPrimary||event.button!==0&&event.button!==1)return;mount.value?.focus({preventScroll:true});down={x:event.clientX,y:event.clientY,center:{...center.value},pixelsPerMm:pixelsPerMm.value,pointerId:event.pointerId,target:event.target instanceof Element?event.target:null,moved:false};mount.value?.setPointerCapture(event.pointerId);}
 function pointerMove(event:PointerEvent){if(!down||down.pointerId!==event.pointerId)return;const dx=event.clientX-down.x,dy=event.clientY-down.y;if(Math.hypot(dx,dy)>5)down.moved=true;if(!down.moved)return;dragging.value=true;center.value={x:down.center.x-dx/down.pixelsPerMm,y:down.center.y-dy/down.pixelsPerMm};}
 function pointerUp(event:PointerEvent){if(!down||down.pointerId!==event.pointerId)return;down=null;dragging.value=false;if(mount.value?.hasPointerCapture(event.pointerId))mount.value.releasePointerCapture(event.pointerId);}
@@ -59,7 +65,7 @@ defineExpose({zoom,fit,setZoom});
 </template>
 
 <style scoped>
-.au-svg-viewport{position:relative;width:100%;height:100%;min-height:120px;overflow:hidden;outline:none;touch-action:none;background:#f5f6f7;user-select:none;cursor:grab;border:1px solid #dfe2e5;border-radius:5px}.au-svg-viewport.dragging{cursor:grabbing}.au-svg-viewport:focus-visible{outline:2px solid var(--color-stroke-active);outline-offset:-2px}
+.au-svg-viewport{position:relative;width:100%;height:100%;min-height:120px;overflow:hidden;outline:none;touch-action:none;background:#f5f6f7;user-select:none;cursor:grab;border:1px solid #dfe2e5;border-radius:5px}.au-svg-viewport.dragging{cursor:grabbing}
 .au-svg-viewport-plot{position:absolute;inset:24px 0 0 40px;overflow:hidden}.au-svg-viewport-grid,.au-svg-viewport-pieces{position:absolute;inset:0;width:100%;height:100%;display:block}.au-svg-viewport-grid{pointer-events:none}.au-svg-viewport-grid line{vector-effect:non-scaling-stroke;stroke-width:1px}.grid-minor{stroke:#e9ebed}.grid-major{stroke:#dce0e4}
 .au-svg-content{fill:none;stroke:#FE0002;stroke-width:.85px}.au-svg-content :deep(path),.au-svg-content :deep(circle),.au-svg-content :deep(rect),.au-svg-content :deep(line),.au-svg-content :deep(polyline),.au-svg-content :deep(polygon),.au-svg-content :deep(ellipse){vector-effect:non-scaling-stroke}
 .au-svg-viewport-ruler{position:absolute;display:block;background:#f8f9fa;pointer-events:none}.ruler-x{top:0;left:40px;width:calc(100% - 40px);height:24px;border-bottom:1px solid #cdd2d7}.ruler-y{top:24px;left:0;height:calc(100% - 24px);width:40px;border-right:1px solid #cdd2d7}.au-svg-viewport-ruler line{stroke:#929aa3;stroke-width:1px}.au-svg-viewport-ruler text{font:10px system-ui,sans-serif;fill:#626b74;font-variant-numeric:tabular-nums}.au-svg-viewport-unit{position:absolute;left:0;top:0;width:40px;height:24px;display:grid;place-items:center;background:#f8f9fa;color:#626b74;font-size:9px;border-right:1px solid #cdd2d7;border-bottom:1px solid #cdd2d7;pointer-events:none}
