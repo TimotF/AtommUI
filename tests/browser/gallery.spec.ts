@@ -117,3 +117,18 @@ for (const width of [1280,960,885,600]) test(`layout ${width}px and RTL fit the 
   await page.screenshot({path:`test-results/gallery-${width}-rtl.png`});
   await page.locator('#gallery-number').fill(''); await expect(page.locator('#gallery-action')).toBeDisabled();
 });
+
+
+test('shared dialog traps focus, closes with Escape and returns to its trigger', async ({page}) => {
+ await page.goto('/');
+ const trigger=page.locator('#gallery-dialog-open');
+ await trigger.focus();await trigger.press('Enter');
+ const dialog=page.getByRole('dialog',{name:'Reprendre votre travail ?'});
+ await expect(dialog).toBeVisible();
+ await expect(dialog).toHaveAttribute('aria-modal','true');
+ await page.keyboard.press('Tab');await expect(page.locator('#gallery-dialog-new')).toBeFocused();
+ await page.keyboard.press('Tab');await expect(page.locator('#gallery-dialog-resume')).toBeFocused();
+ await page.keyboard.press('Tab');await expect(page.locator('#gallery-dialog-new')).toBeFocused();
+ await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();await expect(trigger).toBeFocused();
+ await trigger.press('Enter');await page.locator('#gallery-dialog-resume').click();await expect(dialog).not.toBeVisible();
+});

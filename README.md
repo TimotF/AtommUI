@@ -279,3 +279,23 @@ métier de matériaux physiques peut rester un contrôle distinct.
 L’extension fournit `dispose()` et, facultativement, `beforeRender()`, `resize(width,height,pixelRatio)` et `render(renderer,scene,camera)` pour une passe visuelle comme l’occlusion. La passe doit restaurer les états du renderer qu’elle modifie. Elle reçoit exclusivement le renderer du stage ; aucun renderer supplémentaire n’est nécessaire. `prepare()` doit recevoir une fonction de validité qui devient fausse lors de l’abandon du calcul.
 
 Une seule extension est active par stage : le remplacement et le démontage libèrent l’ancienne, rétablissent la navigation et détachent ses outils via `dispose()`. Le dispose retourné est idempotent et ne libère pas une extension installée ensuite. Les contrôles partagés, les matériaux et les assemblages existants restent compatibles.
+
+## Dialogue partagé (0.15.0)
+
+`AuDialog` fournit la fenêtre modale et reprend le profil compact de `AuRoot`.
+`v-model` contrôle l’ouverture, `title` donne le nom accessible et `text` la description
+facultative. Les slots par défaut et `actions` acceptent du contenu et des boutons
+`AuButton` traduits par le consommateur. `maxWidth` vaut 420 px. `persistent` vaut
+`false` : Échap et le fond ferment la fenêtre. Le consommateur décide du sens d’une
+fermeture et des choix ; aucune donnée n’est écrite par le composant.
+La fenêtre maintient le focus à l’intérieur et le rend au déclencheur à la fermeture
+via `VDialog`. Pour un choix obligatoire, utiliser `persistent` et fournir des actions.
+
+```vue
+<AuDialog v-model="open" :title="t('resumeTitle')" :text="t('resumeText')">
+ <template #actions>
+  <AuButton @click="startNew">{{t('newProject')}}</AuButton>
+  <AuButton primary @click="resume">{{t('resume')}}</AuButton>
+ </template>
+</AuDialog>
+```

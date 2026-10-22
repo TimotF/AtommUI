@@ -46,3 +46,4 @@ export { positionOnboarding } from './onboarding-position.js';
 export type { OnboardingRect, OnboardingSide } from './onboarding-position.js';
 export { default as AuMaterialThumbnail } from './components/AuMaterialThumbnail.vue';
 export { default as AuMaterialPicker } from './components/AuMaterialPicker.vue';
+export { default as AuDialog } from './components/AuDialog.vue';
