@@ -15,7 +15,7 @@ The original assets are available free of charge from Poly Haven. The AtommUI
 library's MIT license does not replace the CC0 status of those images.
 
 Processing: 4K colour photographs are downsampled to 2048px with high-quality
-WebP encoding and tone-adjusted for light plywood and walnut veneer. Original
+WebP encoding and tone-adjusted for golden light plywood and walnut veneer. Original
 2K normal and roughness maps are resized to 1024px and JPEG-encoded.
 Roughness is remapped to a matte finish. These are artistic preview finishes,
 not calibrated representations of a purchased sheet or fabrication presets.
