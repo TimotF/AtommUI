@@ -4,7 +4,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import {geometryFromPreview,type PreviewMeshData} from './geometry.js';
 import {assemblyFrame} from './assembly.js';
 import {materialSurfaces} from '../material-surfaces.js';
-import {PreviewMaterialLibrary} from './materials.js';
+import {PreviewMaterialLibrary,plywoodEdgeTexture} from './materials.js';
 
 /** Scoped access for display tools. The stage owns camera, renderer and navigation.
  * Extensions own only the objects/resources they add; dispose them in dispose(). */
@@ -51,6 +51,7 @@ export class PreviewStage {
   private overlay = new THREE.Group();
   private environment: THREE.WebGLRenderTarget;
   private materialLibrary: PreviewMaterialLibrary;
+  private edgeTexture = plywoodEdgeTexture();
   private appearanceRevision = 0;
   private face = new THREE.MeshStandardMaterial({ roughness: .8 });
   private edge = new THREE.MeshStandardMaterial({ color: '#66533b', roughness: .95 });
@@ -200,14 +201,16 @@ export class PreviewStage {
     this.face.color.set(solid ? appearance.color : surface.fallback);
     this.face.map = this.face.bumpMap = this.face.normalMap = this.face.roughnessMap = null;
     this.face.roughness = solid ? .45 : .95; this.face.needsUpdate = true;
-    this.edge.color.set(solid ? appearance.color : surface.edge).multiplyScalar(solid ? .7 : 1);
+    this.edge.map = solid ? null : this.edgeTexture;
+    this.edge.color.set(solid ? appearance.color : '#ffffff').multiplyScalar(solid ? .7 : 1);
+    this.edge.needsUpdate = true;
     if (solid) return;
     const maps = this.materialLibrary.get(kind);
     void maps.ready.then(ready => {
       // A late image decode must not replace a newer material or revive a disposed stage.
       if (!ready || this.disposed || revision !== this.appearanceRevision) return;
       this.face.color.set('#ffffff'); this.face.map = maps.color;
-      this.face.normalMap = maps.normal; this.face.normalScale.set(.2, .2);
+      this.face.normalMap = maps.normal; this.face.normalScale.set(.08, .08);
       this.face.roughnessMap = maps.roughness; this.face.needsUpdate = true;
     });
   }
@@ -355,7 +358,7 @@ export class PreviewStage {
     this.host.removeEventListener('pointerdown', this.pointerDown); this.host.removeEventListener('pointermove', this.pointerMove);
     this.host.removeEventListener('pointerup', this.pointerUp); this.host.removeEventListener('pointercancel', this.pointerUp);
     this.host.removeEventListener('lostpointercapture', this.pointerUp);
-    this.overlay.clear(); this.clear(); this.face.dispose(); this.edge.dispose(); this.engraving.dispose(); this.materialLibrary.dispose(); this.environment.dispose();
+    this.overlay.clear(); this.clear(); this.face.dispose(); this.edge.dispose(); this.edgeTexture.dispose(); this.engraving.dispose(); this.materialLibrary.dispose(); this.environment.dispose();
     this.renderer.dispose(); this.renderer.forceContextLoss(); this.renderer.domElement.remove(); delete this.host.dataset.previewDiagnostics;
   }
 }

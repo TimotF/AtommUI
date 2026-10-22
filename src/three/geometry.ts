@@ -40,7 +40,12 @@ export function previewMeshes(outline: PreviewOutline): PreviewMeshData[] {
     const position = new Float32Array(geometry.getAttribute('position').array);
     const uv = new Float32Array(position.length / 3 * 2);
     // World-space UVs in mm; the material catalog sets the physical tile size.
-    for (let i = 0; i < position.length / 3; i++) { uv[2 * i] = position[3 * i]; uv[2 * i + 1] = position[3 * i + 1]; }
+    const normals = geometry.getAttribute('normal');
+    for (let i = 0; i < position.length / 3; i++) {
+      uv[2 * i] = position[3 * i];
+      // Extruded sides sample the plywood layers along thickness, including hole walls.
+      uv[2 * i + 1] = Math.abs(normals.getZ(i)) < .5 ? position[3 * i + 2] : position[3 * i + 1];
+    }
     const data = { position, normal: new Float32Array(geometry.getAttribute('normal').array), uv,
       index: geometry.index ? new Uint32Array(geometry.index.array) : null,
       groups: geometry.groups.map(group => ({ ...group })), engraved };

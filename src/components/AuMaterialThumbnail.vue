@@ -6,6 +6,6 @@ withDefaults(defineProps<{ material: UiMaterialKind; color?: string }>(), { colo
 <template>
   <svg class="au-material-thumbnail" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
     <rect width="80" height="80" :fill="material === 'solid' ? safeHexColor(color, '#9ac8bb') : materialSurfaces[material === 'walnut' ? 'walnut' : 'pine'].fallback"/>
-    <image v-if="material !== 'solid'" :href="materialSurfaces[material === 'walnut' ? 'walnut' : 'pine'].color" width="80" height="80" preserveAspectRatio="xMidYMid slice"/>
+    <image v-if="material !== 'solid'" :href="materialSurfaces[material === 'walnut' ? 'walnut' : 'pine'].thumbnail" width="80" height="80" preserveAspectRatio="xMidYMid slice"/>
   </svg>
 </template>
