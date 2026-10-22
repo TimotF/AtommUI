@@ -46,9 +46,9 @@ export class PreviewMaterialLibrary {
   }
 }
 
-/** Display-only cross-section: one glue line per millimetre, independent of face UVs. */
+/** Display-only laser-charred cross-section, with faint plies independent of face UVs. */
 export function plywoodEdgeTexture() {
-  const colors = [[108,77,43],[184,146,96],[211,178,128],[221,191,146],[216,185,138],[207,174,126],[198,162,113],[188,150,100]];
+  const colors = [[10,8,6],[22,16,12],[35,25,17],[43,31,21],[39,28,19],[32,23,16],[26,19,13],[20,15,11]];
   const data = new Uint8Array(colors.flatMap(color => [...color,255]));
   const texture = new DataTexture(data,1,colors.length);
   texture.colorSpace = SRGBColorSpace;
