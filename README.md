@@ -208,7 +208,7 @@ L’entrée `@timotf/atomm-ui/three` exporte `PreviewStage`, `previewMeshes`, `P
 
 Créer `new PreviewStage(host, onZoom, onLimits?)`, appeler `setContent(meshes,{width,height,thickness})`, `setAppearance({material,color})`, `setActive(active)`, puis `dispose()` au démontage. Les commandes sont `zoom(factor)`, `setZoom(percent)` et `fit()`. Le callback de limites fournit les pourcentages réellement accessibles par la caméra. Le host porte la classe `au-three-viewport`, un nom accessible, le focus clavier et les raccourcis fournis par l’application.
 
-Le contenu est centré dans un groupe avec une seule inversion Y ; un rig parent conserve le léger mouvement et le ressort à travers les reconstructions. La caméra et le pan ne sont pas réinitialisés lors d’un changement de paramètres. Le rendu utilise RoomEnvironment/PMREM, ACES, des faces et chants distincts et une texture physique de 45 mm réutilisée. Les dimensions nulles sont ignorées ; les réapparitions et redimensionnements conservent l’état. Les ressources de chaque reconstruction sont libérées séparément des ressources partagées, libérées au démontage. `prefers-reduced-motion` désactive les mouvements et l’inertie.
+Le contenu est centré dans un groupe avec une seule inversion Y ; un rig parent conserve le léger mouvement et le ressort à travers les reconstructions. La caméra et le pan ne sont pas réinitialisés lors d’un changement de paramètres. Le rendu utilise RoomEnvironment/PMREM, ACES, des faces et chants distincts et des textures photographiques CC0 propres au pin et au noyer, partagées avec leurs vignettes (tuile d’aperçu de 450 mm), avec des cartes de normale et de rugosité séparées. Les dimensions nulles sont ignorées ; les réapparitions et redimensionnements conservent l’état. Les ressources de chaque reconstruction sont libérées séparément des ressources partagées, libérées au démontage. `prefers-reduced-motion` désactive les mouvements et l’inertie.
 
 `data-preview-diagnostics` expose uniquement les compteurs de rendu et de ressources, la caméra et le zoom pour les contrôles navigateur. Aucun paramètre métier ni texte utilisateur n’y est stocké. Le consommateur temporise les reconstructions sur 100–200 ms et conserve ses validations et exports.
 
@@ -299,3 +299,5 @@ via `VDialog`. Pour un choix obligatoire, utiliser `persistent` et fournir des a
  </template>
 </AuDialog>
 ```
+
+Les textures de cet essai sont embarquées dans le package et chargées à la demande, sans requête externe. Une teinte de secours reste visible si le décodage échoue. Les changements rapides de matériau et le démontage ignorent les décodages devenus obsolètes ; les textures restent partagées entre les reconstructions et sont libérées avec la scène. Voir [les sources et licences](ASSET_LICENSES.md).

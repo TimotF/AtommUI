@@ -1,0 +1,64 @@
+{
+  "pine": {
+    "source": "https://polyhaven.com/a/coated_pine",
+    "license": "CC0-1.0",
+    "previewMeanRgb": [
+      209,
+      185,
+      143
+    ],
+    "tileMm": 450,
+    "maps": {
+      "Diffuse": {
+        "filename": "coated_pine-Diffuse.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coated_pine/coated_pine_diff_1k.jpg",
+        "md5": "9a7ae992985ad56fd22ed26196a9b405",
+        "size": 710600
+      },
+      "nor_gl": {
+        "filename": "coated_pine-nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coated_pine/coated_pine_nor_gl_1k.jpg",
+        "md5": "2148b0edde5af6b16fbd08a9724feafc",
+        "size": 443383
+      },
+      "Rough": {
+        "filename": "coated_pine-Rough.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coated_pine/coated_pine_rough_1k.jpg",
+        "md5": "0ce8476bf398e47b0655648b3d38d4ae",
+        "size": 491513
+      }
+    },
+    "contrast": 0.5
+  },
+  "walnut": {
+    "source": "https://polyhaven.com/a/black_walnut_veneer_01",
+    "license": "CC0-1.0",
+    "previewMeanRgb": [
+      119,
+      87,
+      65
+    ],
+    "tileMm": 450,
+    "maps": {
+      "Diffuse": {
+        "filename": "black_walnut_veneer_01-Diffuse.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/black_walnut_veneer_01/black_walnut_veneer_01_diff_1k.jpg",
+        "md5": "ab8f92fde28797a8cb68f53e77249e62",
+        "size": 592588
+      },
+      "nor_gl": {
+        "filename": "black_walnut_veneer_01-nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/black_walnut_veneer_01/black_walnut_veneer_01_nor_gl_1k.jpg",
+        "md5": "d69b5e919068c013ec1a4d4aa8ef52b7",
+        "size": 403301
+      },
+      "Rough": {
+        "filename": "black_walnut_veneer_01-Rough.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/black_walnut_veneer_01/black_walnut_veneer_01_rough_1k.jpg",
+        "md5": "3c70a389d27c4799a3b6df9a4e5cb104",
+        "size": 724300
+      }
+    },
+    "contrast": 1.4
+  }
+}

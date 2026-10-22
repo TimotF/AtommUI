@@ -39,7 +39,7 @@ export function previewMeshes(outline: PreviewOutline): PreviewMeshData[] {
     geometry.translate(0, 0, engraved ? outline.thickness / 2 + .05 : -outline.thickness / 2);
     const position = new Float32Array(geometry.getAttribute('position').array);
     const uv = new Float32Array(position.length / 3 * 2);
-    // World-space UVs: one texture tile is 45 mm, independent of the part's size.
+    // World-space UVs in mm; the material catalog sets the physical tile size.
     for (let i = 0; i < position.length / 3; i++) { uv[2 * i] = position[3 * i]; uv[2 * i + 1] = position[3 * i + 1]; }
     const data = { position, normal: new Float32Array(geometry.getAttribute('normal').array), uv,
       index: geometry.index ? new Uint32Array(geometry.index.array) : null,

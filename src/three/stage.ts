@@ -3,6 +3,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import {geometryFromPreview,type PreviewMeshData} from './geometry.js';
 import {assemblyFrame} from './assembly.js';
+import {materialSurfaces} from '../material-surfaces.js';
+import {PreviewMaterialLibrary} from './materials.js';
 
 /** Scoped access for display tools. The stage owns camera, renderer and navigation.
  * Extensions own only the objects/resources they add; dispose them in dispose(). */
@@ -48,7 +50,8 @@ export class PreviewStage {
   private content = new THREE.Group();
   private overlay = new THREE.Group();
   private environment: THREE.WebGLRenderTarget;
-  private texture: THREE.CanvasTexture;
+  private materialLibrary: PreviewMaterialLibrary;
+  private appearanceRevision = 0;
   private face = new THREE.MeshStandardMaterial({ roughness: .8 });
   private edge = new THREE.MeshStandardMaterial({ color: '#66533b', roughness: .95 });
   private engraving = new THREE.MeshBasicMaterial({ color: '#553018', side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -4 });
@@ -100,8 +103,8 @@ export class PreviewStage {
     this.content.scale.y = this.overlay.scale.y = -1;
     const key = new THREE.DirectionalLight('#ffffff', 2);
     key.position.set(-120, 180, 300); this.scene.add(key);
-    this.texture = this.woodTexture();
-    this.face.map = this.face.bumpMap = this.texture; this.face.bumpScale = .12;
+    this.materialLibrary = new PreviewMaterialLibrary(this.renderer.capabilities.getMaxAnisotropy());
+    this.setAppearance({material:'pine',color:'#d1b98f'});
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = !this.motion.matches;
     this.controls.maxPolarAngle = Math.PI * .95;
@@ -189,24 +192,24 @@ export class PreviewStage {
     this.rig.rotation.set(0, 0, 0); this.rig.position.set(0, 0, 0);
   }
 
-  private woodTexture() {
-    const canvas = document.createElement('canvas'); canvas.width = canvas.height = 256;
-    const ctx = canvas.getContext('2d')!; ctx.fillStyle = '#efd7b1'; ctx.fillRect(0, 0, 256, 256);
-    for (let i = 0; i < 350; i++) {
-      const x = (i * 37.17) % 256; ctx.strokeStyle = `rgba(90,54,20,${.012 + (i % 9) * .003})`;
-      ctx.lineWidth = .5 + (i % 3) * .3; ctx.beginPath(); ctx.moveTo(x, 0); ctx.bezierCurveTo(x + Math.sin(i) * 3, 80, x - 2, 170, x, 256); ctx.stroke();
-    }
-    const map = new THREE.CanvasTexture(canvas); map.colorSpace = THREE.SRGBColorSpace;
-    map.wrapS = map.wrapT = THREE.RepeatWrapping; map.repeat.set(1 / 45, 1 / 45);
-    return map;
-  }
-
   setAppearance(appearance: PreviewAppearance) {
+    if (this.disposed) return;
+    const revision = ++this.appearanceRevision;
     const solid = appearance.material === 'solid';
-    this.face.color.set(solid ? appearance.color : appearance.material === 'walnut' ? '#795331' : '#fff5e8');
-    this.face.map = this.face.bumpMap = solid ? null : this.texture;
-    this.face.roughness = solid ? .45 : .8; this.face.needsUpdate = true;
-    this.edge.color.set(solid ? appearance.color : '#66533b').multiplyScalar(solid ? .7 : 1);
+    const kind = appearance.material === 'walnut' ? 'walnut' : 'pine', surface = materialSurfaces[kind];
+    this.face.color.set(solid ? appearance.color : surface.fallback);
+    this.face.map = this.face.bumpMap = this.face.normalMap = this.face.roughnessMap = null;
+    this.face.roughness = solid ? .45 : .95; this.face.needsUpdate = true;
+    this.edge.color.set(solid ? appearance.color : surface.edge).multiplyScalar(solid ? .7 : 1);
+    if (solid) return;
+    const maps = this.materialLibrary.get(kind);
+    void maps.ready.then(ready => {
+      // A late image decode must not replace a newer material or revive a disposed stage.
+      if (!ready || this.disposed || revision !== this.appearanceRevision) return;
+      this.face.color.set('#ffffff'); this.face.map = maps.color;
+      this.face.normalMap = maps.normal; this.face.normalScale.set(.2, .2);
+      this.face.roughnessMap = maps.roughness; this.face.needsUpdate = true;
+    });
   }
 
   setContent(meshes: readonly PreviewMeshData[], size: PreviewSize) {
@@ -352,7 +355,7 @@ export class PreviewStage {
     this.host.removeEventListener('pointerdown', this.pointerDown); this.host.removeEventListener('pointermove', this.pointerMove);
     this.host.removeEventListener('pointerup', this.pointerUp); this.host.removeEventListener('pointercancel', this.pointerUp);
     this.host.removeEventListener('lostpointercapture', this.pointerUp);
-    this.overlay.clear(); this.clear(); this.face.dispose(); this.edge.dispose(); this.engraving.dispose(); this.texture.dispose(); this.environment.dispose();
+    this.overlay.clear(); this.clear(); this.face.dispose(); this.edge.dispose(); this.engraving.dispose(); this.materialLibrary.dispose(); this.environment.dispose();
     this.renderer.dispose(); this.renderer.forceContextLoss(); this.renderer.domElement.remove(); delete this.host.dataset.previewDiagnostics;
   }
 }

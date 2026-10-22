@@ -76,3 +76,27 @@ test('display extensions release replaced tools, restore navigation and cannot d
   removeSecond();removeSecond();assert.equal(calls.filter(x=>x==='second').length,1);
   stage.disposed=true;assert.throws(()=>stage.installExtension(()=>({dispose(){}})),/disposed/);
 });
+
+test('photographic maps retain physical scale, separate colour/data spaces and release cached textures including failed loads', async () => {
+ const {createServer}=await import('vite');
+ const {Texture,SRGBColorSpace,NoColorSpace}=await import('three');
+ const server=await createServer({configFile:false,server:{middlewareMode:true,hmr:false,ws:false},appType:'custom'});
+ try {
+  const {PreviewMaterialLibrary}=await server.ssrLoadModule('/src/three/materials.ts');
+  const requests=[],disposed=[];
+  const loader={load(url,onLoad,_progress,onError){const texture=new Texture();texture.addEventListener('dispose',()=>disposed.push(texture));requests.push({url,onLoad,onError});return texture;}};
+  const library=new PreviewMaterialLibrary(16,loader),pine=library.get('pine');
+  assert.equal(library.get('pine'),pine);assert.equal(requests.length,3);
+  assert.equal(pine.color.colorSpace,SRGBColorSpace);
+  assert.equal(pine.normal.colorSpace,NoColorSpace);assert.equal(pine.roughness.colorSpace,NoColorSpace);
+  for(const texture of [pine.color,pine.normal,pine.roughness]){
+   assert.equal(texture.repeat.x,1/450);assert.equal(texture.repeat.y,1/450);
+   assert.equal(texture.offset.x,.35);assert.equal(texture.offset.y,.5);assert.equal(texture.anisotropy,8);
+  }
+  requests.forEach(request=>request.onLoad());assert.equal(await pine.ready,true);
+  const walnut=library.get('walnut');assert.notEqual(walnut,pine);assert.equal(requests.length,6);
+  requests[3].onError();requests[4].onLoad();requests[5].onLoad();assert.equal(await walnut.ready,false);
+  library.dispose();assert.equal(new Set(disposed).size,6);
+  library.dispose();assert.equal(disposed.length,6);
+ } finally {await server.close();}
+});
