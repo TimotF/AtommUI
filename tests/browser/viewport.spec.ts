@@ -61,16 +61,17 @@ test('ordinary wheel speed, delta units, zoom limits and keyboard controls are p
   (await viewBox(viewport)).forEach((value, index) => expect(value).toBeCloseTo(before[index], 7));
 });
 
-test('preview keyboard focus stays visible and neutral while button focus keeps its accent', async ({ page }) => {
+test('preview keyboard focus uses a faint shadow without an outline while button focus keeps its accent', async ({ page }) => {
   const viewport = page.locator('.au-svg-viewport');
   await page.keyboard.press('Tab'); await viewport.focus();
   expect(await viewport.evaluate(el => el.matches(':focus-visible'))).toBe(true);
-  const styles = await viewport.evaluate(el => {
-    const style = getComputedStyle(el);
-    return { outline: style.outlineColor, neutral: style.getPropertyValue('--color-text-secondary').trim(), offset: style.outlineOffset, width: style.outlineWidth };
+  await expect(viewport).toHaveCSS('outline-style', 'none');
+  const shadow = await viewport.evaluate(el => {
+    const style = getComputedStyle(el, '::after');
+    return { shadow: style.boxShadow, pointerEvents: style.pointerEvents, zIndex: style.zIndex };
   });
-  await expect(viewport).toHaveCSS('outline-color', 'rgb(91, 100, 114)');
-  expect(styles.offset).toBe('-2px'); expect(styles.width).toBe('2px');
+  expect(shadow.shadow).toBe('rgba(23, 23, 25, 0.04) 0px 0px 8px 0px inset');
+  expect(shadow.pointerEvents).toBe('none'); expect(shadow.zIndex).toBe('1');
   const button = page.locator('#demo-guide');
   await button.focus(); await expect(button).toHaveCSS('outline-color', 'rgb(229, 83, 75)');
 });

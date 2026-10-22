@@ -14,8 +14,10 @@
 :is(.au-root,.au-overlay) :where(button:disabled,input:disabled,[aria-disabled="true"]) { cursor: not-allowed; }
 :is(.au-root,.au-overlay) [hidden] { display: none !important; }
 :is(.au-root,.au-overlay) :where(button,input,[tabindex]):focus-visible { outline: var(--au-focus-width) solid var(--color-stroke-surround); outline-offset: var(--au-space-4); }
-/* Preview focus is neutral and inset, so it cannot resemble a cutting/error frame. */
-:is(.au-root,.au-overlay) :is(.au-three-viewport,.au-svg-viewport):focus-visible { outline: var(--au-focus-width) solid var(--color-text-secondary); outline-offset: calc(-1 * var(--au-focus-width)); }
+/* A faint overlay shadow marks keyboard focus without outlining the scene.
+   Paint above the canvas/SVG children so the inset shadow stays visible. */
+:is(.au-root,.au-overlay) :is(.au-three-viewport,.au-svg-viewport):focus-visible { outline: none; }
+:is(.au-root,.au-overlay) :is(.au-three-viewport,.au-svg-viewport):focus-visible::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 8px rgba(23,23,25,.04); pointer-events: none; z-index: 1; }
 :is(.au-root,.au-overlay) .v-btn { border-radius: var(--au-radius-control); font-family: var(--au-font); letter-spacing: 0; text-indent: 0; text-transform: none; transition-duration: var(--au-transition-duration); transition-timing-function: var(--au-transition-easing); }
 :is(.au-root,.au-overlay) .v-btn:focus-visible::after { opacity: 0; }
 /* A light state layer preserves primary-action contrast on hover and focus. */
