@@ -1,21 +1,42 @@
-MIT License
-
+PROPRIETARY SOFTWARE — ALL RIGHTS RESERVED
 Copyright (c) 2026 Timothe Frignac
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. Scope and reservation of rights
+This notice applies to original AtommUI code distributed in version 0.16.0
+and later, unless a later release expressly states otherwise. It is not an
+open-source license.
+Except as expressly authorized below, by a separate written permission from the
+copyright holder, or by applicable law, no permission is granted to copy,
+modify, redistribute, sublicense, sell, or reuse the original software or its
+components. Access to source code or a downloadable package is not a grant of
+an open-source license.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+2. Authorized deployments
+When the copyright holder authorizes inclusion of this software in an
+application or generator, end users may load and execute that deployment to
+use its intended functions. Hosting and distribution partners, including
+Atomm/xTool when authorized by the copyright holder, may host, run, deliver,
+and technically process that deployment within the applicable platform
+agreement. This notice neither accepts that agreement nor grants a general
+right to reuse or distribute the software as a standalone library or product.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+3. Generated results
+This license governs the software, not a work merely because the software was
+used to produce it. Rights in generated results depend on the application,
+its terms and any user-supplied or third-party material.
+
+4. Third-party and previously licensed material
+Third-party code, fonts and assets retain their respective licenses and
+notices. This license does not restrict rights granted by those licenses.
+See THIRD_PARTY_NOTICES.md and the accompanying license files.
+AtommUI releases up to and including 0.15.8 were distributed under MIT.
+Permissions already granted for those copies are unchanged. The original
+notice is preserved in licenses/AtommUI-MIT-through-0.15.8.txt. This new notice
+does not revoke, replace or narrow that earlier grant.
+
+5. Disclaimer
+To the extent permitted by applicable law, the software is provided "AS IS",
+without warranties of merchantability, fitness for a particular purpose or
+non-infringement. The copyright holder is not liable for claims or damages
+arising from use of the software, except where liability cannot lawfully be
+excluded. Mandatory rights under applicable law are not limited by this notice.

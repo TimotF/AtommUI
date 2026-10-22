@@ -135,7 +135,7 @@ decimalStepDelta(3, 0.1); // 0.3
 
 Chaque changement se vérifie par sa boucle ciblée : contrat → cas positif et négatif → composants compilés → interactions Chrome et rendu à 1280, 960, 885, 600 px / RTL → correction → contrôles précédents. Les tests de rendu serveur utilisent les composants réellement distribués ; la CSS est vérifiée dans Chrome, pas dans un substitut DOM. La galerie reste une démonstration de composants.
 
-Licence du code : MIT. Source : https://github.com/TimotF/AtommUI.
+Licence du code : propriétaire à partir de 0.16.0 ; voir [LICENSE](LICENSE). Les versions jusqu’à 0.15.8 et les droits MIT déjà accordés restent inchangés. Les dépendances et textures conservent leurs licences : [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), [ASSET_LICENSES.md](ASSET_LICENSES.md). Une archive accessible ne donne pas un droit de réutilisation du code. Source : https://github.com/TimotF/AtommUI.
 
 ## Zoom et infobulles sur un activateur complet
 

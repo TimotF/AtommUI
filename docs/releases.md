@@ -15,7 +15,7 @@ npm pack --pack-destination /tmp/atomm-ui-package-check
 node scripts/smoke-tarball.mjs /tmp/atomm-ui-package-check/timotf-atomm-ui-0.2.0.tgz
 ```
 
-Le test de l'archive vérifie le JS, les deux feuilles CSS, les types, la licence et une installation `npm ci` dans un consommateur temporaire sans lien vers la source. La CI de branche rejoue cette boucle courte. Les tests de navigateur ciblés contrôlent les changements visuels ou d'interaction avant le tag.
+Le test de l'archive vérifie le JS, les deux feuilles CSS, les types, la licence propriétaire, les notices tierces et historiques et une installation `npm ci` dans un consommateur temporaire sans lien vers la source. La CI de branche rejoue cette boucle courte. Les tests de navigateur ciblés contrôlent les changements visuels ou d'interaction avant le tag.
 
 Après validation du commit exact, pousser le tag annoté `v0.2.0`. Le workflow de tag vérifie que le tag et la version concordent, reconstruit l'archive, la teste dans un consommateur propre et crée la GitHub Release avec l'archive et `SHA256SUMS`. Il refuse de remplacer une release existante. Contrôler ensuite le téléchargement public et son empreinte.
 
@@ -28,3 +28,7 @@ Une application peut figer cette version dans `package.json` :
 Régénérer et commiter `package-lock.json`, puis prouver `npm ci` dans un checkout propre. Le lockfile contient l'intégrité de l'archive et détecte un changement de contenu à URL inchangée. Les consommateurs n'ont pas besoin de compiler la bibliothèque ni d'accéder à son dépôt source. Utiliser toujours l'URL de la version exacte, jamais `latest`.
 
 La publication reste pilotée par un tag validé au lieu d'installer `semantic-release` : l'archive doit être confrontée aux applications consommatrices et à la revue visuelle avant d'obtenir une URL figée. Ce choix garde la CI courte et évite la création automatique d'une version non vérifiée. Les messages Conventional Commits et SemVer restent la convention pour décider du prochain numéro.
+
+## Changement de licence à partir de 0.16.0
+
+Le code original est distribué sous la licence propriétaire du dépôt. La distribution technique sur GitHub ne constitue pas une autorisation de réutilisation. Conserver les dépendances MIT, les textures CC0 et la notice historique `licenses/AtommUI-MIT-through-0.15.8.txt`. Ne pas modifier les tags ni les archives des versions MIT précédentes. La note de chaque nouvelle release doit annoncer la licence propriétaire ; ne jamais la présenter comme une release MIT.

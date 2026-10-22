@@ -12,3 +12,5 @@
 - SVG viewport controls display millimetre geometry with display-only units. Grid, rulers and optional diagnostic overlays are preview-only; the consumer's production export stays independent. Verify pan, pointer-centred wheel zoom, keyboard, cancellation, resizing, multiple instances and invalid bounds.
 
 - Preview material thumbnails and their three-column grid belong to `AuMaterialThumbnail` and `AuMaterialPicker`. Consumers provide translated titles, saved values and optional colors; do not duplicate the material SVG or grid in generators.
+
+- Licensing: original project code is proprietary from this change forward (AtommUI 0.16.0 onward). Do not introduce an open-source grant or change licensing without explicit owner approval. Preserve all third-party notices and permissions already granted for past versions; never replace or remove old release assets. Keep package metadata, release notes and distributed LICENSE/THIRD_PARTY_NOTICES consistent. Generated-result permissions in Bow Tie remain compatible with the separately authorized Atomm platform agreement.

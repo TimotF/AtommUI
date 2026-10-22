@@ -24,6 +24,20 @@ if ([...files].some((name) => !name.startsWith('package/') || name.includes('.DS
   throw new Error('The npm archive contains local or source-only files.');
 }
 
+// Licensing is part of the published package contract, including its boundary.
+if (manifest.license !== 'SEE LICENSE IN LICENSE') throw new Error('Missing proprietary package license metadata.');
+for (const name of ['package/THIRD_PARTY_NOTICES.md', 'package/ASSET_LICENSES.md', 'package/licenses/AtommUI-MIT-through-0.15.8.txt', 'package/licenses/@xmldom-xmldom/LICENSE', 'package/licenses/vue/LICENSE', 'package/licenses/vuetify/LICENSE.md', 'package/licenses/three/LICENSE']) {
+  if (!files.has(name)) throw new Error(`Missing licensing notice: ${name}`);
+}
+const license = execFileSync('tar', ['-xOzf', tarball, 'package/LICENSE'], {encoding:'utf8'});
+const legacy = execFileSync('tar', ['-xOzf', tarball, 'package/licenses/AtommUI-MIT-through-0.15.8.txt'], {encoding:'utf8'});
+if (!license.startsWith('PROPRIETARY SOFTWARE') || !license.includes('0.15.8') || !legacy.startsWith('MIT License')) throw new Error('Invalid prospective licensing boundary.');
+
+for (const [name, file] of [['@xmldom/xmldom','LICENSE'], ['vue','LICENSE'], ['vuetify','LICENSE.md'], ['three','LICENSE']]) {
+  const archived = execFileSync('tar', ['-xOzf', tarball, 'package/licenses/' + name.replaceAll('/','-') + '/' + file]);
+  if (!archived.equals(readFileSync(new URL('../node_modules/' + name + '/' + file, import.meta.url)))) throw new Error('Dependency notice changed or stale: ' + name);
+}
+
 const consumer = mkdtempSync(join(tmpdir(), 'atomm-ui-consumer-'));
 try {
   writeFileSync(join(consumer, 'package.json'), JSON.stringify({

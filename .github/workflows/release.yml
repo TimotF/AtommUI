@@ -50,4 +50,4 @@ jobs:
           fi
           gh release create "$RELEASE_TAG" "release/$PACK_NAME" release/SHA256SUMS \
             --verify-tag --title "AtommUI $RELEASE_TAG" \
-            --notes "Installable npm archive with JavaScript, CSS, TypeScript declarations and MIT license."
+            --notes "Installable npm archive with JavaScript, CSS, TypeScript declarations and proprietary license (AtommUI 0.16.0 onward). Third-party notices and prior MIT grants through 0.15.8 are preserved."

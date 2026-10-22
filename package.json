@@ -1,9 +1,9 @@
 {
   "name": "@timotf/atomm-ui",
-  "version": "0.15.8",
+  "version": "0.16.0",
   "type": "module",
   "description": "Reusable Vue and Vuetify controls for locally computed atomm generators",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TimotF/AtommUI.git"
@@ -15,7 +15,9 @@
     "dist",
     "LICENSE",
     "README.md",
-    "ASSET_LICENSES.md"
+    "ASSET_LICENSES.md",
+    "THIRD_PARTY_NOTICES.md",
+    "licenses"
   ],
   "exports": {
     ".": {
