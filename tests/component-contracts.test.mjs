@@ -250,3 +250,17 @@ test('numeric inner accessories preserve the input and do not appear unless supp
  assert.match(accessory.match(/<input[^>]*id="dimension"[^>]*>/)?.[0]??'',/value="25"/);
  assert.ok(accessory.includes('v-field__prepend-inner'));
 });
+
+
+test('illustrated help slots keep their controls and associated labels when no text prop is supplied',async()=>{
+ const image=()=>h('img',{src:'/diagram.svg',alt:'Measured dimension'});
+ const numeric=await render(h(AuNumericField,{id:'illustrated-number',label:'Dimension',modelValue:'0,'},{help:image}));
+ assert.ok(numeric.includes('data-help="illustrated-number"'));
+ assert.ok(numeric.includes('for="illustrated-number"'));
+ const input=numeric.match(/<input\b[^>]*id="illustrated-number"[^>]*>/)?.[0];
+ assert.ok(input?.includes('value="0,"'));
+ const toggle=await render(h(AuSwitch,{id:'illustrated-toggle',label:'Pattern',modelValue:true},{help:image}));
+ assert.ok(toggle.includes('data-help="illustrated-toggle"'));
+ assert.ok(toggle.includes('for="illustrated-toggle"'));
+ assert.match(toggle.match(/<input\b[^>]*id="illustrated-toggle"[^>]*>/)?.[0]??'',/\schecked(?:="")?(?=\s|>)/);
+});

@@ -8,7 +8,7 @@ function update(value: unknown) { if (!props.disabled && !props.loading) emit('u
 </script>
 <template>
   <div class="au-field-row au-switch-field field-row" :aria-busy="loading ? 'true' : undefined">
-    <AuHelp v-if="help" :label="helpLabel ?? label" :text="help" :help-key="id"><label :for="id">{{ label }}</label></AuHelp>
+    <AuHelp v-if="help || $slots.help" :label="helpLabel ?? label" :text="help ?? ''" :help-key="id"><label :for="id">{{ label }}</label><template v-if="$slots.help" #content><slot name="help" /></template></AuHelp>
     <label v-else :for="id">{{ label }}</label>
     <VSwitch v-bind="$attrs" :id="id" class="au-switch" role="switch" :aria-label="label" :model-value="modelValue" :disabled="disabled || loading" :loading="loading" color="primary" inset hide-details @update:model-value="update" />
   </div>

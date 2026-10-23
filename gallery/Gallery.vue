@@ -4,7 +4,7 @@ import { useLocale } from 'vuetify';
 import { VMenu } from 'vuetify/components/VMenu';
 import { VCard } from 'vuetify/components/VCard';
 import { AuDialog, AuTextField, AuHistoryControls, AuZoomControls, AuTooltip, AuColorField, AuSvgViewport, AuSwitch, AuRoot, AuMaterialPicker, AuFieldGroups, AuFieldGroup, AuLayout, AuButton, AuIcon, AuCard, AuHelp, AuNumericField, AuSelect, AuCheckbox, AuSlider, AuTabs, AuAlert, AuProgress, AuSwatches, AuExampleCard, AuSegmentedControl, AuPanelHeader, AuFieldNote, adjustNumericDraft } from '@timotf/atomm-ui';
-const dialogOpen=ref(false);
+const dialogOpen=ref(false), illustratedWidth=ref('8'), illustratedPattern=ref(false);
 const materialPreview = ref('pine');
 const freeText = ref('Basilic — Grand vert');
 const locale = ref<'fr'|'en'>('fr'), direction = ref<'ltr'|'rtl'>('ltr'), tab = ref('preview');
@@ -42,6 +42,8 @@ function changeLocale(value: string) {
       <AuNumericField id="gallery-readonly" v-model="readOnlyDraft" :label="text('Lecture seule','Read only')" read-only />
       <AuNumericField id="gallery-disabled" v-model="disabledDraft" :label="text('Désactivé','Disabled')" disabled />
       <AuNumericField id="gallery-no-drag" v-model="noDragDraft" :label="text('Saisie seulement','Typing only')" :drag="false" :step=".5" />
-    </AuCard><AuButton id="gallery-action" primary block :disabled="!!numericError" @click="saved = true">{{ text('Action principale','Primary action') }}</AuButton></div></template>
+    </AuCard><AuCard id="gallery-illustrated-help" :title="text('Aide illustrée','Illustrated help')">
+<AuNumericField id="gallery-illustrated-width" v-model="illustratedWidth" :label="text('Largeur illustrée','Illustrated width')" suffix="mm" :help="text('La flèche indique la largeur mesurée.','The arrow shows the measured width.')" :help-label="text('Aide : largeur illustrée','Help: illustrated width')"><template #help><svg width="264" height="120" viewBox="0 0 264 120" role="img" :aria-label="text('Mesure entre deux bords','Measurement between two edges')"><rect width="264" height="120" rx="8" fill="#f7f8fa"/><rect x="48" y="42" width="168" height="48" rx="8" fill="#ead6b2" stroke="#6d5339"/><path d="M48 20v18M216 20v18M48 27H216m-160-4-8 4 8 4m152-8 8 4-8 4" fill="none" stroke="#e44b43" stroke-width="2"/></svg><p>{{text('La flèche indique la largeur mesurée.','The arrow shows the measured width.')}}</p></template></AuNumericField>
+<AuSwitch id="gallery-illustrated-pattern" v-model="illustratedPattern" :label="text('Motif illustré','Illustrated pattern')" :help="text('Le dessin explique cette option.','The drawing explains this option.')" :help-label="text('Aide : motif illustré','Help: illustrated pattern')"><template #help><svg width="264" height="120" viewBox="0 0 264 120" role="img" :aria-label="text('Exemple de motif','Pattern example')"><rect width="264" height="120" rx="8" fill="#f7f8fa"/><path d="m46 86 44-52 42 52 44-52 42 52" fill="none" stroke="#356b5c" stroke-width="5"/></svg><p>{{text('Le dessin explique cette option.','The drawing explains this option.')}}</p></template></AuSwitch></AuCard><AuButton id="gallery-action" primary block :disabled="!!numericError" @click="saved = true">{{ text('Action principale','Primary action') }}</AuButton></div></template>
   </AuLayout></AuRoot>
 </template>

@@ -142,3 +142,21 @@ test('dialog surface and shadow follow its rounded card without a square backdro
  await expect(page.locator('.au-dialog-card')).toHaveCSS('border-radius','12px');
  await expect(page.locator('.au-dialog-card')).not.toHaveCSS('box-shadow','none');
 });
+
+
+test('illustrated numeric and switch help opens without changing values and closes with Escape',async({page})=>{
+ const numeric=page.locator('#gallery-illustrated-width'),toggle=page.locator('#gallery-illustrated-pattern');
+ const numberHelp=page.locator('[data-help="gallery-illustrated-width"]'),switchHelp=page.locator('[data-help="gallery-illustrated-pattern"]');
+ await numberHelp.focus();
+ const measurement=page.getByRole('tooltip').filter({hasText:'La flèche indique la largeur mesurée.'});
+ await expect(measurement.getByRole('img',{name:'Mesure entre deux bords'})).toBeVisible();
+ await expect(numeric).toHaveValue('8');
+ await expect(numberHelp).toHaveAttribute('aria-describedby',await measurement.getAttribute('id') as string);
+ await page.keyboard.press('Escape');await expect(measurement).not.toBeVisible();
+ await switchHelp.click();
+ const illustration=page.getByRole('tooltip').filter({hasText:'Le dessin explique cette option.'});
+ await expect(illustration.getByRole('img',{name:'Exemple de motif'})).toBeVisible();
+ await expect(toggle).not.toBeChecked();
+ await page.keyboard.press('Escape');await expect(illustration).not.toBeVisible();
+ await toggle.check();await expect(toggle).toBeChecked();
+});

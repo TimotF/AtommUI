@@ -36,7 +36,8 @@ onBeforeUnmount(() => { close(); document.removeEventListener('keydown',escape);
     <slot />
     <button ref="trigger" type="button" class="au-help-trigger help-trigger" :data-help="helpKey" :aria-label="label" :aria-describedby="tooltipId" @pointerenter="show" @pointerleave="leave" @click="click" @focus="show" @blur="leave"><VBadge inline content="?" class="au-help-badge" color="var(--color-bg-default)" text-color="var(--color-text-secondary)" :transition="false" aria-hidden="true" role="presentation" aria-live="off" /></button>
     <VTooltip v-model="open" :activator="trigger ?? undefined" :id="`${tooltipId}-overlay`" role="presentation" :eager="false" :activator-props="{ 'aria-describedby': tooltipId }" :content-props="{ id: tooltipId, role: 'tooltip', onPointerenter: show, onPointerleave: leave }" :z-index="3" :open-on-hover="false" :open-on-focus="false" :open-on-click="false" location="top center" :max-width="300" :offset="10" :transition="false" :content-class="contentClass" :interactive="true">
-      <span @pointerenter="clearClosing" @pointerleave="leave">{{ text }}</span>
+      <div v-if="$slots.content" @pointerenter="clearClosing" @pointerleave="leave"><slot name="content" /></div>
+      <span v-else @pointerenter="clearClosing" @pointerleave="leave">{{ text }}</span>
     </VTooltip>
   </span>
 </template>
