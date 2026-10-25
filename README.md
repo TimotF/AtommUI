@@ -357,3 +357,9 @@ Les tailles, couleurs et marges restent partagées ; aucune surcharge applicativ
 couleurs locales figées. Le fond compact suit donc le plan de travail officiel,
 et le rayon du panneau reste dans l'échelle commune. La couleur par défaut des
 opérations de découpe reste rouge ; aucun tracé ni export de consommateur ne change.
+
+### Version 0.19.2 — largeur du rail standard
+
+La composition `AuLayout standard` verrouille les deux rails à 320 px à partir de
+960 px. Le compactage historique du rail gauche ne s'applique plus à ce modèle ;
+les compositions non standard gardent leur comportement précédent.

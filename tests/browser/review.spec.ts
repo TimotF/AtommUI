@@ -41,7 +41,7 @@ for(const lead of [true,false])for(const rtl of [false,true])test(`standard layo
   const geometry=await page.evaluate(()=>{const root=document.querySelector('.host')!,stage=document.querySelector('.au-stage')!,header=document.querySelector('.au-parameters-header')!,lead=document.querySelector('.au-rail-lead')!,rail=document.querySelector('.au-rail-parameters')!,footer=document.querySelector('.au-parameters-footer')!;return{root:root.getBoundingClientRect().toJSON(),stage:stage.getBoundingClientRect().toJSON(),lead:lead.getBoundingClientRect().toJSON(),header:header.getBoundingClientRect().toJSON(),rail:rail.getBoundingClientRect().toJSON(),footer:footer.getBoundingClientRect().toJSON(),overflow:document.documentElement.scrollWidth>innerWidth};});
   expect(geometry.overflow).toBe(false);
   if(width<960){expect(geometry.stage.y).toBe(geometry.root.y);expect(geometry.header.y).toBeGreaterThanOrEqual(geometry.stage.bottom);if(lead)expect(geometry.lead.y).toBeGreaterThanOrEqual(geometry.stage.bottom);await expect(page.getByRole('button',{name:'Export',exact:true})).toBeInViewport();}
-  else expect(geometry.rail.width).toBe(320);
+  else { expect(geometry.rail.width).toBe(320); if(lead)expect(geometry.lead.width).toBe(320); }
  }
 });
 

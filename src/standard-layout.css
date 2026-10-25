@@ -1,5 +1,5 @@
 /* Opt-in official parameters layout; legacy consumers keep their existing composition. */
-.au-layout.au-layout-standard { --au-parameters-width: 320px; }
+.au-layout.au-layout-standard { --au-lead-width: 320px; --au-parameters-width: 320px; }
 .au-layout-standard .au-parameters-header { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; }
 .au-layout-standard .au-parameters-content { flex: 1; min-height: 0; overflow: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: thin; }
 .au-layout-standard .au-parameters-content > * { flex-shrink: 0; }
