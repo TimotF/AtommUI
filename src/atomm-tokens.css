@@ -77,6 +77,8 @@
   --color-on-brand: rgb(var(--v-theme-on-primary));
   --color-on-dark: rgb(var(--v-theme-on-dark));
   --color-error: rgb(var(--v-theme-error));
+  /* Machine-operation preview default; never changes with the UI skin. */
+  --color-operation-cut: #FE0002;
   --color-warning: rgb(var(--v-theme-warning));
   --color-warning-border: rgb(var(--v-theme-warning-border));
   --color-bg-inverse: rgb(var(--v-theme-surface-variant));

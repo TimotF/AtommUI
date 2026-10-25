@@ -350,3 +350,10 @@ Les tailles, couleurs et marges restent partagées ; aucune surcharge applicativ
 
 `AuButton large primary` fournit le CTA de rail de 40 px, rayon 8 px et pleine largeur.
 `loading` conserve sa taille et expose `aria-busy`. Les actions ordinaires restent à 32 px.
+
+### Version 0.19.1 — palette du canevas SVG
+
+`AuSvgViewport` utilise les tokens de fond, bordure, grille et règles au lieu de
+couleurs locales figées. Le fond compact suit donc le plan de travail officiel,
+et le rayon du panneau reste dans l'échelle commune. La couleur par défaut des
+opérations de découpe reste rouge ; aucun tracé ni export de consommateur ne change.
