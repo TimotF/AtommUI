@@ -135,7 +135,7 @@ test('shared dialog traps focus, closes with Escape and returns to its trigger',
 
 
 test('dialog surface and shadow follow its rounded card without a square backdrop', async ({page}) => {
- await page.goto('/');await page.locator('#gallery-dialog-open').click();
+ await page.goto('/');await page.locator('#gallery-dialog-open').focus();await page.locator('#gallery-dialog-open').press('Enter');
  const dialog=page.getByRole('dialog',{name:'Reprendre votre travail ?'});await expect(dialog).toBeVisible();
  await expect(page.locator('.au-dialog-overlay')).toHaveCSS('background-color','rgba(0, 0, 0, 0)');
  await expect(page.locator('.au-dialog-overlay')).toHaveCSS('overflow','visible');

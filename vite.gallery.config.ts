@@ -4,5 +4,5 @@ export default defineConfig({
   plugins: [vue()], base: './',
   server: { host: '127.0.0.1', port: 5174, strictPort: true },
   preview: { host: '127.0.0.1', port: 4174, strictPort: true },
-  build: { outDir: 'gallery-dist', target: 'es2022' },
+  build: { outDir: 'gallery-dist', target: 'es2022', rolldownOptions:{input:['index.html','tests/fixtures/review.html']} },
 });

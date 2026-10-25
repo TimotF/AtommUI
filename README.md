@@ -1,5 +1,13 @@
 # AtommUI
 
+### Correctifs 0.18.2
+
+Dans la disposition `standard`, l’aperçu passe avant les panneaux lorsque le conteneur est inférieur à 960 px ; la disposition historique conserve son ordre. Le pied d’export reste collant.
+
+`PreviewStage` suspend ses frames lorsque la vue est inactive, masquée ou sans dimensions. Avec les animations réduites, il dessine à la demande puis se met au repos ; zoom, déplacement, redimensionnement, géométrie, matière et arrivée des textures le réveillent. Le mouvement ambiant normal est conservé. Après une mutation directe d’un objet appartenant au consommateur, appeler la méthode publique `stage.invalidate()`.
+
+Les extensions disposant d’un hook `render` ou `beforeRender` gardent par défaut leur rendu continu. Une extension statique peut fournir `continuous: false` et demander une frame avec `context.invalidate()`. Les objets de fabrication, la caméra et la propriété des ressources restent inchangés.
+
 Bibliothèque versionnée de composants **Vue 3, Vuetify et TypeScript** pour les interfaces de générateurs atomm. Le package `@timotf/atomm-ui` fournit des composants, une base et un profil compact de style, ainsi qu’un thème importable depuis Node. Les calculs métier et le SDK restent dans les applications ; l’entrée optionnelle `/three` fournit l’aperçu 3D partagé.
 
 La direction visuelle reprend la sobriété des deux références fournies : scène dominante, cartes blanches discrètes, intitulés courts, contrôles compacts et détails dans l'aide contextuelle. Les couleurs, hauteurs et espacements suivent le guide atomm. Les couleurs des objets restent propres à chaque application.

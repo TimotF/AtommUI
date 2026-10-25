@@ -10,6 +10,8 @@ import {PreviewMaterialLibrary,plywoodEdgeTexture} from './materials.js';
  * Extensions own only the objects/resources they add; dispose them in dispose(). */
 export type PreviewStageContext = {
   scene: THREE.Scene; camera: THREE.PerspectiveCamera; canvas: HTMLCanvasElement;
+  /** Request a frame after mutating consumer-owned objects or asynchronous resources. */
+  invalidate: () => void;
   navigation: {
     target: () => THREE.Vector3;
     focus: (point: THREE.Vector3) => void;
@@ -20,6 +22,8 @@ export type PreviewStageContext = {
   prepare: (object: THREE.Object3D, current: () => boolean) => Promise<boolean>;
 };
 export type PreviewStageExtension = {
+  /** Render hooks are continuous by default for backwards compatibility. Static tools may opt out. */
+  continuous?: boolean;
   beforeRender?: () => void;
   /** Optional display pass, using the shared renderer. Restore any renderer state you change. */
   render?: (renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) => void;
@@ -67,6 +71,8 @@ export class PreviewStage {
   private active = true;
   private disposed = false;
   private frame = 0;
+  private dirty = true;
+  private sized = false;
   private previousTime = 0;
   private time = 0;
   private dragging = false;
@@ -119,7 +125,9 @@ export class PreviewStage {
     host.addEventListener('lostpointercapture', this.pointerUp);
     this.observer = new ResizeObserver(entries => {
       const { width, height } = entries[0].contentRect;
-      if (width <= 0 || height <= 0 || this.viewport === `${width}:${height}`) return;
+      if (width <= 0 || height <= 0) { this.sized = false; this.stopFrames(); return; }
+      const wasSized = this.sized; this.sized = true;
+      if (this.viewport === `${width}:${height}`) { if (!wasSized) this.invalidate(); return; }
       this.viewport = `${width}:${height}`;
       const percent = this.percent();
       this.renderer.setSize(width, height);
@@ -128,19 +136,20 @@ export class PreviewStage {
       this.updateBounds();
       if (!this.ready && (this.dimensions || this.assemblyBounds)) this.fit();
       else if (this.ready) this.setZoom(percent);
-      this.publishDiagnostics();
+      this.invalidate(); this.publishDiagnostics();
     });
     this.observer.observe(host);
     // DOM diagnostics allow browser checks without reaching into Vue/three private state.
     this.diagnosticsTimer = setInterval(() => this.publishDiagnostics(), 1000);
-    this.animate(0);
+    document.addEventListener('visibilitychange', this.visibilityChanged);
+    this.invalidate();
   }
 
   /** Replacing an extension first releases its tools; the returned disposer is idempotent. */
   installExtension(setup: (context: PreviewStageContext) => PreviewStageExtension) {
     if (this.disposed) throw new Error('PreviewStage is disposed');
     this.releaseExtension();
-    const extension = setup({scene: this.scene, camera: this.camera, canvas: this.renderer.domElement,
+    const extension = setup({scene: this.scene, camera: this.camera, canvas: this.renderer.domElement, invalidate: () => this.invalidate(),
       navigation: {
         target: () => this.controls.target.clone(),
         focus: point => {
@@ -167,6 +176,7 @@ export class PreviewStage {
     this.extension = extension;
     const {width, height} = this.host.getBoundingClientRect();
     if (width > 0 && height > 0) extension.resize?.(width, height, this.renderer.getPixelRatio());
+    this.invalidate();
     return () => { if (this.extension === extension) this.releaseExtension(); };
   }
   private releaseExtension() {
@@ -190,7 +200,7 @@ export class PreviewStage {
   }
   private resetMotion() {
     this.springX = this.springY = this.velocityX = this.velocityY = 0;
-    this.rig.rotation.set(0, 0, 0); this.rig.position.set(0, 0, 0);
+    this.rig.rotation.set(0, 0, 0); this.rig.position.set(0, 0, 0); this.invalidate();
   }
 
   setAppearance(appearance: PreviewAppearance) {
@@ -204,6 +214,7 @@ export class PreviewStage {
     this.edge.map = solid ? null : this.edgeTexture;
     this.edge.color.set(solid ? appearance.color : '#ffffff').multiplyScalar(solid ? .7 : 1);
     this.edge.needsUpdate = true;
+    this.invalidate();
     if (solid) return;
     const maps = this.materialLibrary.get(kind);
     void maps.ready.then(ready => {
@@ -211,7 +222,7 @@ export class PreviewStage {
       if (!ready || this.disposed || revision !== this.appearanceRevision) return;
       this.face.color.set('#ffffff'); this.face.map = maps.color;
       this.face.normalMap = maps.normal; this.face.normalScale.set(surface.normalScale, surface.normalScale);
-      this.face.roughnessMap = maps.roughness; this.face.needsUpdate = true;
+      this.face.roughnessMap = maps.roughness; this.face.needsUpdate = true; this.invalidate();
     });
   }
 
@@ -229,7 +240,7 @@ export class PreviewStage {
     this.overlay.position.copy(this.content.position);
     // Rebuild only the content: preserve camera, controls, pan, and the persistent motion rig.
     if (!this.ready && this.viewport) this.fit();
-    this.publishDiagnostics();
+    this.invalidate(); this.publishDiagnostics();
   }
 
   /** Consumer-owned objects in SVG millimetres (Y down), sharing the persistent motion rig.
@@ -237,6 +248,7 @@ export class PreviewStage {
   setOverlay(object: THREE.Object3D | null) {
     this.overlay.clear();
     if (object) this.overlay.add(object);
+    this.invalidate();
   }
 
   /** Consumer-owned world-space assembly. Only its reference/bounds change; camera and rig persist. */
@@ -244,7 +256,7 @@ export class PreviewStage {
     assemblyFrame(bounds,this.camera.aspect,this.camera.fov,this.camera.up,new THREE.Vector3(...(this.options.direction??[.12,.13,1])));
     this.clear();this.dimensions=undefined;this.assemblyBounds=bounds.clone();this.rebuilds++;
     this.overlay.clear();this.overlay.scale.set(1,1,1);this.overlay.position.set(0,0,0);this.overlay.add(object);
-    if(!this.ready&&this.viewport)this.fit();this.publishDiagnostics();
+    if(!this.ready&&this.viewport)this.fit();this.invalidate();this.publishDiagnostics();
   }
   /** Shared appearance materials may be referenced by consumer meshes, never disposed by them. */
   get materials(){return {face:this.face,edge:this.edge} as const;}
@@ -293,6 +305,7 @@ export class PreviewStage {
 
   private percent() { return this.ready ? Math.round(this.fitDistance / this.camera.position.distanceTo(this.controls.target) * 100) : 100; }
   private reportZoom = () => {
+    this.invalidate();
     const percent = this.percent();
     if (percent !== this.lastPercent) { this.lastPercent = percent; this.onZoom(percent); }
   };
@@ -303,12 +316,12 @@ export class PreviewStage {
     this.controls.update(); this.reportZoom(); this.publishDiagnostics();
   }
   zoom(factor: number) { if (Number.isFinite(factor) && factor > 0) this.setZoom(this.percent() / factor); }
-  setActive(active: boolean) { this.active = active; this.controls.enabled = active && this.navigationEnabled; }
+  setActive(active: boolean) { this.active = active; this.controls.enabled = active && this.navigationEnabled; if (active) this.invalidate(); else this.stopFrames(); }
 
   private motionChanged = () => {
     this.controls.enableDamping = !this.motion.matches;
     this.springX = this.springY = this.velocityX = this.velocityY = 0;
-    this.rig.rotation.set(0, 0, 0); this.rig.position.set(0, 0, 0); this.publishDiagnostics();
+    this.rig.rotation.set(0, 0, 0); this.rig.position.set(0, 0, 0); this.invalidate(); this.publishDiagnostics();
   };
   private pointerDown = (event: PointerEvent) => { this.dragging = true; this.dragX = event.clientX; this.dragY = event.clientY; };
   private pointerMove = (event: PointerEvent) => {
@@ -320,24 +333,37 @@ export class PreviewStage {
   };
   private pointerUp = () => { this.dragging = false; };
 
+  /** Consumer-owned scene changes must request a frame when ambient motion is disabled. */
+  invalidate() { if (this.disposed) return; this.dirty = true; this.scheduleFrame(); }
+  private scheduleFrame() {
+    if (!this.disposed && this.active && this.sized && document.visibilityState !== 'hidden' && !this.frame) this.frame = requestAnimationFrame(this.animate);
+  }
+  private stopFrames() { cancelAnimationFrame(this.frame); this.frame = 0; this.previousTime = 0; }
+  private visibilityChanged = () => { if (document.visibilityState === 'hidden') this.stopFrames(); else this.invalidate(); };
   private animate = (now: number) => {
+    this.frame = 0;
     if (this.disposed) return;
-    this.frame = requestAnimationFrame(this.animate);
     const dt = this.previousTime ? Math.min((now - this.previousTime) / 1000, .05) : 0;
     this.previousTime = now;
-    if (!this.active || document.visibilityState === 'hidden') return;
+    if (!this.active || !this.sized || document.visibilityState === 'hidden') { this.previousTime = 0; return; }
     if (dt) this.maxStepMs = Math.max(this.maxStepMs, dt * 1000);
-    if (this.motionEnabled && !this.motion.matches) {
+    const moving = this.motionEnabled && !this.motion.matches;
+    if (moving) {
       this.time += dt;
       const x = springStep(this.springX, this.velocityX, 0, dt), y = springStep(this.springY, this.velocityY, 0, dt);
       this.springX = x.value; this.velocityX = x.velocity; this.springY = y.value; this.velocityY = y.velocity;
       this.rig.rotation.set(this.springX + Math.sin(this.time * .61) * .004, this.springY + Math.sin(this.time * .83) * .005, 0);
     }
-    if (this.navigationEnabled) this.controls.update();
+    const changed = this.navigationEnabled && this.controls.update();
+    const continuous = moving || !!(this.extension && this.extension.continuous !== false && (this.extension.beforeRender || this.extension.render));
+    if (!this.dirty && !changed && !continuous) { this.previousTime = 0; return; }
+    this.dirty = false;
     this.extension?.beforeRender?.();
     if (this.extension?.render) this.extension.render(this.renderer, this.scene, this.camera);
     else this.renderer.render(this.scene, this.camera);
     this.renders++;this.options.onFrame?.();
+    if (continuous || this.dirty) this.scheduleFrame();
+    if (!this.frame) this.previousTime = 0;
   };
 
   diagnostics(): PreviewDiagnostics {
@@ -351,7 +377,8 @@ export class PreviewStage {
     for (const child of [...this.content.children]) { if (child instanceof THREE.Mesh) child.geometry.dispose(); this.content.remove(child); }
   }
   dispose() {
-    this.disposed = true; cancelAnimationFrame(this.frame); clearInterval(this.diagnosticsTimer); this.observer.disconnect();
+    this.disposed = true; this.stopFrames(); clearInterval(this.diagnosticsTimer); this.observer.disconnect();
+    document.removeEventListener('visibilitychange', this.visibilityChanged);
     this.releaseExtension();
     this.controls.removeEventListener('change', this.reportZoom); this.controls.dispose();
     this.motion.removeEventListener('change', this.motionChanged);
