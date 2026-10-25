@@ -6,7 +6,7 @@ import AuHelp from './AuHelp.vue';
 import { compactProfileKey } from '../profile.js';
 import { isOptionValue, type UiOption } from '../contracts.js';
 defineOptions({ inheritAttrs: false });
-const props = defineProps<{ id: string; label: string; modelValue: string; items: readonly UiOption[]; help?: string; helpLabel?: string; disabled?: boolean; stacked?: boolean }>();
+const props = defineProps<{ id: string; label: string; modelValue: string; items: readonly UiOption[]; help?: string; helpLabel?: string; disabled?: boolean; stacked?: boolean; native?: boolean }>();
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>();
 const compactProfile = inject(compactProfileKey, () => false);
 const select = ref<InstanceType<typeof VSelect> | null>(null);
@@ -33,7 +33,7 @@ function onAfterLeave() {
 }
 onBeforeUnmount(clearKeyboardSelection);
 const menuProps = computed(() => ({ contentClass: `au-overlay au-select-menu${compactProfile() ? ' au-profile-compact' : ''}`, maxWidth: 360, transition: false as const, zIndex: 3, onAfterLeave }));
-function update(value: unknown) { if (isOptionValue(value,props.items)) emit('update:modelValue',value); }
+function update(value: unknown) { if (!props.disabled && isOptionValue(value,props.items)) emit('update:modelValue',value); }
 function optionColor(color: unknown): string | undefined {
   return typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color) ? color.toLowerCase() : undefined;
 }
@@ -42,7 +42,11 @@ function optionColor(color: unknown): string | undefined {
   <div class="au-select-field" :class="{ 'au-field-row field-row': !stacked }">
     <AuHelp v-if="help" :label="helpLabel ?? label" :text="help" :help-key="id"><label :for="id">{{ label }}</label></AuHelp>
     <label v-else :for="id">{{ label }}</label>
-    <VSelect ref="select" v-bind="$attrs" :id="id" class="au-select-control" :model-value="modelValue" :items="items" item-value="value" item-title="title" :item-props="item => ({ disabled: !!item.disabled })" :aria-label="label" :disabled="disabled" :menu-props="menuProps" @update:model-value="update">
+    <select v-if="native" v-bind="$attrs" :id="id" class="au-select-control au-select-native" :aria-label="label" :value="modelValue" :disabled="disabled" @change="update(($event.target as HTMLSelectElement).value)">
+      <option v-if="!items.some(item => item.value === modelValue)" :value="modelValue" selected disabled hidden>{{modelValue}}</option>
+      <option v-for="item in items" :key="item.value" :value="item.value" :selected="item.value === modelValue" :disabled="item.disabled">{{item.title}}</option>
+    </select>
+    <VSelect v-else ref="select" v-bind="$attrs" :id="id" class="au-select-control" :model-value="modelValue" :items="items" item-value="value" item-title="title" :item-props="item => ({ disabled: !!item.disabled })" :aria-label="label" :disabled="disabled" :menu-props="menuProps" @update:model-value="update">
       <template #selection="{ item }"><span class="au-select-selection"><slot name="selection-prepend" :item="item"><span v-if="optionColor(item.color)" class="au-option-paint" aria-hidden="true" :style="{ backgroundColor: optionColor(item.color) }" /></slot><span class="au-option-title">{{ item.title }}</span></span></template>
       <template #item="{ item, props: itemProps }"><VListItem v-bind="itemProps" role="option" :aria-disabled="item.disabled ? 'true' : undefined" @keydown.capture="onOptionKeydown($event, itemProps.disabled)"><template v-if="optionColor(item.color) || $slots['item-prepend']" #prepend><slot name="item-prepend" :item="item"><span class="au-option-paint" aria-hidden="true" :style="{ backgroundColor: optionColor(item.color) }" /></slot></template></VListItem></template>
     </VSelect>

@@ -48,3 +48,17 @@ for(const lead of [true,false])for(const rtl of [false,true])test(`standard layo
 test('legacy layout does not opt into the new ordering',async({page})=>{
  await page.goto(url+'?width=760&legacy');await expect(page.locator('.au-layout')).not.toHaveClass(/au-layout-standard/);await expect(page.locator('.au-stage')).toHaveCSS('order','0');
 });
+
+
+test('official compact controls retain dimensions, visible selection and native keyboard choice',async({page})=>{
+ await page.goto(url);
+ const button=page.getByRole('button',{name:'Export',exact:true}),footer=page.locator('.au-parameters-footer');
+ expect((await button.boundingBox())!.width).toBeCloseTo((await footer.boundingBox())!.width-32,1);
+ await expect(button).toHaveCSS('height','32px');await expect(button).toHaveCSS('background-color','rgb(41, 42, 45)');
+ await expect(page.locator('.v-switch__track')).toHaveCSS('width','36px');await expect(page.locator('.v-switch__track')).toHaveCSS('height','20px');
+ await expect(page.locator('.v-switch__thumb')).toHaveCSS('width','14px');
+ await page.getByRole('combobox',{name:'Native theme'}).selectOption('theatre');
+ await page.locator('#numeric').press('Shift+ArrowUp');await expect(page.locator('#fixture-values')).toHaveText('theatre|12.5|true');
+ await page.locator('#fixture-title').click();await expect(page.locator('#fixture')).not.toBeVisible();
+ await page.locator('#fixture-title').click();await expect(page.locator('#fixture')).toBeVisible();
+});

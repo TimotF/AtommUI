@@ -1,6 +1,7 @@
 /* Opt-in shared density profile. Import after style.css and set AuRoot profile="compact".
    Teleported controls receive the same class through their contentClass. */
-:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) {
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact),
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .v-theme--atomm {
   --au-input-height: 28px;
   --au-control-height: 32px;
   --au-export-height: 32px;
@@ -21,6 +22,35 @@
   --au-compact-overlay-layer: 2;
   --au-compact-tooltip-layer: 3;
   --au-font-size-label: 12px;
+  --au-line-height: 1.3333333333;
+  --au-font: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Official neutral skin, opt-in: the historical default theme is unchanged. */
+  --v-theme-primary: 41, 42, 45;
+  --v-theme-on-primary: 255, 255, 255;
+  --v-theme-surface: 255, 255, 255;
+  --v-theme-surface-subtle: 252, 252, 253;
+  --v-theme-background: 231, 232, 234;
+  --v-theme-control: 238, 239, 241;
+  --v-theme-on-surface: 23, 23, 25;
+  --v-theme-text-secondary: 61, 62, 66;
+  --v-theme-border: 214, 216, 219;
+  --v-theme-border-strong: 185, 187, 192;
+  --color-bg-surface: var(--color-bg-subtlest);
+  --color-bg-hover: rgba(61, 62, 66, .06);
+  --color-bg-active: rgba(61, 62, 66, .08);
+  --color-bg-highlight: rgba(61, 62, 66, .12);
+  --color-text-disabled: rgb(185, 187, 192);
+  --color-text-tertiary: rgb(133, 135, 139);
+  --color-stroke-divider: rgba(61, 62, 66, .08);
+  --color-stroke-active: var(--color-text-secondary);
+  --color-stroke-surround: rgb(49, 112, 213);
+  --au-segment-bg: var(--color-bg-hover);
+  --au-segment-selected-color: var(--color-text-primary);
+  --color-brand-hover: rgb(61, 62, 66);
+  --color-brand-active: rgb(23, 23, 25);
+  --au-shadow-card: 0 4px 12px rgba(11,11,13,.06), 0 0 4px rgba(11,11,13,.06);
+  --au-shadow-segment: var(--au-shadow-card);
+  --au-shadow-floating: 0 16px 32px rgba(11,11,13,.06), 0 2px 8px rgba(11,11,13,.06);
   --au-font-size-title: 12px;
   --au-card-stroke: var(--color-stroke-divider);
 }
@@ -28,7 +58,7 @@
 :is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-card-body { padding: 0; }
 :is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-card { box-shadow: var(--au-shadow-card); }
 :is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) :is(.au-card-header,.au-card-heading) {
-  min-height: 0; padding: 8px 16px; font-size: 12px; line-height: 18px; font-weight: 500;
+  min-height: 0; padding: 8px 16px; font-size: 12px; line-height: 16px; font-weight: 500;
   border-bottom: 1px solid var(--color-stroke-divider);
   border-radius: 7px 7px 0 0;
 }
@@ -67,3 +97,41 @@
 /* Vuetify adds 10 to nested popovers. Menus stay at layer 2, tips above at 3. */
 .v-overlay:has(.au-overlay.au-profile-compact) { z-index: 2 !important; }
 .v-overlay.v-tooltip:has(.au-overlay.au-profile-compact) { z-index: 3 !important; }
+
+/* Official state and sizing rules stay in the library, never in consumers. */
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) :where(button,[tabindex]):focus-visible { outline-offset: 2px; }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .v-field:has(input:focus-visible) { outline: none; }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .v-field--focused .v-field__outline { --v-field-border-width: 1px; }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .v-text-field__suffix { font-size: 10px; }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button-primary:not(:disabled):hover { background: var(--color-brand-hover) !important; }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button-primary:not(:disabled):active { background: var(--color-brand-active) !important; }
+.au-root.au-profile-compact .au-example-card[aria-pressed="true"] { border-color: var(--color-brand-default); box-shadow: inset 0 0 0 1px var(--color-brand-default); }
+.au-root.au-profile-compact .au-example-card:not(.au-example-row) .au-example-title { font-size: 11px; font-weight: 400; line-height: 16px; }
+.au-root.au-profile-compact .au-example-card[aria-pressed="true"] .au-example-preview :is(img,svg) { transform: none; }
+.au-root.au-profile-compact .au-example-card:not(:disabled):hover .au-example-preview :is(img,svg) { transform: none; }
+.au-root.au-profile-compact .au-example-card:not(:disabled):hover { box-shadow: none; }
+.au-root.au-profile-compact .au-example-card[aria-pressed="true"]:not(:disabled):hover { box-shadow: inset 0 0 0 1px var(--color-brand-default); }
+.au-overlay.au-profile-compact.au-select-menu { border: 1px solid var(--color-stroke-default); border-radius: 8px; box-shadow: var(--au-shadow-floating); }
+.au-overlay.au-profile-compact.au-select-menu .v-list { padding: 6px; max-height: 236px; overflow: auto; scrollbar-width: thin; }
+.au-overlay.au-profile-compact.au-select-menu .v-list-item { min-height: 32px; padding-inline: 10px; border-radius: 4px; }
+.au-overlay.au-profile-compact.au-select-menu .v-list-item--active { font-weight: 500; }
+.au-overlay.au-profile-compact .au-dialog-card { box-shadow: 0 40px 80px rgba(11,11,13,.06), 0 2px 8px rgba(11,11,13,.06); }
+.au-overlay.au-profile-compact .au-dialog-actions>.au-button { height: 32px; min-height: 32px; }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-help-trigger { cursor: pointer; }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-color-hex input { height: 28px; border-radius: 6px; }
+
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-numeric-control .v-field__input { text-align: start; }
+
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-switch {
+  --v-switch-scale: .8;
+  --v-switch-track-height: 20px;
+  --v-switch-thumb-height: 14px;
+  --v-switch-thumb-width: 14px;
+  --v-switch-inset-thumb-off-scale: 1;
+}
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-switch .v-switch__track { width: 36px; min-width: 36px; opacity: 1; pointer-events: none; background: var(--color-stroke-default); }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-switch .v-selection-control--dirty .v-switch__track { background: var(--color-brand-default); }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-switch .v-selection-control__input { width: 24px; height: 24px; }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-switch .v-switch__thumb { background: var(--color-bg-default); box-shadow: var(--au-shadow-card); }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-color-button { width: 32px; min-width: 32px; }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-color-swatch { width: 24px; height: 24px; border-radius: 6px; }

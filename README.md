@@ -333,3 +333,20 @@ Le profil `compact` rétablit la séparation et le registre typographique des en
 Les six textures 3D sont désormais des ressources relatives incluses dans `dist/`, chargées uniquement pour le matériau demandé, plutôt que des données incorporées au JavaScript. Les consommateurs doivent conserver les ressources référencées par le bundle ; un bundler comme Vite les copie et recalcule leurs URL. Couleurs : 1024 px ; cartes de détail : 512 px. Aucune image n’est demandée à un service extérieur.
 
 `previewMeshes({path, thickness, engraving, curveSegments: 24})` permet de réduire le coût de la triangulation d’aperçu. La valeur historique 96 reste la valeur par défaut pour les consommateurs existants. Le paramètre n’affecte jamais le SVG de production ; vérifier contours, contreformes et tailles représentatives avant de l’abaisser.
+
+
+### Version 0.19.0 — profil officiel et choix natif
+
+Le profil opt-in `compact` utilise la palette neutre officielle, des boutons principaux sombres,
+une sélection de vignette de 2 px sans agrandissement de l'illustration, et les dimensions et
+focus officiels des champs et dialogues. Les autres profils conservent leur palette historique.
+`AuButton block` occupe toute la largeur disponible dans tous les profils.
+
+`AuSelect native` propose un vrai `<select>` : clavier, lecteur d'écran et sélecteur tactile
+restent gérés par le navigateur. L'API `items` / `v-model` / `disabled` est inchangée ; les
+options natives affichent leur titre, sans décor ni slots de préfixe. Utiliser ce mode pour
+les choix textuels simples. Le mode enrichi historique reste disponible sans cette propriété.
+Les tailles, couleurs et marges restent partagées ; aucune surcharge applicative n'est nécessaire.
+
+`AuButton large primary` fournit le CTA de rail de 40 px, rayon 8 px et pleine largeur.
+`loading` conserve sa taille et expose `aria-busy`. Les actions ordinaires restent à 32 px.

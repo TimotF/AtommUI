@@ -24,11 +24,11 @@ test('tooltip opens only from the help button, with focus, touch/click, Escape a
   await expect(help.locator('.v-badge__badge')).toHaveText('?');
   await expect(help.locator('.v-badge__badge')).toHaveCSS('background-color','rgb(255, 255, 255)');
   await expect(help.locator('.v-badge__badge')).toHaveCSS('color','rgb(91, 100, 114)');
-  await expect(help).toHaveCSS('cursor','help');
+  await expect(help).toHaveCSS('cursor','pointer');
   const raised=await help.evaluate(el=>el.getBoundingClientRect().top < el.parentElement!.querySelector('label')!.getBoundingClientRect().top);
   expect(raised).toBe(true);
   const label=page.locator('label[for="gallery-number"]');
-  await expect(label).not.toHaveCSS('cursor','help');
+  await expect(label).not.toHaveCSS('cursor','pointer');
   await label.hover(); await page.waitForTimeout(180);
   await expect(page.getByRole('tooltip').filter({hasText:'Les valeurs incomplètes'})).not.toBeVisible();
   await help.hover(); await expect(page.getByRole('tooltip').filter({hasText:'Les valeurs incomplètes'})).toBeVisible();
@@ -68,7 +68,7 @@ test('the same Vuetify help badge and fields work inside a teleported settings m
   const trigger=page.locator('#gallery-settings-trigger');await trigger.focus();await trigger.press('Enter');
   const menu=page.getByRole('dialog',{name:'Réglages détaillés',exact:true});await expect(menu).toBeVisible();
   const help=menu.locator('[data-help="gallery-overlay-select"]');
-  await expect(help.locator('.v-badge__badge')).toHaveText('?');await expect(help).toHaveCSS('border-top-width','0px');await expect(help).toHaveCSS('border-radius','50%');await expect(help).toHaveCSS('cursor','help');
+  await expect(help.locator('.v-badge__badge')).toHaveText('?');await expect(help).toHaveCSS('border-top-width','0px');await expect(help).toHaveCSS('border-radius','50%');await expect(help).toHaveCSS('cursor','pointer');
   await expect(menu.locator('.au-numeric-control .v-field')).toHaveCSS('height','28px');
   await menu.locator('label[for="gallery-overlay-select"]').hover(); await page.waitForTimeout(180);
   await expect(page.getByRole('tooltip').filter({hasText:'La même aide fonctionne'})).not.toBeVisible();
@@ -94,10 +94,10 @@ for (const width of [1280,960,885,600]) test(`layout ${width}px and RTL fit the 
   expect(boxes[1].width).toBeGreaterThanOrEqual(260);expect(boxes.every(r=>r.y===0&&r.height===900)).toBe(true);
   await expect(page.locator('#gallery-action')).toHaveCSS('height','32px');
   await expect(page.getByRole('tab',{name:'Aperçu',exact:true})).toHaveCSS('background-color','rgb(255, 255, 255)');
-  await expect(page.getByRole('tab',{name:'Aperçu',exact:true})).toHaveCSS('color','rgb(31, 36, 48)');
-  for(const rail of ['.au-rail-lead','.au-rail-parameters']) await expect(page.locator(rail)).toHaveCSS('background-color','rgb(245, 246, 248)');
+  await expect(page.getByRole('tab',{name:'Aperçu',exact:true})).toHaveCSS('color','rgb(23, 23, 25)');
+  for(const rail of ['.au-rail-lead','.au-rail-parameters']) await expect(page.locator(rail)).toHaveCSS('background-color','rgb(252, 252, 253)');
   await expect(page.locator('section.au-card').first()).toHaveCSS('background-color','rgb(255, 255, 255)');
-  await expect(page.locator('section.au-card').first()).toHaveCSS('border-top-color','rgb(230, 232, 236)');
+  await expect(page.locator('section.au-card').first()).toHaveCSS('border-top-color','rgba(61, 62, 66, 0.08)');
   const alert=page.locator('.au-rail-lead .au-alert');await expect(alert).toHaveCSS('flex-grow','0');
   expect((await alert.boundingBox())!.height).toBeLessThan(220);
   const titles=await page.locator('.au-card-header .v-btn__content > span').evaluateAll(elements=>elements.map(el=>{

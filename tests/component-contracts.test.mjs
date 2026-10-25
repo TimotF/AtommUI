@@ -264,3 +264,21 @@ test('illustrated help slots keep their controls and associated labels when no t
  assert.ok(toggle.includes('for="illustrated-toggle"'));
  assert.match(toggle.match(/<input\b[^>]*id="illustrated-toggle"[^>]*>/)?.[0]??'',/\schecked(?:="")?(?=\s|>)/);
 });
+
+
+test('native selects keep escaped saved values, disabled choices and browser semantics',async()=>{
+ const html=await render(h(AuSelect,{id:'native-choice',label:'Theme <img>',native:true,modelValue:'saved',items:[{value:'saved',title:'Music <img>'},{value:'off',title:'Unavailable',disabled:true}]}));
+ assert.match(html,/<select[^>]*id="native-choice"[^>]*class="au-select-control au-select-native"/);
+ assert.match(html,/<option value="saved"[^>]*selected[^>]*>Music &lt;img&gt;/);
+ assert.match(html,/<option value="off" disabled/);
+ assert.ok(!html.includes('v-select')&&!html.includes('<img>'));
+ const unknown=await render(h(AuSelect,{id:'future',label:'Theme',native:true,modelValue:'old',items:[{value:'new',title:'New'}],disabled:true}));
+ assert.match(unknown,/<select[^>]*disabled/);assert.match(unknown,/<option value="old" selected disabled hidden/);
+});
+
+
+test('large and busy actions expose their shared sizing and loading contract',async()=>{
+ const html=await render(h(AuButton,{large:true,primary:true,loading:true},()=> 'Generate'));
+ assert.match(html,/au-button-block au-button-large/);assert.match(html,/aria-busy="true"/);
+ assert.match(html,/v-btn--loading/);
+});
