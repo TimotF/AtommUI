@@ -20,17 +20,17 @@ for name, spec in manifest.items():
         images[kind] = Image.open(path)
     # A single luminance field preserves natural grain without independent
     # channel boosts turning scratches yellow or purple.
-    image = images['Diffuse'].convert('L').resize((2048, 2048), Image.Resampling.LANCZOS)
+    image = images['Diffuse'].convert('L').resize((1024, 1024), Image.Resampling.LANCZOS)
     mean = ImageStat.Stat(image).mean[0]
     bands = [image.point(lambda value, tone=tone:
              round(min(255, tone * (value / mean) ** spec['contrast'])))
              for tone in spec['previewMeanRgb']]
     color = Image.merge('RGB', bands)
-    color.save(out / (name + '-color.webp'), quality=92, method=6)
+    color.save(out / (name + '-color.webp'), quality=82, method=6)
     color.resize((256, 256), Image.Resampling.LANCZOS).save(
         out / (name + '-thumbnail.jpg'), quality=90, optimize=True)
-    images['nor_gl'].convert('RGB').resize((1024, 1024), Image.Resampling.LANCZOS).save(
-        out / (name + '-normal.jpg'), quality=92, optimize=True)
-    rough = images['Rough'].convert('L').resize((1024, 1024), Image.Resampling.LANCZOS)
+    images['nor_gl'].convert('RGB').resize((512, 512), Image.Resampling.LANCZOS).save(
+        out / (name + '-normal.jpg'), quality=82, optimize=True)
+    rough = images['Rough'].convert('L').resize((512, 512), Image.Resampling.LANCZOS)
     rough.point(lambda value: 190 + round(value * .25)).save(
-        out / (name + '-roughness.jpg'), quality=92, optimize=True)
+        out / (name + '-roughness.jpg'), quality=82, optimize=True)

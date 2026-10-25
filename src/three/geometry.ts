@@ -6,7 +6,7 @@ export type PreviewMeshData = {
   position: Float32Array; normal: Float32Array; uv: Float32Array; index: Uint32Array | null;
   groups: { start: number; count: number; materialIndex?: number }[]; engraved: boolean;
 };
-export type PreviewOutline = { path: string; engraving?: readonly string[]; thickness: number };
+export type PreviewOutline = { path: string; engraving?: readonly string[]; thickness: number; curveSegments?: number };
 
 /** SVGLoader uses DOMParser; a Worker has no native DOM. No network or SVG scripts are used. */
 if (typeof globalThis.DOMParser === 'undefined') {
@@ -35,6 +35,8 @@ function shapes(path: string) {
 /** Coordinates stay in physical mm, Y down. Flip Y once on the display content group. */
 export function previewMeshes(outline: PreviewOutline): PreviewMeshData[] {
   if (!Number.isFinite(outline.thickness) || outline.thickness <= 0) throw new Error('Invalid preview thickness');
+  const curveSegments=outline.curveSegments??96;
+  if(!Number.isInteger(curveSegments)||curveSegments<4||curveSegments>96)throw new Error('Invalid preview curve segments');
   const pack = (geometry: BufferGeometry, engraved: boolean): PreviewMeshData => {
     geometry.translate(0, 0, engraved ? outline.thickness / 2 + .05 : -outline.thickness / 2);
     const position = new Float32Array(geometry.getAttribute('position').array);
@@ -52,8 +54,8 @@ export function previewMeshes(outline: PreviewOutline): PreviewMeshData[] {
     geometry.dispose();
     return data;
   };
-  const meshes = [pack(new ExtrudeGeometry(shapes(outline.path), { depth: outline.thickness, bevelEnabled: false, curveSegments: 96 }), false)];
-  if (outline.engraving?.length) meshes.push(pack(new ShapeGeometry(outline.engraving.flatMap(shapes), 96), true));
+  const meshes = [pack(new ExtrudeGeometry(shapes(outline.path), { depth: outline.thickness, bevelEnabled: false, curveSegments }), false)];
+  if (outline.engraving?.length) meshes.push(pack(new ShapeGeometry(outline.engraving.flatMap(shapes), curveSegments), true));
   return meshes;
 }
 

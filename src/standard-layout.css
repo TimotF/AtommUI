@@ -1,7 +1,7 @@
 /* Opt-in official parameters layout; legacy consumers keep their existing composition. */
 .au-layout.au-layout-standard { --au-parameters-width: 320px; }
-.au-layout-standard .au-parameters-header { flex: none; min-height: 48px; display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--color-stroke-divider); }
-.au-layout-standard .au-parameters-content { flex: 1; min-height: 0; overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: thin; }
+.au-layout-standard .au-parameters-header { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; }
+.au-layout-standard .au-parameters-content { flex: 1; min-height: 0; overflow: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: thin; }
 .au-layout-standard .au-parameters-content > * { flex-shrink: 0; }
 .au-layout-standard .au-parameters-footer { flex: none; padding: 16px; background: var(--color-bg-surface); border-top: 1px solid var(--color-stroke-divider); }
 .au-layout-standard .au-preview-header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; padding: 12px 16px; }

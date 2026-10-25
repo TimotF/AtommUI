@@ -20,6 +20,9 @@ for (const name of [
 ]) {
   if (!files.has(name)) throw new Error(`Missing from npm archive: ${name}`);
 }
+for(const name of ['pine-color.webp','walnut-color.webp','pine-normal.jpg','pine-roughness.jpg','walnut-normal.jpg','walnut-roughness.jpg'])if(!files.has('package/dist/'+name))throw new Error('Missing external preview texture: '+name);
+const previewCode=execFileSync('tar',['-xOzf',tarball,'package/dist/three.js'],{encoding:'utf8'});
+if(previewCode.includes('data:image/')||/"\/(?:pine|walnut)-/.test(previewCode)||!previewCode.includes('import.meta.url'))throw new Error('Preview textures must be relative module assets, not embedded or root-relative URLs.');
 if ([...files].some((name) => !name.startsWith('package/') || name.includes('.DS_Store') || name.startsWith('package/src/'))) {
   throw new Error('The npm archive contains local or source-only files.');
 }
