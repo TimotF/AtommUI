@@ -31,6 +31,14 @@ test('preview accepts only path data, never HTML, external images or invalid thi
   for(const path of ['', 'M0 0NaN', '\"/><image href=\"https://example.org\"/>']) assert.throws(()=>previewMeshes({path,thickness:3}));
   for(const thickness of [NaN,Infinity,0,-1]) assert.throws(()=>previewMeshes({path:'M0 0H10V10Z',thickness}));
 });
+test('consumers can reduce display tessellation while preserving holes, bounds and the historical default',()=>{
+ const outline={path:'M10 0A10 10 0 1 1 9.999 0Z M10 4A6 6 0 1 0 10.001 4Z',thickness:3};
+ const original=previewMeshes(outline)[0],fast=previewMeshes({...outline,curveSegments:24})[0];
+ assert(fast.position.length<original.position.length/2);
+ assert(Math.abs(topArea(fast)-Math.PI*(100-36))<1);
+ for(const mesh of [original,fast]){const x=[],y=[];for(let i=0;i<mesh.position.length;i+=3){x.push(mesh.position[i]);y.push(mesh.position[i+1]);}assert(Math.abs(Math.min(...x))<.01);assert(Math.abs(Math.max(...x)-20)<.01);assert(Math.abs(Math.min(...y))<.01);assert(Math.abs(Math.max(...y)-20)<.01);}
+ for(const curveSegments of [0,3,97,NaN,24.5])assert.throws(()=>previewMeshes({...outline,curveSegments}));
+});
 test('the display spring overshoots once and settles without depending on frame rate', () => {
   const run=step=>{let value=.1,velocity=0,min=0;for(let time=0;time<.8;time+=step){({value,velocity}=springStep(value,velocity,0,step));min=Math.min(min,value);}return {value,velocity,min};};
   for(const result of [run(1/60),run(1/120)]) {

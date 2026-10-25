@@ -304,3 +304,11 @@ via `VDialog`. Pour un choix obligatoire, utiliser `persistent` et fournir des a
 Les textures de cet essai sont embarquées dans le package et chargées à la demande, sans requête externe. Une teinte de secours reste visible si le décodage échoue. Les changements rapides de matériau et le démontage ignorent les décodages devenus obsolètes ; les textures restent partagées entre les reconstructions et sont libérées avec la scène. Voir [les sources et licences](ASSET_LICENSES.md).
 
 La valeur historique `pine` conserve sa compatibilité et affiche désormais un contreplaqué clair sans gros nœud. Les chants et parois des trous échantillonnent les couches selon l’épaisseur locale ; les coordonnées des faces, le dessin et l’export restent indépendants. Le détail normal est atténué pour une surface brute lisse.
+
+### Version 0.18.0 — préparation de conformité Atomm
+
+Le profil `compact` rétablit la séparation et le registre typographique des en-têtes de cartes du modèle officiel ; la composition `standard` utilise un en-tête de paramètres sans barre de titre supplémentaire. Les applications conservent la responsabilité de ne pas ajouter leur propre titre supérieur et d’insérer le bouton SDK vide avec `data-atomm-export-button`.
+
+Les six textures 3D sont désormais des ressources relatives incluses dans `dist/`, chargées uniquement pour le matériau demandé, plutôt que des données incorporées au JavaScript. Les consommateurs doivent conserver les ressources référencées par le bundle ; un bundler comme Vite les copie et recalcule leurs URL. Couleurs : 1024 px ; cartes de détail : 512 px. Aucune image n’est demandée à un service extérieur.
+
+`previewMeshes({path, thickness, engraving, curveSegments: 24})` permet de réduire le coût de la triangulation d’aperçu. La valeur historique 96 reste la valeur par défaut pour les consommateurs existants. Le paramètre n’affecte jamais le SVG de production ; vérifier contours, contreformes et tailles représentatives avant de l’abaisser.

@@ -1,11 +1,11 @@
 import { DataTexture, LinearFilter, TextureLoader, RepeatWrapping, SRGBColorSpace, type Texture } from 'three';
 import { materialSurfaces, type WoodKind } from '../material-surfaces.js';
-import pineColor from '../assets/materials/pine-color.webp';
-import walnutColor from '../assets/materials/walnut-color.webp';
-import pineNormal from '../assets/materials/pine-normal.jpg';
-import pineRoughness from '../assets/materials/pine-roughness.jpg';
-import walnutNormal from '../assets/materials/walnut-normal.jpg';
-import walnutRoughness from '../assets/materials/walnut-roughness.jpg';
+import pineColor from '../assets/materials/pine-color.webp?no-inline';
+import walnutColor from '../assets/materials/walnut-color.webp?no-inline';
+import pineNormal from '../assets/materials/pine-normal.jpg?no-inline';
+import pineRoughness from '../assets/materials/pine-roughness.jpg?no-inline';
+import walnutNormal from '../assets/materials/walnut-normal.jpg?no-inline';
+import walnutRoughness from '../assets/materials/walnut-roughness.jpg?no-inline';
 
 const detailMaps = {
   pine: { color: pineColor, normal: pineNormal, roughness: pineRoughness },

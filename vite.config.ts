@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { readFileSync } from 'node:fs';
 export default defineConfig({
+  base: './',
   plugins: [vue(), { name: 'compact-profile-css', generateBundle() {
     this.emitFile({ type: 'asset', fileName: 'compact.css', source: readFileSync(new URL('./src/compact.css', import.meta.url)) });
   } }],

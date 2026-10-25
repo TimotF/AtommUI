@@ -20,10 +20,19 @@
   --au-compact-dialog-radius: 12px;
   --au-compact-overlay-layer: 2;
   --au-compact-tooltip-layer: 3;
+  --au-font-size-label: 12px;
+  --au-font-size-title: 12px;
+  --au-card-stroke: var(--color-stroke-divider);
 }
 
 :is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-card-body { padding: 0; }
-:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) :is(.au-card-header,.au-card-heading) { border-bottom: 0; }
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-card { box-shadow: var(--au-shadow-card); }
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) :is(.au-card-header,.au-card-heading) {
+  min-height: 0; padding: 8px 16px; font-size: 12px; line-height: 18px; font-weight: 500;
+  border-bottom: 1px solid var(--color-stroke-divider);
+  border-radius: 7px 7px 0 0;
+}
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-card-header[aria-expanded="false"] { border-bottom-color: transparent; border-radius: 7px; }
 :is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-field-row { min-height: 0; padding: var(--au-space-8) var(--au-space-16); }
 :is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .v-field {
   height: var(--au-input-height);
