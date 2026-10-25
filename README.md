@@ -281,6 +281,19 @@ L’extension fournit `dispose()` et, facultativement, `beforeRender()`, `resize
 
 Une seule extension est active par stage : le remplacement et le démontage libèrent l’ancienne, rétablissent la navigation et détachent ses outils via `dispose()`. Le dispose retourné est idempotent et ne libère pas une extension installée ensuite. Les contrôles partagés, les matériaux et les assemblages existants restent compatibles.
 
+## Matériaux d’assemblages personnalisés (0.17.1)
+
+L’entrée publique `@timotf/atomm-ui/three` exporte aussi `PreviewMaterialLibrary`,
+`materialSurfaces`, le type `WoodKind` (`pine | walnut`) et `plywoodEdgeTexture`.
+Un consommateur peut ainsi utiliser les mêmes textures photographiques que le
+stage sur plusieurs familles de pièces, sans créer un second renderer.
+Créer une bibliothèque par scène, appeler `get(kind)` pour obtenir les textures
+de couleur, normale et rugosité, attendre `ready`, puis libérer la bibliothèque
+avec la scène. Les matériaux du consommateur ne possèdent pas ces textures.
+Leur échelle en millimètres est déjà portée par les textures ; `materialSurfaces`
+fournit la couleur de secours et l’amplitude de normale. Cette API ne modifie
+ni le rendu ni le comportement des consommateurs existants.
+
 ## Dialogue partagé (0.15.0)
 
 `AuDialog` fournit la fenêtre modale et reprend le profil compact de `AuRoot`.

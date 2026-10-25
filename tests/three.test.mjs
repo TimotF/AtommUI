@@ -82,7 +82,8 @@ test('photographic maps retain physical scale, separate colour/data spaces and r
  const {Texture,SRGBColorSpace,NoColorSpace}=await import('three');
  const server=await createServer({configFile:false,server:{middlewareMode:true,hmr:false,ws:false},appType:'custom'});
  try {
-  const {PreviewMaterialLibrary,plywoodEdgeTexture}=await server.ssrLoadModule('/src/three/materials.ts');
+  const {PreviewMaterialLibrary,plywoodEdgeTexture,materialSurfaces}=await import('../dist/three.js');
+  assert.deepEqual(Object.keys(materialSurfaces),['pine','walnut']);
   const edge=plywoodEdgeTexture();
   assert.equal(edge.image.width,1);assert.equal(edge.image.height,8);assert.equal(edge.colorSpace,SRGBColorSpace);
   assert.notDeepEqual(Array.from(edge.image.data.slice(0,4)),Array.from(edge.image.data.slice(12,16)));edge.dispose();
