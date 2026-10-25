@@ -84,9 +84,10 @@ try {
   `], { cwd: consumer, stdio: 'inherit' });
   execFileSync('npm', ['install', 'three@0.186.1', ...npmFlags], { cwd: consumer, stdio: 'inherit' });
   execFileSync(process.execPath, ['--input-type=module', '-e', `
-    const {previewMeshes,PreviewStage}=await import('@timotf/atomm-ui/three');
+    const {previewMeshes,PreviewStage,PreviewMaterialLibrary,plywoodEdgeTexture,materialSurfaces}=await import('@timotf/atomm-ui/three');
     const meshes=previewMeshes({path:'M0 0H10V10H0Z',thickness:3});
     if(typeof PreviewStage!=='function'||meshes.length!==1||!meshes[0].position.every(Number.isFinite)) throw new Error('Optional 3D entry is invalid');
+    if(typeof PreviewMaterialLibrary!=='function'||typeof plywoodEdgeTexture!=='function'||Object.keys(materialSurfaces).join(',')!=='pine,walnut') throw new Error('Missing public wood materials');
   `], { cwd: consumer, stdio: 'inherit' });
   const lock = JSON.parse(readFileSync(join(consumer, 'package-lock.json'), 'utf8'));
   if (!lock.packages['node_modules/@timotf/atomm-ui']?.integrity) throw new Error('Consumer lockfile lacks archive integrity.');
