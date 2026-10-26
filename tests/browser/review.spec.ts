@@ -62,3 +62,14 @@ test('official compact controls retain dimensions, visible selection and native 
  await page.locator('#fixture-title').click();await expect(page.locator('#fixture')).not.toBeVisible();
  await page.locator('#fixture-title').click();await expect(page.locator('#fixture')).toBeVisible();
 });
+
+test('enriched select keeps trigger focus, skips disabled choices and commits after typeahead',async({page})=>{
+ await page.goto(url);const select=page.getByRole('combobox',{name:'Enriched theme',exact:true});
+ await select.press('ArrowDown');await select.press('ArrowDown');await expect(select).toHaveAttribute('aria-activedescendant','rich-choice-option-2');await expect(select).toBeFocused();
+ await select.press('Escape');await expect(page.locator('#fixture-values')).toHaveText('music|2.5|true');
+ await select.press('End');await expect(select).toHaveAttribute('aria-activedescendant','rich-choice-option-4');await select.press('Home');await select.press('t');await select.press('Enter');await expect(page.locator('#fixture-values')).toHaveText('theatre|2.5|true');
+ await select.press('ArrowDown');await select.press('Tab');await expect(select).toHaveAttribute('aria-expanded','false');
+});
+test('collapsing and reopening the rail moves focus to the visible action',async({page})=>{
+ await page.goto(url);await page.getByRole('button',{name:'Collapse templates',exact:true}).click();await expect(page.locator('#rail-import')).toBeHidden();const reopen=page.getByRole('button',{name:'Expand templates',exact:true});await expect(reopen).toBeFocused();await reopen.press('Enter');await expect(page.getByRole('button',{name:'Collapse templates',exact:true})).toBeFocused();
+});

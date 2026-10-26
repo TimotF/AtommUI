@@ -61,14 +61,14 @@ test('external model updates and unmount stop captured scrubs without overwritin
   await page.locator('#gallery-show-scrub').focus();await page.keyboard.press('Space');await expect(input).toHaveCount(0);
   await page.mouse.move(point.x+48,point.y);await page.mouse.up();await expect(page.locator('#gallery-scrub-value')).toHaveText('2,6');
 });
-test('segmented choices use a single radio tab stop, skip disabled choices and follow RTL',async({page})=>{
-  const group=page.getByRole('radiogroup',{name:'Densité',exact:true}),gap=group.getByRole('radio',{name:'Écart',exact:true}),count=group.getByRole('radio',{name:'Nombre',exact:true});
-  await expect(gap).toHaveAttribute('aria-checked','true');await expect(group.getByRole('radio',{name:'Indisponible',exact:true})).toBeDisabled();
-  await gap.focus();await gap.press('ArrowRight');await expect(count).toHaveAttribute('aria-checked','true');await expect(count).toBeFocused();
+test('segmented choices use a single button tab stop, skip disabled choices and follow RTL',async({page})=>{
+  const group=page.getByRole('group',{name:'Densité',exact:true}),gap=group.getByRole('button',{name:'Écart',exact:true}),count=group.getByRole('button',{name:'Nombre',exact:true});
+  await expect(gap).toHaveAttribute('aria-pressed','true');await expect(group.getByRole('button',{name:'Indisponible',exact:true})).toBeDisabled();
+  await gap.focus();await gap.press('ArrowRight');await expect(count).toHaveAttribute('aria-pressed','true');await expect(count).toBeFocused();
   await count.press('Home');await expect(gap).toBeFocused();await gap.press('End');await expect(count).toBeFocused();
-  const stops=await group.getByRole('radio').evaluateAll(elements=>elements.filter(el=>el.getAttribute('tabindex')==='0').length);expect(stops).toBe(1);
-  await page.locator('#gallery-direction').locator('..').click();await page.getByRole('option',{name:'RTL',exact:true}).click();
-  await count.focus();await count.press('ArrowRight');await expect(gap).toHaveAttribute('aria-checked','true');
+  const stops=await group.getByRole('button').evaluateAll(elements=>elements.filter(el=>el.getAttribute('tabindex')==='0').length);expect(stops).toBe(1);
+  await page.locator('#gallery-direction').click();await page.getByRole('option',{name:'RTL',exact:true}).click();
+  await count.focus();await count.press('ArrowRight');await expect(gap).toHaveAttribute('aria-pressed','true');
 });
 test('large example previews fit their cards and reduced motion removes hover transitions',async({page})=>{
   const rows=page.locator('.gallery-examples .au-example-preview');

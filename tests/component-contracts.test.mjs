@@ -282,3 +282,13 @@ test('large and busy actions expose their shared sizing and loading contract',as
  assert.match(html,/au-button-block au-button-large/);assert.match(html,/aria-busy="true"/);
  assert.match(html,/v-btn--loading/);
 });
+
+test('enriched select is a named select-only combobox with escaped current value',async()=>{
+ const html=await render(h(AuSelect,{id:'rich',label:'Theme',modelValue:'first',items:[{value:'first',title:'Music <img>',color:'#D2A773'}]}));
+ assert.match(html,/<button[^>]*id="rich"[^>]*role="combobox"/);assert.match(html,/aria-expanded="false"/);assert.match(html,/aria-haspopup="listbox"/);assert.ok(html.includes('Music &lt;img&gt;'));assert.ok(!html.includes('<img>'));
+});
+
+test('compact segmented controls follow the official named group of pressed buttons',async()=>{
+ const app=createSSRApp(()=>h(AuRoot,{profile:'compact'},()=>h(AuSegmentedControl,{label:'View',modelValue:'2d',items:[{value:'2d',title:'2D'},{value:'3d',title:'3D'}]}))).use(createAtommVuetify());
+ const html=await renderToString(app);assert.match(html,/role="group" aria-label="View"/);assert.match(html,/<button[^>]*aria-pressed="true"/);assert.ok(!html.includes('aria-checked'));
+});

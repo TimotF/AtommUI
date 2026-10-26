@@ -363,3 +363,24 @@ opérations de découpe reste rouge ; aucun tracé ni export de consommateur ne 
 La composition `AuLayout standard` verrouille les deux rails à 320 px à partir de
 960 px. Le compactage historique du rail gauche ne s'applique plus à ce modèle ;
 les compositions non standard gardent leur comportement précédent.
+
+### Review-ready controls (0.20)
+
+`AuLayout` can own the template rail header and its accessible collapse/reopen controls:
+
+```vue
+<AuLayout standard lead-collapsible :lead-label="t('templates')"
+  :collapse-label="t('collapseTemplates')" :expand-label="t('showTemplates')">
+  <template #lead><!-- gallery content; no duplicate header needed --></template>
+  <template #stage><!-- preview --></template>
+  <template #parameters><!-- controls and pinned export --></template>
+</AuLayout>
+```
+
+It manages its own collapsed state unless `v-model:lead-collapsed` is supplied. Focus returns to the matching visible control. Below 960px, the stage moves first in the document as well as visually; keyed regions keep viewer instances alive. Supply distinct `lead-id` values for multiple layouts.
+
+`AuButton ghost` is for Reset and other unobtrusive actions; `destructive` is an outlined destructive action. In the opt-in compact profile, ordinary buttons use the official white bordered appearance. The historical density profile is preserved.
+
+`AuSelect` now keeps focus on the combobox trigger and announces the active option. It supports arrows, Home/End, Enter/Space, typeahead, Escape, Tab and outside dismissal; disabled options are skipped. Its listbox is fixed and teleported, flips above the trigger and follows scrolling/resizing. `native` explicitly requests the platform select; small coarse-pointer devices use it automatically. Existing `selection-prepend` and `item-prepend` slots receive `item` including `raw`, title, value and optional color. Options never interpret HTML. Supply unique IDs and translated labels.
+
+The compact segmented view/unit controls use the official named group of buttons with `aria-pressed`. Arrow keys and Home/End still navigate the enabled choices with one tab stop; the historical profile retains radio semantics.

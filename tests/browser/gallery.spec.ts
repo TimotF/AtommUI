@@ -8,12 +8,12 @@ test('raw decimals, errors, locale and actual Vuetify controls',async({page}) =>
   await expect(input).toHaveValue('0,25'); await input.fill('-');
   await expect(input).toHaveValue('-'); await expect(input).toHaveAttribute('aria-invalid','true');
   await expect(page.locator('#gallery-action')).toBeDisabled();
-  await page.locator('#gallery-language').locator('..').click(); await page.getByRole('option',{name:'English',exact:true}).click();
+  await page.locator('#gallery-language').click(); await page.getByRole('option',{name:'English',exact:true}).click();
   await expect(input).toHaveValue('-'); await input.fill('0.35');
   await expect(input).toHaveAttribute('aria-invalid','false'); await input.press('Shift+ArrowUp'); await expect(input).toHaveValue('0.45');
   const alignment=await input.evaluate(el=>{const unit=el.parentElement!.querySelector('.v-text-field__suffix')!.getBoundingClientRect(),value=el.getBoundingClientRect(),field=el.closest('.v-field')!.getBoundingClientRect();return {offset:Math.abs(unit.top+unit.height/2-value.top-value.height/2),fieldHeight:field.height};});
   expect(alignment.fieldHeight).toBe(28); expect(alignment.offset).toBeLessThanOrEqual(1);
-  await page.locator('#gallery-material').locator('..').click(); await page.getByRole('option',{name:'Plywood',exact:true}).click();
+  await page.locator('#gallery-material').click(); await page.getByRole('option',{name:'Plywood',exact:true}).click();
   await expect(page.locator('#gallery-material')).toHaveValue('Plywood');
   const slider = page.getByRole('slider',{name:'Preview',exact:true}); await slider.focus(); await slider.press('End'); await expect(slider).toHaveAttribute('aria-valuenow','100'); await slider.press('Home'); await expect(slider).toHaveAttribute('aria-valuenow','0');
   await page.locator('#gallery-checkbox').uncheck(); await expect(page.locator('#gallery-checkbox')).not.toBeChecked();
@@ -49,19 +49,19 @@ test('generic example cards are selectable with mouse and keyboard',async({page}
   await third.focus();await third.press('Enter');await expect(third).toHaveAttribute('aria-pressed','true');
   const tiles=await page.locator('.gallery-examples .au-example-card').evaluateAll(elements=>elements.map(el=>{const r=el.getBoundingClientRect(),preview=el.querySelector('.au-example-preview')!.getBoundingClientRect(),title=el.querySelector('.au-example-title')!.getBoundingClientRect();return{top:r.top,bottom:r.bottom,previewBottom:preview.bottom,titleTop:title.top,previewWidth:preview.width,width:r.width};}));
   expect(tiles).toHaveLength(3);expect(tiles[0].bottom).toBeLessThanOrEqual(tiles[1].top);expect(tiles[1].bottom).toBeLessThanOrEqual(tiles[2].top);expect(tiles.every(tile=>tile.previewBottom<=tile.titleTop&&tile.previewWidth>=tile.width-20)).toBe(true);
-  await page.locator('#gallery-example-layout').getByRole('radio',{name:'Ligne',exact:true}).click();
+  await page.locator('#gallery-example-layout').getByRole('button',{name:'Ligne',exact:true}).click();
   const rows=await page.locator('.gallery-examples .au-example-row').evaluateAll(elements=>elements.map(el=>{const r=el.getBoundingClientRect(),preview=el.querySelector('.au-example-preview')!.getBoundingClientRect(),title=el.querySelector('.au-example-title')!.getBoundingClientRect();return{top:r.top,bottom:r.bottom,previewRight:preview.right,titleLeft:title.left};}));
   expect(rows).toHaveLength(3);expect(rows[0].bottom).toBeLessThanOrEqual(rows[1].top);expect(rows[1].bottom).toBeLessThanOrEqual(rows[2].top);expect(rows.every(row=>row.previewRight<=row.titleLeft)).toBe(true);
 });
 test('select previews show safe colours and preserve actual option semantics',async({page})=>{
-  const field=page.locator('#gallery-material').locator('xpath=ancestor::div[contains(@class,"au-select-control")]');
+  const field=page.locator('#gallery-material');
   await expect(field.locator('.au-option-paint')).toHaveCSS('background-color','rgb(196, 67, 54)');
-  await page.locator('#gallery-material').locator('..').click();
+  await page.locator('#gallery-material').click();
   const wood=page.getByRole('option',{name:'Contreplaqué',exact:true});
   await expect(wood.locator('.au-option-paint')).toHaveCSS('background-color','rgb(210, 167, 115)');
   const unavailable=page.getByRole('option',{name:'Indisponible',exact:true});
   await expect(unavailable).toHaveAttribute('aria-disabled','true');await expect(unavailable.locator('.au-option-paint')).toHaveCount(0);
-  await wood.click();await expect(page.locator('#gallery-material')).toHaveValue('Contreplaqué');
+  await wood.click();await expect(page.locator('#gallery-material')).toHaveText('Contreplaqué');
   await expect(field.locator('.au-option-paint')).toHaveCSS('background-color','rgb(210, 167, 115)');
 });
 test('the same Vuetify help badge and fields work inside a teleported settings menu',async({page})=>{
@@ -106,7 +106,7 @@ for (const width of [1280,960,885,600]) test(`layout ${width}px and RTL fit the 
   }));
   expect(titles.every(title=>title.left>=0&&title.right>=0&&title.top>=0&&title.bottom>=0)).toBe(true);
   await page.screenshot({path:`test-results/gallery-${width}.png`});
-  await page.locator('#gallery-direction').locator('..').click(); await page.getByRole('option',{name:'RTL',exact:true}).click();
+  await page.locator('#gallery-direction').click(); await page.getByRole('option',{name:'RTL',exact:true}).click();
   await expect(page.locator('.au-root')).toHaveAttribute('dir','rtl');
   const dimensions = await page.evaluate(() => ({viewport:innerWidth,body:document.body.scrollWidth,root:document.querySelector('.au-root')!.scrollWidth}));
   expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport); expect(dimensions.root).toBeLessThanOrEqual(dimensions.viewport);

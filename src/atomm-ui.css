@@ -240,3 +240,20 @@
 :is(.au-root,.au-overlay) .au-select-native:disabled { cursor: not-allowed; opacity: .6; }
 
 :is(.au-root,.au-overlay) .au-button.au-button-large { height: 40px; border-radius: 8px; }
+
+/* Select-only combobox: focus remains on the trigger; options are not tab stops. */
+:is(.au-root,.au-overlay) .au-select-trigger { display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;height:var(--au-input-height);padding:0 8px;border:1px solid transparent;border-radius:var(--au-radius-control);background:var(--color-bg-control);color:var(--color-text-secondary);text-align:start; }
+:is(.au-root,.au-overlay) .au-select-trigger:focus-visible { outline:none;border-color:var(--color-stroke-active);background:var(--color-bg-default); }
+:is(.au-root,.au-overlay) .au-select-trigger:not(:disabled):hover { border-color:var(--color-stroke-default); }
+:is(.au-root,.au-overlay) .au-select-trigger:disabled { opacity:.6; }
+.au-select-popup { z-index:3;box-sizing:border-box;padding:6px;border:1px solid var(--color-stroke-default);border-radius:8px;box-shadow:var(--au-shadow-floating);background:var(--color-bg-default);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin; }
+.au-select-option { display:flex;align-items:center;gap:8px;min-height:32px;padding:6px 10px;border-radius:4px;cursor:pointer; }
+.au-select-option-active { background:var(--color-bg-hover); }
+.au-select-option[aria-selected="true"] { font-weight:500; }
+.au-select-option[aria-disabled="true"] { opacity:.5;cursor:not-allowed; }
+.au-select-option .au-option-title { flex:1;white-space:normal;overflow-wrap:anywhere; }
+.au-layout-lead-header { display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;flex:none; }
+.au-layout-lead-header h2 { font-size:14px;font-weight:600;margin:0;min-width:0;overflow-wrap:anywhere; }
+.au-root .au-layout-expand { position:absolute;inset-block-start:12px;inset-inline-start:16px;z-index:2;height:40px;max-width:calc(100% - 32px);border-radius:20px;box-shadow:var(--au-shadow-card); }
+.au-root .au-layout-expand .v-btn__content { overflow:hidden;text-overflow:ellipsis; }
+.au-root .au-layout-collapsible:has(.au-layout-expand) .au-preview-header { padding-block-start:60px; }
