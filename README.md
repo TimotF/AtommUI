@@ -413,3 +413,7 @@ the same continuous selection ring. It does not change card dimensions, intercep
 clicks or replace the separate keyboard focus outline. The historical profile
 and public component props are unchanged. The gallery `?selection-review` covers
 these content types, unselected and disabled states, plus `&rtl` and `&legacy`.
+
+### Preview tab width (0.23.2)
+
+In the standard layout, `au-preview-views` now fits its visible tab labels instead of reserving a 104px minimum. Two compact tabs such as 3D/SVG therefore keep the same 2px outer inset at both ends. The correction also covers three tabs, full titles and RTL; tab selection and keyboard behavior are unchanged. Includes the opaque-preview selection fix from 0.23.1.

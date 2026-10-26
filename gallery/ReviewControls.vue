@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { AuRoot, AuLayout, AuTipsButton, AuDialog, AuButton, AuCard, AuNumericField, AuSceneControls, AuOnboardingCard } from '@timotf/atomm-ui';
+import { AuRoot, AuLayout, AuTipsButton, AuDialog, AuButton, AuCard, AuNumericField, AuSceneControls, AuOnboardingCard, AuTabs } from '@timotf/atomm-ui';
+const query=new URLSearchParams(location.search), tabCount=Number(query.get('tabs')??0), view=ref('sliceform');
+const views=[{value:'source',title:'Source model',compactTitle:'Model'},{value:'sliceform',title:'Assembly preview',compactTitle:'3D'},{value:'pages',title:'SVG',compactTitle:'SVG'}];
 const stacked=new URLSearchParams(location.search).has('stacked');
 const explode=ref(20), controlsDisabled=ref(false);
 const open=ref(false), collapsed=ref(false), dock=ref<HTMLElement|null>(null), detached=ref(true), zoom=ref(100), count=ref('6'), canvasActive=ref(false);
@@ -10,6 +12,7 @@ const open=ref(false), collapsed=ref(false), dock=ref<HTMLElement|null>(null), d
     <template #lead-actions><AuButton id="review-header-action" ghost>Help</AuButton></template>
     <template #lead><p class="review-caption">Shared control review</p></template>
     <template #stage>
+      <AuTabs v-if="tabCount" id="review-tabs" class="au-preview-views" v-model="view" label="Views" :items="views.slice(tabCount===2?1:0)" />
       <AuTipsButton id="review-tips" label="Tips" :active="open" @click="open=true" />
       <div ref="dock" id="review-zoom-dock" class="review-zoom-dock" />
       <div class="review-tools" :class="{'review-tools-stacked':stacked}"><AuSceneControls id="review-scene-controls" :layout="stacked ? 'stacked' : 'inline'" :zoom-target="!stacked && detached ? dock : null" :disabled="controlsDisabled" :percent="zoom" label="Zoom" zoom-in-label="Zoom in" zoom-out-label="Zoom out" recenter-label="Fit" :explode="explode" @update:explode="explode=$event" explode-label="Explode" @zoom="factor=>zoom=Math.round(zoom/factor)" @set-zoom="zoom=$event" @recenter="zoom=100"><template #extra><AuButton id="review-canvas-label" canvas :icon="stacked" aria-label="Orient"><span v-if="!stacked">Orient</span><span v-else>↶</span></AuButton><AuButton id="review-canvas-action" canvas icon :active="canvasActive" aria-label="Inspect part" @click="canvasActive=!canvasActive">⌕</AuButton></template></AuSceneControls></div>
@@ -28,6 +31,8 @@ const open=ref(false), collapsed=ref(false), dock=ref<HTMLElement|null>(null), d
 .review-controls-demo .review-tools { position:absolute; bottom:64px; inset-inline:16px; }
 .review-controls-demo .review-tools-stacked { bottom:16px; }
 .review-controls-demo .review-tools-stacked #review-scene-controls { margin-inline:auto; }
+.review-controls-demo #review-tabs { position:absolute;top:16px;inset-inline-start:50%;transform:translateX(-50%); }
+.review-controls-demo:has(#review-tabs) #review-tips { top:64px; }
 .review-caption { padding:16px; }
 .review-paragraph { margin:0 0 16px; }
 </style>

@@ -5,7 +5,7 @@
 .au-layout-standard .au-parameters-content > * { flex-shrink: 0; }
 .au-layout-standard .au-parameters-footer { flex: none; padding: 16px; background: var(--color-bg-surface); border-top: 1px solid var(--color-stroke-divider); }
 .au-layout-standard .au-preview-header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; padding: 12px 16px; }
-.au-layout-standard .au-preview-views { grid-column: 2; width: auto; min-width: 104px; }
+.au-layout-standard .au-preview-views { grid-column: 2; width: max-content; min-width: 0; }
 .au-layout-standard .au-preview-help { grid-column: 3; justify-self: end; }
 .au-layout-standard .au-preview-footer { text-align: start; padding: 0 16px 16px; }
 .au-layout-standard .au-preview-footer .au-scene-controls { justify-content: flex-start; }

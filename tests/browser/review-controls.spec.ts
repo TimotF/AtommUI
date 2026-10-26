@@ -98,3 +98,23 @@ test('stacked canvas controls keep two rows, events and accessible fit at narrow
   await expect(fit).toBeDisabled();await expect(tools.getByRole('button',{name:'Zoom in',exact:true})).toBeDisabled();
   await expect(slider).toBeDisabled();
 });
+
+
+test('two or three preview tabs fit their visible labels without an empty trailing segment',async({page})=>{
+ for(const count of [2,3]) {
+  await page.goto('/?review-controls&tabs='+count);
+  for(const width of [1280,1135,960]) for(const direction of ['ltr','rtl']) {
+   await page.setViewportSize({width,height:853});
+   await page.locator('html').evaluate((element,dir)=>element.setAttribute('dir',dir),direction);
+   const group=page.locator('#review-tabs');
+   const [track,first,last]=await Promise.all([group.boundingBox(),group.locator('.v-tab').first().boundingBox(),group.locator('.v-tab').last().boundingBox()]);
+   const start=direction==='rtl'?track!.x+track!.width-first!.x-first!.width:first!.x-track!.x;
+   const end=direction==='rtl'?last!.x-track!.x:track!.x+track!.width-last!.x-last!.width;
+   expect(start).toBeGreaterThanOrEqual(1);expect(start).toBeLessThanOrEqual(3);
+   expect(end).toBeGreaterThanOrEqual(1);expect(end).toBeLessThanOrEqual(3);
+  }
+  const tabs=page.locator('#review-tabs .v-tab');
+  await tabs.last().click();await expect(tabs.last()).toHaveAttribute('aria-selected','true');
+  await tabs.first().focus();await tabs.first().press('Enter');await expect(tabs.first()).toHaveAttribute('aria-selected','true');
+ }
+});
