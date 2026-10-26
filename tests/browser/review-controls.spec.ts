@@ -55,6 +55,9 @@ test('canvas actions use the official shell without changing ordinary buttons',a
   await expect(button).toHaveCSS('width','32px');await expect(button).toHaveCSS('height','32px');
   await expect(button).toHaveCSS('border-radius','8px');await expect(button).toHaveCSS('background-color','rgb(255, 255, 255)');
   await expect(page.locator('#review-move-zoom')).toHaveCSS('border-radius','6px');
+  await expect(page.locator('#review-canvas-label')).toHaveClass(/v-btn--variant-outlined/);
+  await expect(page.locator('#review-canvas-label')).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await expect(page.locator('#review-canvas-label .v-btn__underlay')).toHaveCSS('background-color','rgba(0, 0, 0, 0)');
   await button.focus();await button.press('Space');await expect(button).toHaveAttribute('aria-pressed','true');
   await button.press('Enter');await expect(button).toHaveAttribute('aria-pressed','false');
 });
