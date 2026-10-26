@@ -398,3 +398,9 @@ The gallery `?review-controls` demonstrates these additions alongside the existi
 ### Canvas action buttons (0.22)
 
 Use `<AuButton canvas icon>` for a 32px icon action on the preview canvas, or `canvas` with a text label. In the compact profile this opts into a white surface, an 8px radius and a bordered shell; `active` preserves the selected state. Ordinary rail buttons and 6px inputs are unchanged. Keep application placement in the consumer.
+
+### Two-row canvas toolbar (0.23.0)
+
+`AuSceneControls layout="stacked"` places the optional explosion slider above a row of separate white canvas buttons: zoom out, presets, zoom in, icon-only fit, then the existing `extra` slot. The fit icon retains the translated `recenterLabel` as its accessible name and hover/focus/touch tooltip. A `footer` slot accepts app-specific notes or page navigation below the controls. The rows wrap within the available width; labels, state and actions remain consumer-owned. The default `inline` layout and optional `zoomTarget` retain their existing behavior. If a zoom target is supplied with the stacked layout, the whole lower row (including extra actions) moves there.
+
+`AuZoomControls` also exposes `separated` (individual canvas buttons), `recenterIcon` (icon-only fit) and an `actions` slot after fit. All are optional. Zoom events, presets, bounds and keyboard operation remain unchanged.

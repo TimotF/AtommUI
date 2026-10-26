@@ -2,8 +2,10 @@
 import {computed,inject,ref} from 'vue';
 import {VMenu} from 'vuetify/components/VMenu';
 import AuButton from './AuButton.vue';
+import AuIcon from './AuIcon.vue';
+import AuTooltip from './AuTooltip.vue';
 import {compactProfileKey} from '../profile.js';
-const props=withDefaults(defineProps<{percent:number;label:string;zoomInLabel:string;zoomOutLabel:string;recenterLabel:string;min?:number;max?:number;presets?:readonly number[];disabled?:boolean}>(),{min:10,max:4000,presets:()=>[25,50,100,150,200]});
+const props=withDefaults(defineProps<{percent:number;label:string;zoomInLabel:string;zoomOutLabel:string;recenterLabel:string;min?:number;max?:number;presets?:readonly number[];disabled?:boolean;separated?:boolean;recenterIcon?:boolean}>(),{min:10,max:4000,presets:()=>[25,50,100,150,200]});
 const emit=defineEmits<{zoom:[factor:number];setZoom:[percent:number];recenter:[]}>();
 const open=ref(false),compact=inject(compactProfileKey,()=>false);
 const menuClass=computed(()=>`au-overlay au-zoom-menu${compact()?' au-profile-compact':''}`);
@@ -13,13 +15,15 @@ const choices=computed(()=>[...new Set(props.presets)].filter(value=>Number.isFi
 function choose(value:number){if(unavailable.value||!choices.value.includes(value))return;emit('setZoom',value);open.value=false;}
 </script>
 <template>
- <div class="au-zoom-controls" role="group" :aria-label="label">
-  <AuButton variant="text" icon :aria-label="zoomOutLabel" :disabled="unavailable||percent<=min" @click="emit('zoom',1.12)">−</AuButton>
+ <div class="au-zoom-controls" :class="{'au-zoom-controls-separated':separated}" role="group" :aria-label="label">
+  <AuButton :variant="separated?'outlined':'text'" :canvas="separated" icon :aria-label="zoomOutLabel" :disabled="unavailable||percent<=min" @click="emit('zoom',1.12)">−</AuButton>
   <VMenu v-model="open" location="top" :offset="8" :content-class="menuClass" :z-index="3" :disabled="unavailable||!choices.length" :transition="false">
-   <template #activator="{props:activator}"><AuButton v-bind="activator" class="au-zoom-value" variant="text" :aria-label="label" :disabled="unavailable||!choices.length" :aria-expanded="String(open)" :aria-controls="open?activator['aria-controls']:undefined">{{valid?Math.round(percent):'—'}} %</AuButton></template>
+   <template #activator="{props:activator}"><AuButton v-bind="activator" class="au-zoom-value" :variant="separated?'outlined':'text'" :canvas="separated" :aria-label="label" :disabled="unavailable||!choices.length" :aria-expanded="String(open)" :aria-controls="open?activator['aria-controls']:undefined">{{valid?Math.round(percent):'—'}} %</AuButton></template>
    <div role="group" :aria-label="label"><AuButton v-for="value in choices" :key="value" variant="text" :active="percent===value" @click="choose(value)">{{value}} %</AuButton></div>
   </VMenu>
-  <AuButton variant="text" icon :aria-label="zoomInLabel" :disabled="unavailable||percent>=max" @click="emit('zoom',.88)">+</AuButton>
-  <AuButton variant="text" :disabled="unavailable" @click="emit('recenter')">{{recenterLabel}}</AuButton>
+  <AuButton :variant="separated?'outlined':'text'" :canvas="separated" icon :aria-label="zoomInLabel" :disabled="unavailable||percent>=max" @click="emit('zoom',.88)">+</AuButton>
+  <AuTooltip v-if="recenterIcon" :text="recenterLabel"><template #activator="{props:activator}"><AuButton v-bind="activator" :canvas="separated" :variant="separated?'outlined':'text'" icon :aria-label="recenterLabel" :disabled="unavailable" @click="emit('recenter')"><AuIcon path="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" /></AuButton></template></AuTooltip>
+  <AuButton v-else :variant="separated?'outlined':'text'" :canvas="separated" :disabled="unavailable" @click="emit('recenter')">{{recenterLabel}}</AuButton>
+  <slot name="actions" />
  </div>
 </template>

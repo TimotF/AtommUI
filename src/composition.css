@@ -65,3 +65,11 @@ button.au-group-heading-line:focus-visible { outline: 2px solid var(--color-stro
 .au-material-picker { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; min-width: 0; --au-example-aspect-ratio: 1; }
 .au-root .au-material-picker .au-example-card .v-btn__content { height: 100%; }
 .au-material-thumbnail { display: block; width: 100%; height: 100%; }
+
+/* Opt-in two-row canvas toolbar. App actions share the lower row with zoom. */
+.au-scene-controls-stacked { flex-direction:column; align-items:stretch; gap:8px; width:max-content; max-width:100%; }
+.au-scene-controls-stacked > .au-scene-explode { flex:none; min-width:0; max-width:none; width:100%; }
+.au-scene-controls-stacked .au-scene-extra { flex-wrap:nowrap; gap:4px; }
+.au-scene-footer { min-width:0; max-width:100%; }
+.au-zoom-controls.au-zoom-controls-separated { flex-wrap:wrap; justify-content:flex-start; gap:4px; background:transparent; border-radius:0; max-width:100%; }
+.au-zoom-controls-separated .au-zoom-value { min-width:58px; padding-inline:8px; }

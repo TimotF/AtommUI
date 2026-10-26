@@ -18,6 +18,7 @@ test('Tips capsule opens a framed, scrollable dialog and restores focus', async 
   await page.getByRole('button',{name:'Close tips',exact:true}).click();
   await expect(dialog).toBeHidden();await expect(trigger).toBeFocused();
   await trigger.press('Enter');await expect(dialog).toBeVisible();
+  await expect(dialog.locator('.v-overlay__content')).toBeFocused();
   await page.keyboard.press('Escape');await expect(trigger).toBeFocused();
 });
 
@@ -60,4 +61,40 @@ test('canvas actions use the official shell without changing ordinary buttons',a
   await expect(page.locator('#review-canvas-label .v-btn__underlay')).toHaveCSS('background-color','rgba(0, 0, 0, 0)');
   await button.focus();await button.press('Space');await expect(button).toHaveAttribute('aria-pressed','true');
   await button.press('Enter');await expect(button).toHaveAttribute('aria-pressed','false');
+});
+
+test('stacked canvas controls keep two rows, events and accessible fit at narrow widths', async ({page})=>{
+  await page.goto('/?review-controls&stacked');
+  const tools=page.locator('#review-scene-controls');
+  for(const [width,dir] of [[1280,'ltr'],[960,'ltr'],[960,'rtl']] as const) {
+    await page.setViewportSize({width,height:853});
+    await page.locator('html').evaluate((element,direction)=>element.setAttribute('dir',direction),dir);
+    const [slider,zoom,action,stage]=await Promise.all([tools.locator('.au-scene-explode').boundingBox(),tools.locator('.au-zoom-controls').boundingBox(),page.locator('#review-canvas-action').boundingBox(),page.locator('.au-stage').boundingBox()]);
+    expect(slider!.y+slider!.height).toBeLessThanOrEqual(zoom!.y);
+    expect(action!.y).toBe(zoom!.y);
+    expect(zoom!.x).toBeGreaterThanOrEqual(stage!.x);
+    expect(zoom!.x+zoom!.width).toBeLessThanOrEqual(stage!.x+stage!.width);
+    const buttons=tools.locator('.au-zoom-controls > .au-button');
+    for(const button of await buttons.all()) {
+      await expect(button).toHaveCSS('background-color','rgb(255, 255, 255)');
+      await expect(button).toHaveCSS('border-radius','8px');
+      await expect(button).toHaveClass(/v-btn--variant-outlined/);
+    }
+  }
+  await page.locator('html').evaluate(element=>element.setAttribute('dir','ltr'));
+  await page.getByRole('button',{name:'Zoom in',exact:true}).click();
+  await expect(tools.locator('.au-zoom-value')).toHaveText('114 %');
+  await tools.locator('.au-zoom-value').click();
+  await page.getByRole('button',{name:'150 %',exact:true}).click();
+  const fit=tools.getByRole('button',{name:'Fit',exact:true});
+  await expect(fit).toHaveText('');
+  await fit.hover();await expect(page.getByRole('tooltip')).toContainText('Fit');
+  await fit.focus();await fit.press('F1');await expect(page.getByRole('tooltip')).toContainText('Fit');
+  await fit.press('Enter');await expect(tools.locator('.au-zoom-value')).toHaveText('100 %');
+  await page.keyboard.press('Escape');
+  const slider=tools.getByRole('slider');
+  await slider.focus();await slider.press('ArrowRight');await expect(slider).toHaveAttribute('aria-valuenow','21');
+  await page.locator('#review-disable').click();
+  await expect(fit).toBeDisabled();await expect(tools.getByRole('button',{name:'Zoom in',exact:true})).toBeDisabled();
+  await expect(slider).toBeDisabled();
 });
