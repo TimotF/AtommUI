@@ -215,7 +215,13 @@
 .au-zoom-menu>div{display:flex;flex-direction:column}
 
 :is(.au-root,.au-overlay) .au-text-field{display:grid;gap:6px;padding:8px 16px;min-width:0}
-:is(.au-root,.au-overlay) .au-text-field>label{color:var(--color-text-secondary);font-size:var(--au-font-size-label)}
+:is(.au-root,.au-overlay) .au-text-field-main{display:grid;gap:6px;min-width:0}
+:is(.au-root,.au-overlay) .au-text-field-main>label{color:var(--color-text-secondary);font-size:var(--au-font-size-label)}
+:is(.au-root,.au-overlay) .au-text-field.au-text-field-row{padding:0;gap:0}
+:is(.au-root,.au-overlay) .au-text-field-row>.au-field-row{display:flex;gap:8px;padding:8px 16px;min-width:0}
+:is(.au-root,.au-overlay) .au-text-field-row>.au-field-row>label,:is(.au-root,.au-overlay) .au-text-field-row>.au-field-row>.au-label-help{flex:1 1 0;min-width:0;overflow-wrap:anywhere;color:var(--color-text-primary)}
+:is(.au-root,.au-overlay) .au-text-field-row>.au-field-row>.au-text-control{flex:0 1 60%;width:60%;min-width:0}
+:is(.au-root,.au-overlay) .au-text-field-row>.au-field-error{padding-inline:16px}
 :is(.au-root,.au-overlay) .au-text-control{min-width:0;width:100%}
 :is(.au-root,.au-overlay) .au-text-control .v-field{background:var(--color-bg-control);border:var(--au-border-width) solid transparent;border-radius:var(--au-radius-control)}
 :is(.au-root,.au-overlay) .au-text-control .v-field--focused{background:var(--color-bg-default);border-color:var(--color-stroke-active)}

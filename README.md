@@ -154,6 +154,8 @@ Licence du code : propriétaire à partir de 0.16.0 ; voir [LICENSE](LICENSE). L
 
 `AuTextField` (0.6.0) reçoit `id`, `label`, `modelValue: string`, `error`, `disabled`, `readOnly`, `help`, `helpLabel` et `placeholder`. Il émet `update:modelValue` sans normaliser ni tronquer le texte. Le label, l’erreur et l’aide sont associés au champ ; la validation appartient au consommateur. Sa présentation empilée laisse toute la largeur aux textes longs. Aucun composant existant ne change.
 
+À partir de 0.25.0, `layout="row"` place le libellé et le contrôle sur une même rangée de panneau, avec les espacements partagés de 8 / 16 px et un champ de hauteur 28 px dans le profil compact. Le contrôle occupe 60 % de la largeur utile ; le libellé peut revenir à la ligne, sans masquer les valeurs ni modifier le modèle. `layout="stacked"` reste la valeur par défaut et conserve la présentation existante, notamment dans les dialogues. Les compositions `AuFieldGroups` conservent leur espacement existant. Les associations d’aide et d’erreur, les états désactivé / lecture seule et la direction RTL sont identiques dans les deux dispositions.
+
 `AuNumericField` expose aussi le slot optionnel `prepend-inner` pour placer une indication ou une action dans le champ. Sans ce slot, le rendu reste identique. Les actions de cet emplacement ne déclenchent pas le glissement numérique ; leur libellé, leur aide et leur logique restent à la charge du consommateur.
 
 

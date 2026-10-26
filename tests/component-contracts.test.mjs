@@ -302,3 +302,15 @@ test('compact cards and field groups form a consecutive heading hierarchy',async
 test('text and numeric fields give Vuetify label references real external label IDs',async()=>{
  for(const Component of [AuTextField,AuNumericField]){const html=await render(h(Component,{id:'labelled',label:'Gift',modelValue:'2'}));assert.match(html,/<label[^>]*id="labelled-label"[^>]*for="labelled"/);assert.match(html,/aria-labelledby="labelled-label"/);}
 });
+
+test('text row layout preserves complete drafts and accessible error relationships',async()=>{
+ for(const layout of ['stacked','row']){
+  const value='Éléonore François · contact@atelier-orbe.example';
+  const html=await render(h(AuTextField,{id:'row-field',label:'Contact',modelValue:value,layout,error:'Please check this value.',help:'Keep the full text.'}));
+  assert.ok(html.includes(`value="${value}"`));
+  assert.match(html,/<label[^>]*id="row-field-label"[^>]*for="row-field"/);
+  assert.ok(html.includes('aria-invalid="true"'));
+  assert.ok(html.includes('aria-describedby="row-field-error"'));
+  assert.ok(html.includes('id="row-field-error"'));
+ }
+});
