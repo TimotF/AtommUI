@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed,nextTick,onBeforeUnmount,onMounted,ref,watch} from 'vue';
 import AuButton from './AuButton.vue';
-const props=withDefaults(defineProps<{standard?:boolean;leadCollapsed?:boolean;leadCollapsible?:boolean;collapseLabel?:string;expandLabel?:string;leadLabel?:string;stageLabel?:string;parametersLabel?:string;leadId?:string}>(),{standard:false,leadId:'rail-import'});
+const props=withDefaults(defineProps<{standard?:boolean;leadCollapsed?:boolean;leadCollapsible?:boolean;collapseLabel?:string;expandLabel?:string;leadLabel?:string;stageLabel?:string;parametersLabel?:string;leadId?:string}>(),{standard:false,leadCollapsed:undefined,leadId:'rail-import'});
 const emit=defineEmits<{'update:leadCollapsed':[value:boolean]}>();
 const local=ref(false),collapsed=computed(()=>props.leadCollapsed??local.value),root=ref<HTMLElement>(),lead=ref<HTMLElement>(),expand=ref<InstanceType<typeof AuButton>>(),collapse=ref<InstanceType<typeof AuButton>>(),narrow=ref(false);
 const regions=computed(()=>props.standard&&narrow.value?['stage','lead','parameters']:['lead','stage','parameters']);
