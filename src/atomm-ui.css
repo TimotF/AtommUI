@@ -257,3 +257,5 @@
 .au-root .au-layout-expand { position:absolute;inset-block-start:12px;inset-inline-start:16px;z-index:2;height:40px;max-width:calc(100% - 32px);border-radius:20px;box-shadow:var(--au-shadow-card); }
 .au-root .au-layout-expand .v-btn__content { overflow:hidden;text-overflow:ellipsis; }
 .au-root .au-layout-collapsible:has(.au-layout-expand) .au-preview-header { padding-block-start:60px; }
+
+.au-root .au-card-title { margin:0;font:inherit; }

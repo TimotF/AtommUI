@@ -292,3 +292,9 @@ test('compact segmented controls follow the official named group of pressed butt
  const app=createSSRApp(()=>h(AuRoot,{profile:'compact'},()=>h(AuSegmentedControl,{label:'View',modelValue:'2d',items:[{value:'2d',title:'2D'},{value:'3d',title:'3D'}]}))).use(createAtommVuetify());
  const html=await renderToString(app);assert.match(html,/role="group" aria-label="View"/);assert.match(html,/<button[^>]*aria-pressed="true"/);assert.ok(!html.includes('aria-checked'));
 });
+
+test('compact cards and field groups form a consecutive heading hierarchy',async()=>{
+ const {AuCard,AuFieldGroup}=await import('../dist/atomm-ui.js');
+ const app=createSSRApp(()=>h(AuRoot,{profile:'compact'},()=>h(AuCard,{id:'card',title:'Gift'},()=>h(AuFieldGroup,{title:'Details'},()=> 'Fields')))).use(createAtommVuetify());
+ const html=await renderToString(app);assert.match(html,/<h2 class="au-card-title">/);assert.match(html,/<h3>/);assert.ok(!html.includes('<h4>'));
+});

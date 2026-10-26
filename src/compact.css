@@ -136,7 +136,7 @@
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-color-button { width: 32px; min-width: 32px; }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-color-swatch { width: 24px; height: 24px; border-radius: 6px; }
 
-:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button:not(.au-button-primary):not(.au-button-icon):not(.au-button-ghost):not(.au-button-destructive) { background:var(--color-bg-default);border:1px solid var(--color-stroke-default);color:var(--color-text-primary);box-shadow:var(--au-shadow-card); }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button.v-btn--variant-tonal:not(.au-button-primary):not(.au-button-icon):not(.au-button-ghost):not(.au-button-destructive) { background:var(--color-bg-default);border:1px solid var(--color-stroke-default);color:var(--color-text-primary);box-shadow:var(--au-shadow-card); }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button-ghost { background:transparent;box-shadow:none; }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button-destructive { border:1px solid var(--color-error);color:var(--color-error);background:transparent; }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button:not(.au-button-primary):not(:disabled):hover { background:var(--color-bg-hover); }
