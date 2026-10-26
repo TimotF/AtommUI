@@ -4,6 +4,7 @@ test('Tips capsule opens a framed, scrollable dialog and restores focus', async 
   await page.goto('/?review-controls');
   const trigger=page.locator('#review-tips');
   await expect(trigger).toHaveCSS('height','32px');
+  await expect(trigger).toHaveCSS('min-width','max-content');
   await expect(trigger).toHaveCSS('font-size','14px');
   await expect(trigger.locator('span').last()).toHaveCSS('font-size','14px');
   await expect(trigger).toHaveCSS('font-weight','500');

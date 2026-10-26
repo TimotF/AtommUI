@@ -11,7 +11,7 @@ defineProps<{ label: string; active?: boolean; disabled?: boolean }>();
 </template>
 
 <style>
-:is(.au-root,.au-overlay) .au-button.au-tips-button { height:32px; border:1px solid var(--color-stroke-default); border-radius:999px; background:var(--color-bg-default); color:var(--color-text-secondary); padding-inline:12px; font-size:var(--au-font-size-action); }
+:is(.au-root,.au-overlay) .au-button.au-tips-button { height:32px; min-width:max-content; max-width:none; border:1px solid var(--color-stroke-default); border-radius:999px; background:var(--color-bg-default); color:var(--color-text-secondary); padding-inline:12px; font-size:var(--au-font-size-action); }
 :is(.au-root,.au-overlay) .au-button.au-tips-button:not(:disabled):hover { border-color:var(--color-stroke-strong); background:var(--color-bg-hover); }
 :is(.au-root,.au-overlay) .au-button.au-tips-button[aria-pressed="true"] { outline:1px solid var(--color-stroke-active); outline-offset:0; }
 </style>
