@@ -426,3 +426,20 @@ preview segments size to their own labels and keep them on one line. This fixes
 Only preview segments opt into this behavior. Ordinary parameter choices keep
 equal flexible widths and multiline labels. Browser regression checks cover both
 components, 390–1456px widths, RTL, selection and keyboard use.
+
+### Accessible preview interactions (0.24.0)
+
+- Help triggers retain a minimum 24 × 24px hit area inside shrinking field rows.
+- `AuSegmentedControl` accepts optional `compactTitle` and `testId` on its items,
+  with full accessible labels and the existing group/pressed semantics.
+- `AuSvgViewport` handles native two-finger pinch about the moving midpoint,
+  retains one-finger dragging after release, and cancels a gesture with Escape.
+  The exposed `frameBounds({x,y,width,height}, padding?)` frames physical geometry;
+  optional `maxZoom` limits the percentage (4000 by default). Drawing/export
+  coordinates are unchanged.
+- `AuActionMenu` accepts `id`, `modelValue`, an `activator` selector, `label`, and
+  translated `items` (`value`, `title`, optional `id`, `disabled`, `active`, `group`).
+  It emits `select(value)` and `update:modelValue`, uses compact 32px action rows,
+  and offers `before`/`after` slots for application-specific fields. Consumers
+  own the actions, not menu presentation. Default behavior of existing controls
+  remains unchanged outside these additions and accessibility fixes.

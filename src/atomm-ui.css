@@ -45,7 +45,7 @@
 :is(.au-root,.au-overlay) .au-field-row > label { flex: 1 1 auto; }
 :is(.au-root,.au-overlay) .au-label-help { display: inline-flex; align-items: center; gap: var(--au-help-gap); min-width: 0; }
 :is(.au-root,.au-overlay) .au-label-help label { cursor: default; }
-:is(.au-root,.au-overlay) .au-help-trigger { display: inline-flex; align-items: center; justify-content: center; width: var(--au-space-24); height: var(--au-space-24); border: 0; background: none; border-radius: var(--au-radius-pill); font-size: var(--au-font-size-secondary); font-weight: var(--au-font-weight-medium); color: var(--color-text-secondary); padding: 0; transition: background-color var(--au-transition-duration) var(--au-transition-easing), color var(--au-transition-duration) var(--au-transition-easing); }
+:is(.au-root,.au-overlay) .au-help-trigger { display: inline-flex; align-items: center; justify-content: center; width: var(--au-space-24); min-width: var(--au-space-24); height: var(--au-space-24); min-height: var(--au-space-24); flex-shrink: 0; border: 0; background: none; border-radius: var(--au-radius-pill); font-size: var(--au-font-size-secondary); font-weight: var(--au-font-weight-medium); color: var(--color-text-secondary); padding: 0; transition: background-color var(--au-transition-duration) var(--au-transition-easing), color var(--au-transition-duration) var(--au-transition-easing); }
 :is(.au-root,.au-overlay) .au-help-trigger:hover, :is(.au-root,.au-overlay) .au-help-trigger:focus-visible { background: var(--color-bg-control); color: var(--color-text-primary); }
 :is(.au-root,.au-overlay) .au-help-trigger { cursor: help; align-self: flex-start; margin-block-start: -4px; }
 :is(.au-root,.au-overlay) .au-help-badge .v-badge__wrapper { margin: 0; }
@@ -259,3 +259,11 @@
 .au-root .au-layout-collapsible:has(.au-layout-expand) .au-preview-header { padding-block-start:60px; }
 
 .au-root .au-card-title { margin:0;font:inherit; }
+
+/* Shared action menus use the same compact rows as the official selectors. */
+.au-overlay.au-action-menu { min-width: 160px; max-width: min(360px,calc(100vw - 16px)); }
+.au-overlay .au-action-list { padding: var(--au-space-4); border-radius: var(--au-radius-control); background: var(--color-bg-default); color: var(--color-text-primary); font-family: var(--au-font); }
+.au-overlay .au-action-list .v-list-item { min-height: 32px; padding: 6px 12px; border-radius: var(--au-radius-control); }
+.au-overlay .au-action-list .v-list-item-title { font-size: var(--au-font-size-label); line-height: 20px; white-space: normal; overflow-wrap: anywhere; }
+.au-overlay .au-action-list .au-action-group { padding: 8px 12px 4px; color: var(--color-text-secondary); font-size: var(--au-font-size-secondary); }
+.au-overlay .au-action-list .au-action-fields { padding: 8px 12px; }

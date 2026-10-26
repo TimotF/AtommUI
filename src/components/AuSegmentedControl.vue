@@ -2,9 +2,9 @@
 import { computed, inject, ref } from 'vue';
 import { VBtn } from 'vuetify/components/VBtn';
 import {compactProfileKey} from '../profile.js';
-import { isOptionValue, type UiOption } from '../contracts.js';
+import { isOptionValue, type UiTab } from '../contracts.js';
 defineOptions({ inheritAttrs: false });
-const props = withDefaults(defineProps<{ modelValue: string; items: readonly UiOption[]; label: string; disabled?: boolean }>(), { disabled: false });
+const props = withDefaults(defineProps<{ modelValue: string; items: readonly UiTab[]; label: string; disabled?: boolean }>(), { disabled: false });
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>();
 const compact=inject(compactProfileKey,()=>false);
 const group = ref<HTMLElement | null>(null);
@@ -27,6 +27,6 @@ function key(event: KeyboardEvent) {
 </script>
 <template>
   <div ref="group" v-bind="$attrs" class="au-segmented-control" :role="compact()?'group':'radiogroup'" :aria-label="label" :aria-disabled="disabled ? 'true' : undefined" @keydown="key">
-    <VBtn v-for="item in items" :key="item.value" class="au-segmented-option" :class="{ 'au-segmented-selected': modelValue === item.value }" variant="text" :ripple="false" :role="compact()?undefined:'radio'" :aria-checked="compact()?undefined:String(modelValue === item.value)" :aria-pressed="compact()?String(modelValue === item.value):undefined" :aria-label="item.title" :data-value="item.value" :disabled="disabled || item.disabled" :tabindex="!disabled && !item.disabled && selected === item.value ? 0 : -1" @click="choose(item.value)">{{ item.title }}</VBtn>
+    <VBtn v-for="item in items" :key="item.value" class="au-segmented-option" :class="{ 'au-segmented-selected': modelValue === item.value, 'au-tab-compact':!!item.compactTitle }" variant="text" :ripple="false" :role="compact()?undefined:'radio'" :aria-checked="compact()?undefined:String(modelValue === item.value)" :aria-pressed="compact()?String(modelValue === item.value):undefined" :aria-label="item.title" :data-value="item.value" :data-testid="item.testId" :disabled="disabled || item.disabled" :tabindex="!disabled && !item.disabled && selected === item.value ? 0 : -1" @click="choose(item.value)"><span class="au-tab-title-full">{{item.title}}</span><span v-if="item.compactTitle" class="au-tab-title-short" aria-hidden="true">{{item.compactTitle}}</span></VBtn>
   </div>
 </template>

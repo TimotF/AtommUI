@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { AuRoot, AuLayout, AuTipsButton, AuDialog, AuButton, AuCard, AuNumericField, AuSceneControls, AuOnboardingCard, AuTabs, AuSegmentedControl } from '@timotf/atomm-ui';
+import { AuRoot, AuLayout, AuTipsButton, AuDialog, AuButton, AuCard, AuNumericField, AuSceneControls, AuOnboardingCard, AuTabs, AuSegmentedControl, AuActionMenu } from '@timotf/atomm-ui';
 const query=new URLSearchParams(location.search), tabCount=Number(query.get('tabs')??0), view=ref('sliceform'), segmented=query.has('segmented'), parameterChoice=ref('first');
 const views=[{value:'source',title:'Source model',compactTitle:'Model'},{value:'sliceform',title:'Assembly preview',compactTitle:'3D'},{value:'pages',title:'SVG',compactTitle:'SVG'}];
 const previewViews=segmented ? [{value:'sliceform',title:'3D'},{value:'pages',title:'SVG'}] : views.slice(tabCount===2?1:0);
+const actionOpen=ref(false),lastAction=ref('');
 const stacked=new URLSearchParams(location.search).has('stacked');
 const explode=ref(20), controlsDisabled=ref(false);
 const open=ref(false), collapsed=ref(false), dock=ref<HTMLElement|null>(null), detached=ref(true), zoom=ref(100), count=ref('6'), canvasActive=ref(false);
@@ -18,7 +19,7 @@ const open=ref(false), collapsed=ref(false), dock=ref<HTMLElement|null>(null), d
       <div ref="dock" id="review-zoom-dock" class="review-zoom-dock" />
       <div class="review-tools" :class="{'review-tools-stacked':stacked}"><AuSceneControls id="review-scene-controls" :layout="stacked ? 'stacked' : 'inline'" :zoom-target="!stacked && detached ? dock : null" :disabled="controlsDisabled" :percent="zoom" label="Zoom" zoom-in-label="Zoom in" zoom-out-label="Zoom out" recenter-label="Fit" :explode="explode" @update:explode="explode=$event" explode-label="Explode" @zoom="factor=>zoom=Math.round(zoom/factor)" @set-zoom="zoom=$event" @recenter="zoom=100"><template #extra><AuButton id="review-canvas-label" canvas :icon="stacked" aria-label="Orient"><span v-if="!stacked">Orient</span><span v-else>↶</span></AuButton><AuButton id="review-canvas-action" canvas icon :active="canvasActive" aria-label="Inspect part" @click="canvasActive=!canvasActive">⌕</AuButton></template></AuSceneControls></div>
     </template>
-    <template #parameters><div class="au-parameters-content"><AuCard id="review-settings" title="Settings"><AuNumericField id="review-count" v-model="count" label="Count" /></AuCard><AuSegmentedControl v-if="segmented" id="review-parameter-choices" v-model="parameterChoice" label="Parameter choices" :items="[{value:'first',title:'Keep this longer parameter label readable'},{value:'second',title:'Another longer parameter label'}]"/><AuButton id="review-move-zoom" @click="detached=!detached">Move zoom</AuButton><AuButton id="review-disable" @click="controlsDisabled=!controlsDisabled">Disable</AuButton><div class="au-overlay au-profile-compact"><AuOnboardingCard title="Choose a material" label="Tip" close-label="Close tip" next-label="Got it" hide-label="Hide tips" text="Measure its actual thickness." /></div></div></template>
+    <template #parameters><div class="au-parameters-content"><AuCard id="review-settings" title="Settings"><AuNumericField id="review-count" v-model="count" label="Count" /></AuCard><AuSegmentedControl v-if="segmented" id="review-parameter-choices" v-model="parameterChoice" label="Parameter choices" :items="[{value:'first',title:'Keep this longer parameter label readable'},{value:'second',title:'Another longer parameter label'}]"/><template v-if="query.has('actions')"><AuButton id="review-actions-trigger" :aria-expanded="String(actionOpen)" @click="actionOpen=!actionOpen">Actions</AuButton><AuActionMenu id="review-actions" v-model="actionOpen" activator="#review-actions-trigger" label="Actions" :items="[{value:'reset',title:'Reset orientation'},{value:'disabled',title:'Unavailable',disabled:true},{value:'rotate',title:'X +90°',group:'Advanced'}]" @select="lastAction=$event"/><output id="review-action-result">{{lastAction}}</output></template><div v-if="query.has('actions')" class="review-narrow-help"><AuNumericField id="review-help-width" v-model="count" label="Correction d’emboîtement" help="Measure the actual thickness." help-label="Help: fit correction"/></div><AuButton id="review-move-zoom" @click="detached=!detached">Move zoom</AuButton><AuButton id="review-disable" @click="controlsDisabled=!controlsDisabled">Disable</AuButton><div class="au-overlay au-profile-compact"><AuOnboardingCard title="Choose a material" label="Tip" close-label="Close tip" next-label="Got it" hide-label="Hide tips" text="Measure its actual thickness." /></div></div></template>
   </AuLayout>
   <AuDialog v-model="open" framed title="Fabrication Tips" close-label="Close tips" :max-width="480">
     <p v-for="n in 16" :key="n" class="review-paragraph">{{ n }}. Check the material thickness and test the fit before cutting the model.</p>
@@ -37,3 +38,5 @@ const open=ref(false), collapsed=ref(false), dock=ref<HTMLElement|null>(null), d
 .review-caption { padding:16px; }
 .review-paragraph { margin:0 0 16px; }
 </style>
+
+<style>.review-narrow-help {width:180px;max-width:100%;}</style>

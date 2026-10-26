@@ -144,3 +144,15 @@ test('preview segmented choices keep SVG on one line without changing parameter 
   const buttons=await parameters.locator('button').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().width));
   expect(buttons[0]).toBeCloseTo(buttons[1],1);
 });
+
+
+test('shared action menus use compact rows, skip disabled actions and close on selection',async({page})=>{
+ await page.goto('/?review-controls&actions');await page.locator('#review-actions-trigger').click();
+ const menu=page.getByRole('menu',{name:'Actions',exact:true});await expect(menu).toBeVisible();
+ const rows=await menu.getByRole('menuitem').evaluateAll(els=>els.map(e=>e.getBoundingClientRect().height));expect(rows).toEqual([32,32,32]);
+ await expect(menu.getByRole('menuitem',{name:'Unavailable'})).toBeDisabled();
+ await menu.getByRole('menuitem',{name:'X +90°'}).click();await expect(menu).toBeHidden();await expect(page.locator('#review-action-result')).toHaveText('rotate');
+ await page.locator('#review-actions-trigger').click();await expect(menu).toBeVisible();await page.keyboard.press('Escape');await expect(menu).toBeHidden();
+ const help=page.getByRole('button',{name:'Help: fit correction',exact:true}),rect=await help.boundingBox();expect(rect!.width).toBeGreaterThanOrEqual(24);expect(rect!.height).toBeGreaterThanOrEqual(24);
+ await help.focus();await expect(page.getByRole('tooltip')).toContainText('Measure the actual thickness.');await page.keyboard.press('Escape');
+});

@@ -48,3 +48,6 @@ export { default as AuMaterialThumbnail } from './components/AuMaterialThumbnail
 export { default as AuMaterialPicker } from './components/AuMaterialPicker.vue';
 export { default as AuDialog } from './components/AuDialog.vue';
 export { default as AuTipsButton } from './components/AuTipsButton.vue';
+
+export { default as AuActionMenu } from './components/AuActionMenu.vue';
+export type { ActionMenuItem } from './components/AuActionMenu.vue';

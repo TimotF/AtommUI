@@ -73,7 +73,9 @@ test('preview keyboard focus uses a faint shadow without an outline while button
   expect(shadow.shadow).toBe('rgba(23, 23, 25, 0.04) 0px 0px 8px 0px inset');
   expect(shadow.pointerEvents).toBe('none'); expect(shadow.zIndex).toBe('1');
   const button = page.locator('#demo-guide');
-  await button.focus(); await expect(button).toHaveCSS('outline-color', 'rgb(229, 83, 75)');
+  await page.keyboard.press('Tab'); await button.focus(); await expect(button).toBeFocused();
+  await expect(button).toHaveCSS('outline-style','solid');
+  await expect(button).toHaveCSS('outline-width','2px');
 });
 
 test('drag cancellation restores the view after pinch zoom', async ({ page }) => {
@@ -85,4 +87,32 @@ test('drag cancellation restores the view after pinch zoom', async ({ page }) =>
   expect((await viewBox(viewport))[0]).not.toBe(before[0]);
   await page.keyboard.press('Escape'); await page.mouse.up();
   (await viewBox(viewport)).forEach((value, index) => expect(value).toBeCloseTo(before[index], 7));
+});
+
+
+test('two native touch points zoom about their midpoint and release without a jump',async({page})=>{
+ const viewport=page.locator('.au-svg-viewport'),box=(await viewport.boundingBox())!,before=await viewBox(viewport);
+ const cdp=await page.context().newCDPSession(page);await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:2});
+ const x=box.x+box.width*.55,y=box.y+box.height*.5;
+ const touch=(distance:number)=>[{x:x-distance/2,y,id:1},{x:x+distance/2,y,id:2}];
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:touch(80)});
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:touch(120)});
+ await expect.poll(async()=>before[2]/(await viewBox(viewport))[2]).toBeCloseTo(1.5,1);
+ const enlarged=await viewBox(viewport),plot=await viewport.locator('.au-svg-viewport-pieces').boundingBox();
+ const ax=(x-plot!.x)/plot!.width,ay=(y-plot!.y)/plot!.height;
+ expect(enlarged[0]+enlarged[2]*ax).toBeCloseTo(before[0]+before[2]*ax,2);
+ expect(enlarged[1]+enlarged[3]*ay).toBeCloseTo(before[1]+before[3]*ay,2);
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[touch(120)[0]]});
+ const released=await viewBox(viewport);released.forEach((v,i)=>expect(v).toBeCloseTo(enlarged[i],6));
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ await cdp.detach();
+});
+
+test('frameBounds fits a physical region without altering the SVG geometry',async({page})=>{
+ const viewport=page.locator('.au-svg-viewport'),original=await viewport.locator('.au-svg-content path').getAttribute('d');
+ await page.locator('#demo-frame-region').click();const box=await viewBox(viewport);
+ expect(box[0]+box[2]/2).toBeCloseTo(35,6);expect(box[1]+box[3]/2).toBeCloseTo(20,6);
+ expect(box[0]).toBeLessThan(20);expect(box[0]+box[2]).toBeGreaterThan(50);
+ expect(box[1]).toBeLessThan(10);expect(box[1]+box[3]).toBeGreaterThan(30);
+ expect(await viewport.locator('.au-svg-content path').getAttribute('d')).toBe(original);
 });

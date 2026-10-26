@@ -2,7 +2,7 @@
 import {computed,onBeforeUnmount,onMounted,ref,watch} from 'vue';
 import type { SvgBounds } from '../viewport.js';
 import { safeSvgBounds } from '../viewport.js';
-const props=withDefaults(defineProps<{bounds:SvgBounds;label:string;displayUnit?:'mm'|'in';locale?:string;grid?:boolean}>(),{grid:true});
+const props=withDefaults(defineProps<{bounds:SvgBounds;label:string;displayUnit?:'mm'|'in';locale?:string;grid?:boolean;maxZoom?:number}>(),{grid:true});
 const emit=defineEmits<{zoomchange:[percent:number]}>();
 const toDisplay=(value:number,unit:string)=>unit==='in'?value/25.4:value;
 const fromDisplay=(value:number,unit:string)=>unit==='in'?value*25.4:value;
@@ -26,7 +26,7 @@ const label=(value:number)=>new Intl.NumberFormat(props.locale??'en',{maximumFra
 let observer:ResizeObserver|undefined;
 let down:{x:number;y:number;center:{x:number;y:number};pixelsPerMm:number;pointerId:number;target:Element|null;moved:boolean}|null=null;
 function fit(){center.value={x:canvas.value.x+canvas.value.width/2,y:canvas.value.y+canvas.value.height/2};scale.value=1;emit('zoomchange',100);}
-function setZoom(percent:number,anchor?:{x:number;y:number}){if(!Number.isFinite(percent))return;const next=Math.max(.1,Math.min(40,percent/100));if(anchor){const before=pixelsPerMm.value,world={x:viewport.value.x+anchor.x/before,y:viewport.value.y+anchor.y/before},after=fittedPixelsPerMm.value*next;center.value={x:world.x-(anchor.x-plotWidth.value/2)/after,y:world.y-(anchor.y-plotHeight.value/2)/after};}scale.value=next;emit('zoomchange',Math.round(next*100));}
+function setZoom(percent:number,anchor?:{x:number;y:number}){if(!Number.isFinite(percent))return;const next=Math.max(.1,Math.min(Math.max(.1,(props.maxZoom??4000)/100),percent/100));if(anchor){const before=pixelsPerMm.value,world={x:viewport.value.x+anchor.x/before,y:viewport.value.y+anchor.y/before},after=fittedPixelsPerMm.value*next;center.value={x:world.x-(anchor.x-plotWidth.value/2)/after,y:world.y-(anchor.y-plotHeight.value/2)/after};}scale.value=next;emit('zoomchange',Math.round(next*100));}
 /** factor < 1 zooms in, matching the reference generator. */
 function zoom(factor:number){if(Number.isFinite(factor)&&factor>0)setZoom(scale.value*100/factor);}
 function wheel(event:WheelEvent){
@@ -36,15 +36,56 @@ function wheel(event:WheelEvent){
  const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?plotHeight.value:1)*(event.ctrlKey?10:1);
  setZoom(scale.value*100/Math.exp(Math.max(-500,Math.min(500,delta))*.0015),{x:event.clientX-rect.left-rulerWidth,y:event.clientY-rect.top-rulerHeight});
 }
-function pointerDown(event:PointerEvent){if(down||!event.isPrimary||event.button!==0&&event.button!==1)return;mount.value?.focus({preventScroll:true});down={x:event.clientX,y:event.clientY,center:{...center.value},pixelsPerMm:pixelsPerMm.value,pointerId:event.pointerId,target:event.target instanceof Element?event.target:null,moved:false};mount.value?.setPointerCapture(event.pointerId);}
-function pointerMove(event:PointerEvent){if(!down||down.pointerId!==event.pointerId)return;const dx=event.clientX-down.x,dy=event.clientY-down.y;if(Math.hypot(dx,dy)>5)down.moved=true;if(!down.moved)return;dragging.value=true;center.value={x:down.center.x-dx/down.pixelsPerMm,y:down.center.y-dy/down.pixelsPerMm};}
-function pointerUp(event:PointerEvent){if(!down||down.pointerId!==event.pointerId)return;down=null;dragging.value=false;if(mount.value?.hasPointerCapture(event.pointerId))mount.value.releasePointerCapture(event.pointerId);}
-function pointerCancel(event:PointerEvent){if(down?.pointerId===event.pointerId){center.value=down.center;down=null;dragging.value=false;}}
-function keyboard(event:KeyboardEvent){if(event.key==='Escape'){if(down){center.value=down.center;pointerUp({pointerId:down.pointerId} as PointerEvent);}return;}if(event.key==='0'){event.preventDefault();fit();}else if(event.key==='+'||event.key==='='){event.preventDefault();zoom(.88);}else if(event.key==='-'){event.preventDefault();zoom(1.12);}else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)){event.preventDefault();const step=40/pixelsPerMm.value;center.value={x:center.value.x+(event.key==='ArrowRight'?step:event.key==='ArrowLeft'?-step:0),y:center.value.y+(event.key==='ArrowDown'?step:event.key==='ArrowUp'?-step:0)};}}
+const pointers=new Map<number,{x:number;y:number}>();
+let pinch:{distance:number;scale:number;world:{x:number;y:number}}|null=null;
+let initial:{center:{x:number;y:number};scale:number}|null=null;
+function pair(){return [...pointers.values()].slice(0,2);}
+function midpoint(){const [a,b]=pair();return {x:(a.x+b.x)/2,y:(a.y+b.y)/2};}
+function local(point:{x:number;y:number}){const r=mount.value!.querySelector('.au-svg-viewport-pieces')!.getBoundingClientRect();return{x:point.x-r.left,y:point.y-r.top};}
+function rebase(){
+ pinch=null;down=null;
+ if(pointers.size>=2){const [a,b]=pair(),p=local(midpoint());pinch={distance:Math.max(1,Math.hypot(b.x-a.x,b.y-a.y)),scale:scale.value,world:{x:viewport.value.x+p.x/pixelsPerMm.value,y:viewport.value.y+p.y/pixelsPerMm.value}};}
+ else if(pointers.size===1){const [pointerId,p]=[...pointers][0];down={...p,center:{...center.value},pixelsPerMm:pixelsPerMm.value,pointerId,target:null,moved:false};}
+}
+function pointerDown(event:PointerEvent){
+ if(event.pointerType!=='touch'&&(!event.isPrimary||event.button!==0&&event.button!==1))return;
+ if(!pointers.size)initial={center:{...center.value},scale:scale.value};
+ pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});mount.value?.focus({preventScroll:true});mount.value?.setPointerCapture(event.pointerId);rebase();
+}
+function pointerMove(event:PointerEvent){
+ if(!pointers.has(event.pointerId))return;pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+ if(pinch&&pointers.size>=2){
+  const [a,b]=pair(),point=local(midpoint());
+  setZoom(pinch.scale*100*Math.hypot(b.x-a.x,b.y-a.y)/pinch.distance);
+  center.value={x:pinch.world.x-(point.x-plotWidth.value/2)/pixelsPerMm.value,y:pinch.world.y-(point.y-plotHeight.value/2)/pixelsPerMm.value};dragging.value=true;return;
+ }
+ if(!down||down.pointerId!==event.pointerId)return;
+ const dx=event.clientX-down.x,dy=event.clientY-down.y;if(Math.hypot(dx,dy)>5)down.moved=true;if(!down.moved)return;
+ dragging.value=true;center.value={x:down.center.x-dx/down.pixelsPerMm,y:down.center.y-dy/down.pixelsPerMm};
+}
+function pointerUp(event:PointerEvent){
+ if(!pointers.delete(event.pointerId))return;
+ if(mount.value?.hasPointerCapture(event.pointerId))mount.value.releasePointerCapture(event.pointerId);
+ rebase();if(!pointers.size){initial=null;dragging.value=false;}
+}
+function cancelGesture(){
+ const ids=[...pointers.keys()];pointers.clear();pinch=null;down=null;dragging.value=false;
+ if(initial){center.value=initial.center;scale.value=initial.scale;emit('zoomchange',Math.round(scale.value*100));initial=null;}
+ for(const id of ids)if(mount.value?.hasPointerCapture(id))mount.value.releasePointerCapture(id);
+}
+function pointerCancel(event:PointerEvent){if(pointers.has(event.pointerId))cancelGesture();}
+/** Frame a physical region without changing the drawing or its export scale. */
+function frameBounds(bounds:SvgBounds,padding=24){
+ if(![bounds.x,bounds.y,bounds.width,bounds.height].every(Number.isFinite)||bounds.width<=0||bounds.height<=0)return;
+ const inset=Number.isFinite(padding)?Math.max(0,padding):24;
+ setZoom(100*Math.min(Math.max(1,plotWidth.value-2*inset)/bounds.width,Math.max(1,plotHeight.value-2*inset)/bounds.height)/fittedPixelsPerMm.value);
+ center.value={x:bounds.x+bounds.width/2,y:bounds.y+bounds.height/2};
+}
+function keyboard(event:KeyboardEvent){if(event.key==='Escape'){cancelGesture();return;}if(event.key==='0'){event.preventDefault();fit();}else if(event.key==='+'||event.key==='='){event.preventDefault();zoom(.88);}else if(event.key==='-'){event.preventDefault();zoom(1.12);}else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)){event.preventDefault();const step=40/pixelsPerMm.value;center.value={x:center.value.x+(event.key==='ArrowRight'?step:event.key==='ArrowLeft'?-step:0),y:center.value.y+(event.key==='ArrowDown'?step:event.key==='ArrowUp'?-step:0)};}}
 watch([()=>canvas.value.x,()=>canvas.value.y,()=>canvas.value.width,()=>canvas.value.height],fit,{immediate:true});
 onMounted(()=>{observer=new ResizeObserver(entries=>{const size=entries[0].contentRect;if(size.width>0&&size.height>0){width.value=size.width;height.value=size.height;}});observer.observe(mount.value!);fit();});
-onBeforeUnmount(()=>{observer?.disconnect();down=null;});
-defineExpose({zoom,fit,setZoom});
+onBeforeUnmount(()=>{observer?.disconnect();pointers.clear();down=null;pinch=null;initial=null;});
+defineExpose({zoom,fit,setZoom,frameBounds});
 </script>
 <template>
  <div ref="mount" class="au-svg-viewport" :class="{dragging}" role="region" :aria-label="props.label" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown + - 0 Escape" tabindex="0" @pointerdown="pointerDown" @pointermove="pointerMove" @pointerup="pointerUp" @pointercancel="pointerCancel" @lostpointercapture="pointerCancel" @wheel.prevent="wheel" @keydown="keyboard">
