@@ -5,6 +5,7 @@ import '@timotf/atomm-ui/compact.css';
 import Gallery from './Gallery.vue';
 import Harmonisation from './Harmonisation.vue';
 import ReviewControls from './ReviewControls.vue';
+import SelectionReview from './SelectionReview.vue';
 import './style.css';
 const query=new URLSearchParams(location.search);
-createApp(query.has('review-controls') ? ReviewControls : query.has('harmonisation') ? Harmonisation : Gallery).use(createAtommVuetify()).mount('#app');
+createApp(query.has('selection-review') ? SelectionReview : query.has('review-controls') ? ReviewControls : query.has('harmonisation') ? Harmonisation : Gallery).use(createAtommVuetify()).mount('#app');

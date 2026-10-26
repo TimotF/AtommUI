@@ -404,3 +404,12 @@ Use `<AuButton canvas icon>` for a 32px icon action on the preview canvas, or `c
 `AuSceneControls layout="stacked"` places the optional explosion slider above a row of separate white canvas buttons: zoom out, presets, zoom in, icon-only fit, then the existing `extra` slot. The fit icon retains the translated `recenterLabel` as its accessible name and hover/focus/touch tooltip. A `footer` slot accepts app-specific notes or page navigation below the controls. The rows wrap within the available width; labels, state and actions remain consumer-owned. The default `inline` layout and optional `zoomTarget` retain their existing behavior. If a zoom target is supplied with the stacked layout, the whole lower row (including extra actions) moves there.
 
 `AuZoomControls` also exposes `separated` (individual canvas buttons), `recenterIcon` (icon-only fit) and an `actions` slot after fit. All are optional. Zoom events, presets, bounds and keyboard operation remain unchanged.
+
+### Version 0.23.1 — continuous example selection
+
+In the compact profile, `AuExampleCard` paints its 2px selected border above the
+preview and title. Transparent SVGs, opaque images and row cards therefore keep
+the same continuous selection ring. It does not change card dimensions, intercept
+clicks or replace the separate keyboard focus outline. The historical profile
+and public component props are unchanged. The gallery `?selection-review` covers
+these content types, unselected and disabled states, plus `&rtl` and `&legacy`.

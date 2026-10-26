@@ -1,6 +1,6 @@
 {
   "name": "@timotf/atomm-ui",
-  "version": "0.23.0",
+  "version": "0.23.1",
   "type": "module",
   "description": "Reusable Vue and Vuetify controls for locally computed atomm generators",
   "license": "SEE LICENSE IN LICENSE",
