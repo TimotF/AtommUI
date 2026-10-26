@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { AuRoot, AuLayout, AuTipsButton, AuDialog, AuButton, AuCard, AuNumericField, AuSceneControls, AuOnboardingCard } from '@timotf/atomm-ui';
-const open=ref(false), collapsed=ref(false), dock=ref<HTMLElement|null>(null), detached=ref(true), zoom=ref(100), count=ref('6');
+const open=ref(false), collapsed=ref(false), dock=ref<HTMLElement|null>(null), detached=ref(true), zoom=ref(100), count=ref('6'), canvasActive=ref(false);
 </script>
 <template>
   <AuRoot profile="compact" class="review-controls-demo"><AuLayout standard lead-collapsible v-model:lead-collapsed="collapsed" lead-label="Examples" collapse-label="Hide examples" expand-label="Show examples" collapse-id="review-collapse" expand-id="review-expand">
@@ -10,7 +10,7 @@ const open=ref(false), collapsed=ref(false), dock=ref<HTMLElement|null>(null), d
     <template #stage>
       <AuTipsButton id="review-tips" label="Tips" :active="open" @click="open=true" />
       <div ref="dock" id="review-zoom-dock" class="review-zoom-dock" />
-      <div class="review-tools"><AuSceneControls id="review-scene-controls" :zoom-target="detached ? dock : null" :percent="zoom" label="Zoom" zoom-in-label="Zoom in" zoom-out-label="Zoom out" recenter-label="Fit" :explode="20" explode-label="Explode" @zoom="factor=>zoom=Math.round(zoom/factor)" @set-zoom="zoom=$event" @recenter="zoom=100" /></div>
+      <div class="review-tools"><AuSceneControls id="review-scene-controls" :zoom-target="detached ? dock : null" :percent="zoom" label="Zoom" zoom-in-label="Zoom in" zoom-out-label="Zoom out" recenter-label="Fit" :explode="20" explode-label="Explode" @zoom="factor=>zoom=Math.round(zoom/factor)" @set-zoom="zoom=$event" @recenter="zoom=100"><template #extra><AuButton id="review-canvas-action" canvas icon :active="canvasActive" aria-label="Inspect part" @click="canvasActive=!canvasActive">⌕</AuButton></template></AuSceneControls></div>
     </template>
     <template #parameters><div class="au-parameters-content"><AuCard id="review-settings" title="Settings"><AuNumericField id="review-count" v-model="count" label="Count" /></AuCard><AuButton id="review-move-zoom" @click="detached=!detached">Move zoom</AuButton><div class="au-overlay au-profile-compact"><AuOnboardingCard title="Choose a material" label="Tip" close-label="Close tip" next-label="Got it" hide-label="Hide tips" text="Measure its actual thickness." /></div></div></template>
   </AuLayout>

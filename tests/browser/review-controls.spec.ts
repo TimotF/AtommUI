@@ -47,3 +47,14 @@ test('touch close actions have 44px hit areas',async({browser})=>{
   expect(box!.width).toBeGreaterThanOrEqual(44);expect(box!.height).toBeGreaterThanOrEqual(44);
   await close.click();await context.close();
 });
+
+
+test('canvas actions use the official shell without changing ordinary buttons',async({page})=>{
+  await page.goto('/?review-controls');
+  const button=page.locator('#review-canvas-action');
+  await expect(button).toHaveCSS('width','32px');await expect(button).toHaveCSS('height','32px');
+  await expect(button).toHaveCSS('border-radius','8px');await expect(button).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await expect(page.locator('#review-move-zoom')).toHaveCSS('border-radius','6px');
+  await button.focus();await button.press('Space');await expect(button).toHaveAttribute('aria-pressed','true');
+  await button.press('Enter');await expect(button).toHaveAttribute('aria-pressed','false');
+});

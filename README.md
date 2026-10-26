@@ -394,3 +394,7 @@ The compact segmented view/unit controls use the official named group of buttons
 - On coarse-pointer devices, onboarding close actions now have 44×44px hit areas; ordinary desktop controls keep their dimensions.
 
 The gallery `?review-controls` demonstrates these additions alongside the existing controls. Consumers supply all wording and keep their fabrication logic and exports independent.
+
+### Canvas action buttons (0.22)
+
+Use `<AuButton canvas icon>` for a 32px icon action on the preview canvas, or `canvas` with a text label. In the compact profile this opts into a white surface, an 8px radius and a bordered shell; `active` preserves the selected state. Ordinary rail buttons and 6px inputs are unchanged. Keep application placement in the consumer.
