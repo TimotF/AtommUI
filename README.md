@@ -417,3 +417,12 @@ these content types, unselected and disabled states, plus `&rtl` and `&legacy`.
 ### Preview tab width (0.23.2)
 
 In the standard layout, `au-preview-views` now fits its visible tab labels instead of reserving a 104px minimum. Two compact tabs such as 3D/SVG therefore keep the same 2px outer inset at both ends. The correction also covers three tabs, full titles and RTL; tab selection and keyboard behavior are unchanged. Includes the opaque-preview selection fix from 0.23.1.
+
+### Segmented preview labels (0.23.3)
+
+The standard `au-preview-views` composition also supports `AuSegmentedControl`:
+preview segments size to their own labels and keep them on one line. This fixes
+`SVG` wrapping after the 0.23.2 content-width change, while retaining snug `AuTabs`.
+Only preview segments opt into this behavior. Ordinary parameter choices keep
+equal flexible widths and multiline labels. Browser regression checks cover both
+components, 390–1456px widths, RTL, selection and keyboard use.

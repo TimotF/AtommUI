@@ -118,3 +118,29 @@ test('two or three preview tabs fit their visible labels without an empty traili
   await tabs.first().focus();await tabs.first().press('Enter');await expect(tabs.first()).toHaveAttribute('aria-selected','true');
  }
 });
+
+
+test('preview segmented choices keep SVG on one line without changing parameter wrapping',async({page})=>{
+  await page.goto('/?review-controls&tabs=2&segmented');
+  const group=page.locator('#review-tabs'),svg=group.getByRole('button',{name:'SVG',exact:true}),three=group.getByRole('button',{name:'3D',exact:true});
+  for(const width of [390,960,1135,1456])for(const direction of ['ltr','rtl']){
+    await page.setViewportSize({width,height:853});
+    await page.locator('html').evaluate((el,dir)=>el.setAttribute('dir',dir),direction);
+    const content=await group.locator('.v-btn__content').evaluateAll(elements=>elements.map(el=>{
+      const c=getComputedStyle(el),r=el.getBoundingClientRect();return {height:r.height,lineHeight:parseFloat(c.lineHeight),scroll:el.scrollWidth,width:r.width};
+    }));
+    for(const label of content){expect(label.height).toBeLessThanOrEqual(label.lineHeight+1);expect(label.scroll).toBeLessThanOrEqual(label.width+1);}
+    const bounds=await group.boundingBox();expect(bounds!.x).toBeGreaterThanOrEqual(0);expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(width);
+    const [first,last]=await Promise.all([three.boundingBox(),svg.boundingBox()]);
+    const start=direction==='rtl'?bounds!.x+bounds!.width-first!.x-first!.width:first!.x-bounds!.x;
+    const end=direction==='rtl'?last!.x-bounds!.x:bounds!.x+bounds!.width-last!.x-last!.width;
+    expect(start).toBeCloseTo(2,0);expect(end).toBeCloseTo(2,0);
+  }
+  await svg.click();await expect(svg).toHaveAttribute('aria-pressed','true');
+  await three.focus();await three.press('Enter');await expect(three).toHaveAttribute('aria-pressed','true');
+  const parameters=page.locator('#review-parameter-choices');
+  await expect(parameters.locator('.v-btn__content').first()).toHaveCSS('white-space','normal');
+  await expect(parameters.locator('.v-btn__content').first()).toHaveCSS('overflow-wrap','anywhere');
+  const buttons=await parameters.locator('button').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().width));
+  expect(buttons[0]).toBeCloseTo(buttons[1],1);
+});
