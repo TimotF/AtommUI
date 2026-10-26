@@ -387,7 +387,7 @@ The compact segmented view/unit controls use the official named group of buttons
 
 ### Fabrication Tips and detached zoom (0.21)
 
-- `AuTipsButton` accepts translated `label`, optional `active` and `disabled`, plus ordinary button attributes/events. It supplies the 32px white capsule, 20px lightbulb, border and keyboard states.
+- `AuTipsButton` accepts translated `label`, optional `active` and `disabled`, plus ordinary button attributes/events. It supplies the 32px white capsule, 14px medium action text, 20px lightbulb, border and keyboard states.
 - `AuDialog framed` uses a fixed title/info/close header, a scrolling body and fixed `actions` footer. Supply `close-label` to show the labelled close action and `:max-width="480"` for Fabrication Tips. Escape, backdrop dismissal, focus containment and return to the opener remain managed by the dialog. Without `framed`, existing dialogs keep their markup and appearance.
 - `AuSceneControls :zoom-target="dockElement"` renders its existing zoom controls in a consumer-owned element, while keeping the extra tools and explosion control in place. The target must exist inside the same `AuRoot` so it inherits the profile and theme. A null target retains inline placement. Events, bounds and percent values remain unchanged; no duplicate zoom state is introduced.
 - `AuLayout` exposes `lead-actions` for app-specific header actions, and optional `collapse-id`/`expand-id` for stable integration targets. Its collapse state and focus behavior remain shared.
