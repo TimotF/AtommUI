@@ -10,7 +10,7 @@ function update(value: unknown) {
 </script>
 <template>
   <div class="au-field au-text-field">
-    <AuHelp v-if="help" :label="helpLabel ?? label" :text="help" :help-key="id"><label :for="id">{{ label }}</label></AuHelp><label v-else :for="id">{{ label }}</label>
+    <AuHelp v-if="help" :label="helpLabel ?? label" :text="help" :help-key="id"><label :id="`${id}-label`" :for="id">{{ label }}</label></AuHelp><label v-else :id="`${id}-label`" :for="id">{{ label }}</label>
     <VTextField v-bind="$attrs" :id="id" class="au-text-control" :model-value="modelValue" :placeholder="placeholder" type="text" autocomplete="off" :aria-label="label" :aria-invalid="String(!!error)" :aria-describedby="error ? `${id}-error` : undefined" :error="!!error" :disabled="disabled" :readonly="readOnly" @update:model-value="update" />
     <p :id="`${id}-error`" class="au-field-error" :hidden="!error" role="status">{{ error }}</p>
   </div>

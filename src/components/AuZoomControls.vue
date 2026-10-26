@@ -16,7 +16,7 @@ function choose(value:number){if(unavailable.value||!choices.value.includes(valu
  <div class="au-zoom-controls" role="group" :aria-label="label">
   <AuButton variant="text" icon :aria-label="zoomOutLabel" :disabled="unavailable||percent<=min" @click="emit('zoom',1.12)">−</AuButton>
   <VMenu v-model="open" location="top" :offset="8" :content-class="menuClass" :z-index="3" :disabled="unavailable||!choices.length" :transition="false">
-   <template #activator="{props:activator}"><AuButton v-bind="activator" class="au-zoom-value" variant="text" :aria-label="label" :disabled="unavailable||!choices.length" :aria-expanded="String(open)">{{valid?Math.round(percent):'—'}} %</AuButton></template>
+   <template #activator="{props:activator}"><AuButton v-bind="activator" class="au-zoom-value" variant="text" :aria-label="label" :disabled="unavailable||!choices.length" :aria-expanded="String(open)" :aria-controls="open?activator['aria-controls']:undefined">{{valid?Math.round(percent):'—'}} %</AuButton></template>
    <div role="group" :aria-label="label"><AuButton v-for="value in choices" :key="value" variant="text" :active="percent===value" @click="choose(value)">{{value}} %</AuButton></div>
   </VMenu>
   <AuButton variant="text" icon :aria-label="zoomInLabel" :disabled="unavailable||percent>=max" @click="emit('zoom',.88)">+</AuButton>

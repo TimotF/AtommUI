@@ -227,7 +227,7 @@ test('touch help suppresses only the long-press action and cancels when the poin
 test('free text preserves Unicode, empty drafts and spaces with associated errors', async () => {
  for (const value of ['', '  Érable n° 2  ', '<script>']) {
   const html=await render(h(AuTextField,{id:'plant',label:'Nom',modelValue:value,error:'Corrigez le nom',help:'Aide'}));
-  assert.match(html, /<label for="plant">Nom<\/label>/);
+  assert.match(html, /<label id="plant-label" for="plant">Nom<\/label>/);
   assert.match(html, /aria-describedby="plant-error"/);
   assert.match(html, /data-help="plant"/);
   assert.ok(html.includes('Corrigez le nom'));
@@ -297,4 +297,8 @@ test('compact cards and field groups form a consecutive heading hierarchy',async
  const {AuCard,AuFieldGroup}=await import('../dist/atomm-ui.js');
  const app=createSSRApp(()=>h(AuRoot,{profile:'compact'},()=>h(AuCard,{id:'card',title:'Gift'},()=>h(AuFieldGroup,{title:'Details'},()=> 'Fields')))).use(createAtommVuetify());
  const html=await renderToString(app);assert.match(html,/<h2 class="au-card-title">/);assert.match(html,/<h3>/);assert.ok(!html.includes('<h4>'));
+});
+
+test('text and numeric fields give Vuetify label references real external label IDs',async()=>{
+ for(const Component of [AuTextField,AuNumericField]){const html=await render(h(Component,{id:'labelled',label:'Gift',modelValue:'2'}));assert.match(html,/<label[^>]*id="labelled-label"[^>]*for="labelled"/);assert.match(html,/aria-labelledby="labelled-label"/);}
 });

@@ -103,7 +103,7 @@ onBeforeUnmount(() => { finish(false); if (clickTimer !== undefined) clearTimeou
 <template>
   <div class="au-field au-numeric" :class="{ 'au-is-draggable': draggable, 'au-is-dragging': dragging }">
     <div class="au-field-row field-row">
-      <slot name="label"><AuHelp v-if="help || $slots.help" :label="helpLabel ?? label" :text="help ?? ''" :help-key="id"><label :for="id">{{ label }}</label><template v-if="$slots.help" #content><slot name="help" /></template></AuHelp><label v-else :for="id">{{ label }}</label></slot>
+      <slot name="label"><AuHelp v-if="help || $slots.help" :label="helpLabel ?? label" :text="help ?? ''" :help-key="id"><label :id="`${id}-label`" :for="id">{{ label }}</label><template v-if="$slots.help" #content><slot name="help" /></template></AuHelp><label v-else :id="`${id}-label`" :for="id">{{ label }}</label></slot>
       <VTextField v-bind="$attrs" :id="id" class="au-numeric-control input-number" :model-value="displayValue" type="text" :inputmode="inputMode" autocomplete="off" :spellcheck="false" :aria-label="label" :aria-invalid="String(!!error)" :aria-describedby="`${id}-error`" :aria-keyshortcuts="readOnly || disabled ? undefined : 'Shift+ArrowUp Shift+ArrowDown'" :error="!!error" :disabled="disabled" :readonly="readOnly" :suffix="suffix" @update:model-value="update" @focus="focus" @blur="blur" @keydown="key" @pointerdown="down" @lostpointercapture="lost" @click.capture="click"><template v-if="$slots['prepend-inner']" #prepend-inner><slot name="prepend-inner" /></template></VTextField>
     </div>
     <p :id="`${id}-error`" class="au-field-error field-error" :hidden="!error" role="status">{{ error }}</p>

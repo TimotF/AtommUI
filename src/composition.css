@@ -6,7 +6,7 @@
 }
 .au-field-group { min-width: 0; }
 .au-group-heading { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; color: var(--color-text-secondary); }
-.au-group-heading h4 { flex: 1; min-width: 0; margin: 0; font: 600 12px/1.5 var(--au-font); }
+.au-group-heading :is(h3,h4) { flex: 1; min-width: 0; margin: 0; font: 600 12px/1.5 var(--au-font); }
 .au-group-heading-line { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; }
 button.au-group-heading-line { border: 0; padding: 0; background: transparent; color: inherit; font: inherit; text-align: start; cursor: pointer; }
 .au-group-heading-line > span:not(.au-group-rule) { min-width: 0; overflow-wrap: anywhere; }
