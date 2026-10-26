@@ -384,3 +384,13 @@ It manages its own collapsed state unless `v-model:lead-collapsed` is supplied. 
 `AuSelect` now keeps focus on the combobox trigger and announces the active option. It supports arrows, Home/End, Enter/Space, typeahead, Escape, Tab and outside dismissal; disabled options are skipped. Its listbox is fixed and teleported, flips above the trigger and follows scrolling/resizing. `native` explicitly requests the platform select; small coarse-pointer devices use it automatically. Existing `selection-prepend` and `item-prepend` slots receive `item` including `raw`, title, value and optional color. Options never interpret HTML. Supply unique IDs and translated labels.
 
 The compact segmented view/unit controls use the official named group of buttons with `aria-pressed`. Arrow keys and Home/End still navigate the enabled choices with one tab stop; the historical profile retains radio semantics.
+
+### Fabrication Tips and detached zoom (0.21)
+
+- `AuTipsButton` accepts translated `label`, optional `active` and `disabled`, plus ordinary button attributes/events. It supplies the 32px white capsule, 20px lightbulb, border and keyboard states.
+- `AuDialog framed` uses a fixed title/info/close header, a scrolling body and fixed `actions` footer. Supply `close-label` to show the labelled close action and `:max-width="480"` for Fabrication Tips. Escape, backdrop dismissal, focus containment and return to the opener remain managed by the dialog. Without `framed`, existing dialogs keep their markup and appearance.
+- `AuSceneControls :zoom-target="dockElement"` renders its existing zoom controls in a consumer-owned element, while keeping the extra tools and explosion control in place. The target must exist inside the same `AuRoot` so it inherits the profile and theme. A null target retains inline placement. Events, bounds and percent values remain unchanged; no duplicate zoom state is introduced.
+- `AuLayout` exposes `lead-actions` for app-specific header actions, and optional `collapse-id`/`expand-id` for stable integration targets. Its collapse state and focus behavior remain shared.
+- On coarse-pointer devices, onboarding close actions now have 44×44px hit areas; ordinary desktop controls keep their dimensions.
+
+The gallery `?review-controls` demonstrates these additions alongside the existing controls. Consumers supply all wording and keep their fabrication logic and exports independent.

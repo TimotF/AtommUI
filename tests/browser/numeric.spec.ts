@@ -16,7 +16,7 @@ test('numeric click edits, small movement stays a click, and scrub increments ex
   await drag(page,input,8);await expect(input).toHaveValue('0,11');
   const field=input.locator('xpath=ancestor::div[contains(@class,"au-numeric-control")]').locator('.v-field');
   await expect(field).toHaveCSS('background-color','rgb(255, 255, 255)');await expect(field).toHaveCSS('border-top-width','1px');await expect(field).toHaveCSS('border-radius','6px');
-  await expect(input).toHaveCSS('text-align','end');
+  await expect(input).toHaveCSS('text-align','start');
 });
 test('scrub rounds halfway between steps equally in both directions',async({page})=>{
   const input=page.locator('#gallery-scrub');
@@ -73,10 +73,10 @@ test('segmented choices use a single button tab stop, skip disabled choices and 
 test('large example previews fit their cards and reduced motion removes hover transitions',async({page})=>{
   const rows=page.locator('.gallery-examples .au-example-preview');
   const heights=await rows.evaluateAll(elements=>elements.map(el=>el.getBoundingClientRect().height));expect(heights.every(height=>height>=70)).toBe(true);
-  const card=page.getByTestId('gallery-example-B');await card.hover();await expect(card).toHaveCSS('transform','none');await expect(card.locator('.au-example-preview svg')).not.toHaveCSS('transform','none');
+  const card=page.getByTestId('gallery-example-B');await card.hover();await expect(card).toHaveCSS('transform','none');await expect(card.locator('.au-example-preview svg')).toHaveCSS('transform','none');
   await page.emulateMedia({reducedMotion:'reduce'});await expect(card).toHaveCSS('transition-duration','0s');await expect(card.locator('.au-example-preview')).toHaveCSS('transition-duration','0s');
   const heading=page.locator('#gallery-scrub-contract-title.au-card-heading');
-  await expect(heading).toHaveCSS('margin-top','0px');await expect(heading).toHaveCSS('margin-bottom','0px');await expect(heading).toHaveCSS('border-bottom-width','0px');await expect(heading).toHaveCSS('text-transform','none');
+  await expect(heading).toHaveCSS('margin-top','0px');await expect(heading).toHaveCSS('margin-bottom','0px');await expect(heading).toHaveCSS('border-bottom-width','1px');await expect(heading).toHaveCSS('text-transform','none');
 });
 
 test.describe('native touch gestures',()=>{

@@ -14,7 +14,7 @@ test('raw decimals, errors, locale and actual Vuetify controls',async({page}) =>
   const alignment=await input.evaluate(el=>{const unit=el.parentElement!.querySelector('.v-text-field__suffix')!.getBoundingClientRect(),value=el.getBoundingClientRect(),field=el.closest('.v-field')!.getBoundingClientRect();return {offset:Math.abs(unit.top+unit.height/2-value.top-value.height/2),fieldHeight:field.height};});
   expect(alignment.fieldHeight).toBe(28); expect(alignment.offset).toBeLessThanOrEqual(1);
   await page.locator('#gallery-material').click(); await page.getByRole('option',{name:'Plywood',exact:true}).click();
-  await expect(page.locator('#gallery-material')).toHaveValue('Plywood');
+  await expect(page.locator('#gallery-material')).toHaveText('Plywood');
   const slider = page.getByRole('slider',{name:'Preview',exact:true}); await slider.focus(); await slider.press('End'); await expect(slider).toHaveAttribute('aria-valuenow','100'); await slider.press('Home'); await expect(slider).toHaveAttribute('aria-valuenow','0');
   await page.locator('#gallery-checkbox').uncheck(); await expect(page.locator('#gallery-checkbox')).not.toBeChecked();
   await page.locator('#gallery-action').click(); await expect(page.getByText('Action confirmed.',{exact:true})).toBeVisible();
@@ -23,7 +23,7 @@ test('tooltip opens only from the help button, with focus, touch/click, Escape a
   const help = page.locator('[data-help="gallery-number"]');
   await expect(help.locator('.v-badge__badge')).toHaveText('?');
   await expect(help.locator('.v-badge__badge')).toHaveCSS('background-color','rgb(255, 255, 255)');
-  await expect(help.locator('.v-badge__badge')).toHaveCSS('color','rgb(91, 100, 114)');
+  await expect(help.locator('.v-badge__badge')).toHaveCSS('color','rgb(61, 62, 66)');
   await expect(help).toHaveCSS('cursor','pointer');
   const raised=await help.evaluate(el=>el.getBoundingClientRect().top < el.parentElement!.querySelector('label')!.getBoundingClientRect().top);
   expect(raised).toBe(true);

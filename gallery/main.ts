@@ -4,5 +4,7 @@ import '@timotf/atomm-ui/style.css';
 import '@timotf/atomm-ui/compact.css';
 import Gallery from './Gallery.vue';
 import Harmonisation from './Harmonisation.vue';
+import ReviewControls from './ReviewControls.vue';
 import './style.css';
-createApp(new URLSearchParams(location.search).has('harmonisation') ? Harmonisation : Gallery).use(createAtommVuetify()).mount('#app');
+const query=new URLSearchParams(location.search);
+createApp(query.has('review-controls') ? ReviewControls : query.has('harmonisation') ? Harmonisation : Gallery).use(createAtommVuetify()).mount('#app');
