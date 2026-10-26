@@ -73,3 +73,10 @@ button.au-group-heading-line:focus-visible { outline: 2px solid var(--color-stro
 .au-scene-footer { min-width:0; max-width:100%; }
 .au-zoom-controls.au-zoom-controls-separated { flex-wrap:wrap; justify-content:flex-start; gap:4px; background:transparent; border-radius:0; max-width:100%; }
 .au-zoom-controls-separated .au-zoom-value { min-width:58px; padding-inline:8px; }
+
+/* The existing 16px group inset supplies the row's horizontal padding. */
+.au-field-groups-reference .au-group-heading{margin-bottom:0}
+.au-field-groups-reference .au-group-content{gap:0}
+:is(.au-root,.au-overlay) .au-field-groups.au-field-groups-reference .au-field-row,
+:is(.au-root,.au-overlay).au-profile-compact .au-field-groups.au-field-groups-reference .au-field-row{padding:8px 0;gap:8px}
+.au-field-groups-reference .au-group-content>:not(.au-field-row):not(.au-field):not(:has(.au-field-row)){margin-block:4px}

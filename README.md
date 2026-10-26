@@ -445,3 +445,13 @@ components, 390–1456px widths, RTL, selection and keyboard use.
   and offers `before`/`after` slots for application-specific fields. Consumers
   own the actions, not menu presentation. Default behavior of existing controls
   remains unchanged outside these additions and accessibility fixes.
+
+## Variantes de référence 0.26.0
+
+Ces trois options sont explicites et conservent par défaut le rendu des consommateurs existants :
+
+- `AuAlert appearance="reference"` : teinte officielle selon `tone`, texte primaire, icône SVG décorative de statut, padding 12 px et rayon 6 px. Le message reste dans le slot et le rôle d’alerte est conservé.
+- `AuFieldGroups spacing="reference"` : chaque rangée reçoit 8 px en haut et en bas, sans espace supplémentaire entre les rangées. Le retrait horizontal de 16 px est déjà fourni par le groupe et n’est pas ajouté une deuxième fois. Les wrappers métier autour des champs numériques restent compatibles. Les contenus autres que des champs gardent un espacement de 8 px entre eux.
+- `AuExampleCard appearance="reference"` : aperçu carré limité à 140 px, adaptable à sa colonne, marge de 14 px pour les SVG, ombre officielle et anneau de sélection de 2 px sans redimensionnement. Le libellé de 11 px reste sous l’aperçu. `preview-kind="image"` affiche une photo bord à bord. Un SVG chargé par une balise `img` conserve `preview-kind="svg"`. Le mode `layout="row"` et les vignettes de matériaux existantes gardent leur rendu.
+
+Les dimensions, les imports, les exemples et les textes restent propres aux applications. Ces variantes ne changent aucune géométrie de fabrication.

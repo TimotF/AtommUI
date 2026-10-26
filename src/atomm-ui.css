@@ -273,3 +273,25 @@
 .au-overlay .au-action-list .v-list-item-title { font-size: var(--au-font-size-label); line-height: 20px; white-space: normal; overflow-wrap: anywhere; }
 .au-overlay .au-action-list .au-action-group { padding: 8px 12px 4px; color: var(--color-text-secondary); font-size: var(--au-font-size-secondary); }
 .au-overlay .au-action-list .au-action-fields { padding: 8px 12px; }
+
+/* Explicit reference variants: legacy consumers retain their current rendering. */
+:is(.au-root,.au-overlay) .au-alert.au-alert-reference{display:flex;align-items:center;gap:8px;padding:12px;border-radius:6px;font:400 12px/16px var(--au-font);color:var(--color-text-primary);background:var(--au-alert-tint);min-width:0}
+.au-alert-reference-info{--au-alert-tint:#f1f6fd;--au-alert-solid:#3f81ea}
+.au-alert-reference-success{--au-alert-tint:#ecfff0;--au-alert-solid:#16b364}
+.au-alert-reference-warning{--au-alert-tint:#fff3eb;--au-alert-solid:#ff6500}
+.au-alert-reference-error{--au-alert-tint:#fee9e7;--au-alert-solid:#ec221f}
+.au-alert-reference>.au-icon{flex:none;color:var(--au-alert-solid)}
+.au-alert-reference>.au-alert-message{min-width:0;overflow-wrap:anywhere}
+.au-alert-reference .au-alert-message>p{margin:0}
+.au-root .au-example-card.au-example-reference:not(.au-example-row){border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible;padding:0;height:auto;transform:none}
+.au-root .au-example-card.au-example-reference:not(.au-example-row) .v-btn__content{gap:6px;align-items:center}
+.au-root .au-example-card.au-example-reference:not(.au-example-row) .au-example-preview{position:relative;box-sizing:border-box;width:100%;max-width:140px;height:auto;aspect-ratio:1;padding:14px;border:1px solid var(--color-stroke-divider);border-radius:8px;box-shadow:0 4px 12px rgba(11,11,13,.06),0 0 4px rgba(11,11,13,.06);background:var(--color-bg-default);overflow:visible}
+.au-root .au-example-card.au-example-reference:not(.au-example-row) .au-example-preview :is(img,svg){object-fit:contain;border-radius:6px;transform:none;transition:none}
+.au-root .au-example-card.au-example-reference:not(.au-example-row) .au-example-title{background:transparent;color:var(--color-text-secondary);font:400 11px/16px var(--au-font);padding:0}
+.au-root .au-example-card.au-example-reference:not(.au-example-row)::before{display:none}
+.au-root .au-example-card.au-example-reference:not(.au-example-row) .au-example-preview::after{content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 2px transparent}
+.au-root .au-example-card.au-example-reference:not(.au-example-row)[aria-pressed=true] .au-example-preview{border-color:var(--color-brand-default)}
+.au-root .au-example-card.au-example-reference:not(.au-example-row)[aria-pressed=true] .au-example-preview::after{box-shadow:inset 0 0 0 2px var(--color-brand-default)}
+.au-root .au-example-card.au-example-reference:not(.au-example-row):not(:disabled):hover .au-example-preview{border-color:var(--color-stroke-default)}
+.au-root .au-example-card.au-example-reference.au-example-reference-image:not(.au-example-row) .au-example-preview{padding:0;overflow:hidden}
+.au-root .au-example-card.au-example-reference.au-example-reference-image:not(.au-example-row) .au-example-preview img{object-fit:cover;border-radius:7px}
