@@ -455,3 +455,14 @@ Ces trois options sont explicites et conservent par défaut le rendu des consomm
 - `AuExampleCard appearance="reference"` : aperçu carré limité à 140 px, adaptable à sa colonne, marge de 14 px pour les SVG, ombre officielle et anneau de sélection de 2 px sans redimensionnement. Le libellé de 11 px reste sous l’aperçu. `preview-kind="image"` affiche une photo bord à bord. Un SVG chargé par une balise `img` conserve `preview-kind="svg"`. Le mode `layout="row"` et les vignettes de matériaux existantes gardent leur rendu.
 
 Les dimensions, les imports, les exemples et les textes restent propres aux applications. Ces variantes ne changent aucune géométrie de fabrication.
+
+### Optional numeric +/− buttons (0.27.0)
+
+`AuNumericField` accepts `stepper` (false by default), `incrementLabel` and
+`decrementLabel` (translated accessible names). The buttons use `step`, `min`,
+`max` and `adjust`, just like the existing gestures. Empty/incomplete drafts,
+read-only fields and unavailable directions at a bound disable adjustment.
+The `update:modelValue` event carries the new raw string, followed by `adjust`
+with that same string, allowing the consumer to commit an explicit click.
+Consumers choose meaningful steps and validation; manual input is never rounded
+or repaired by the stepper. Existing consumers render unchanged without `stepper`.

@@ -314,3 +314,17 @@ test('text row layout preserves complete drafts and accessible error relationshi
   assert.ok(html.includes('id="row-field-error"'));
  }
 });
+
+
+test('optional numeric steppers retain raw drafts, bounds and translated accessible names',async()=>{
+ const props={id:'stepped',label:'Width',stepper:true,step:.1,min:0,max:10,incrementLabel:'Increase width',decrementLabel:'Decrease width'};
+ const plain=await render(h(AuNumericField,{...props,stepper:false,modelValue:'3'}));
+ assert.ok(!plain.includes('au-numeric-stepper'));
+ for(const [modelValue,count,extra] of [['0',1,{}],['10',1,{}],['0,3',0,{}],['',2,{}],['0,',2,{}],['-',2,{}],['3',2,{disabled:true}],['3',2,{readOnly:true}],['3',2,{step:0}]]){
+  const html=await render(h(AuNumericField,{...props,modelValue,...extra}));
+  const buttons=html.match(/<button[^>]*>/g)??[];
+  assert.equal(buttons.length,2);assert.equal(buttons.filter(b=>/ disabled(?:[ =]|>)/.test(b)).length,count,modelValue+JSON.stringify(extra));
+  assert.ok(html.includes('aria-label="Increase width"'));assert.ok(html.includes('aria-label="Decrease width"'));assert.ok(html.includes('aria-controls="stepped"'));
+  if(modelValue)assert.ok(html.includes('value="'+modelValue+'"'));
+ }
+});

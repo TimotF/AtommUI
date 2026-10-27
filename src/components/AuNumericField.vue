@@ -3,11 +3,12 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useLocale } from 'vuetify';
 import { VTextField } from 'vuetify/components/VTextField';
 import AuHelp from './AuHelp.vue';
+import AuButton from './AuButton.vue';
 import type { DecimalAdjustment } from '../contracts.js';
 import { adjustNumericDraft, decimalStepDelta } from '../numeric.js';
 defineOptions({ inheritAttrs: false });
-const props = withDefaults(defineProps<{ id: string; label: string; modelValue: string; suffix?: string; error?: string; disabled?: boolean; readOnly?: boolean; help?: string; helpLabel?: string; step?: number; min?: number; max?: number; adjust?: DecimalAdjustment; formatDisplay?: (value: string) => string; inputMode?: 'decimal' | 'numeric'; drag?: boolean; dragPixelsPerStep?: number }>(), { disabled: false, readOnly: false, step: 1, inputMode: 'decimal', drag: true, dragPixelsPerStep: 8 });
-const emit = defineEmits<{ 'update:modelValue': [value: string] }>();
+const props = withDefaults(defineProps<{ id: string; label: string; modelValue: string; suffix?: string; error?: string; disabled?: boolean; readOnly?: boolean; help?: string; helpLabel?: string; step?: number; min?: number; max?: number; adjust?: DecimalAdjustment; formatDisplay?: (value: string) => string; inputMode?: 'decimal' | 'numeric'; drag?: boolean; dragPixelsPerStep?: number; stepper?: boolean; incrementLabel?: string; decrementLabel?: string }>(), { disabled: false, readOnly: false, step: 1, inputMode: 'decimal', drag: true, dragPixelsPerStep: 8, stepper: false });
+const emit = defineEmits<{ 'update:modelValue': [value: string]; adjust: [value: string] }>();
 const locale = useLocale(), dragging = ref(false), editing = ref(false);
 const editingDraft = ref(props.modelValue);
 // Preserve incomplete decimals and trailing zeroes while the user types.
@@ -24,6 +25,25 @@ function adjusted(text: string, delta: number): string | null {
     const value = result === null ? null : adjustNumericDraft(result, 0, { min: props.min, max: props.max, decimalSeparator });
     return value !== null && props.inputMode === 'numeric' && !/^[+-]?\d+$/.test(value) ? null : value;
   } catch { return null; }
+}
+/** Button adjustments share exact decimal arithmetic with scrubbing. No draft repair. */
+function stepped(direction: number): string | null {
+  if (props.disabled || props.readOnly || !validStep.value) return null;
+  const delta = decimalStepDelta(direction, props.step);
+  return delta === null ? null : adjusted(props.modelValue, delta);
+}
+function canStep(direction: number) {
+  const value = stepped(direction);
+  return value !== null && adjusted(props.modelValue, 0) !== value;
+}
+function stepBy(direction: number) {
+  if (!canStep(direction)) return;
+  finish(false);
+  const value = stepped(direction);
+  if (value === null) return;
+  if (editing.value) editingDraft.value = value;
+  emit('update:modelValue', value);
+  emit('adjust', value);
 }
 const draggable = computed(() => !props.disabled && !props.readOnly && props.drag && validStep.value && adjusted(props.modelValue, 0) !== null);
 function update(value: unknown) {
@@ -104,7 +124,12 @@ onBeforeUnmount(() => { finish(false); if (clickTimer !== undefined) clearTimeou
   <div class="au-field au-numeric" :class="{ 'au-is-draggable': draggable, 'au-is-dragging': dragging }">
     <div class="au-field-row field-row">
       <slot name="label"><AuHelp v-if="help || $slots.help" :label="helpLabel ?? label" :text="help ?? ''" :help-key="id"><label :id="`${id}-label`" :for="id">{{ label }}</label><template v-if="$slots.help" #content><slot name="help" /></template></AuHelp><label v-else :id="`${id}-label`" :for="id">{{ label }}</label></slot>
-      <VTextField v-bind="$attrs" :id="id" class="au-numeric-control input-number" :model-value="displayValue" type="text" :inputmode="inputMode" autocomplete="off" :spellcheck="false" :aria-label="label" :aria-invalid="String(!!error)" :aria-describedby="`${id}-error`" :aria-keyshortcuts="readOnly || disabled ? undefined : 'Shift+ArrowUp Shift+ArrowDown'" :error="!!error" :disabled="disabled" :readonly="readOnly" :suffix="suffix" @update:model-value="update" @focus="focus" @blur="blur" @keydown="key" @pointerdown="down" @lostpointercapture="lost" @click.capture="click"><template v-if="$slots['prepend-inner']" #prepend-inner><slot name="prepend-inner" /></template></VTextField>
+      <div v-if="stepper" class="au-numeric-stepper">
+        <AuButton class="au-numeric-step" icon type="button" :aria-label="decrementLabel ?? `${label} −`" :aria-controls="id" :disabled="!canStep(-1)" @pointerdown.prevent @click="stepBy(-1)">−</AuButton>
+        <VTextField v-bind="$attrs" :id="id" class="au-numeric-control input-number" :model-value="displayValue" type="text" :inputmode="inputMode" autocomplete="off" :spellcheck="false" :aria-label="label" :aria-invalid="String(!!error)" :aria-describedby="`${id}-error`" :aria-keyshortcuts="readOnly || disabled ? undefined : 'Shift+ArrowUp Shift+ArrowDown'" :error="!!error" :disabled="disabled" :readonly="readOnly" :suffix="suffix" @update:model-value="update" @focus="focus" @blur="blur" @keydown="key" @pointerdown="down" @lostpointercapture="lost" @click.capture="click"><template v-if="$slots['prepend-inner']" #prepend-inner><slot name="prepend-inner" /></template></VTextField>
+        <AuButton class="au-numeric-step" icon type="button" :aria-label="incrementLabel ?? `${label} +`" :aria-controls="id" :disabled="!canStep(1)" @pointerdown.prevent @click="stepBy(1)">+</AuButton>
+      </div>
+      <VTextField v-else v-bind="$attrs" :id="id" class="au-numeric-control input-number" :model-value="displayValue" type="text" :inputmode="inputMode" autocomplete="off" :spellcheck="false" :aria-label="label" :aria-invalid="String(!!error)" :aria-describedby="`${id}-error`" :aria-keyshortcuts="readOnly || disabled ? undefined : 'Shift+ArrowUp Shift+ArrowDown'" :error="!!error" :disabled="disabled" :readonly="readOnly" :suffix="suffix" @update:model-value="update" @focus="focus" @blur="blur" @keydown="key" @pointerdown="down" @lostpointercapture="lost" @click.capture="click"><template v-if="$slots['prepend-inner']" #prepend-inner><slot name="prepend-inner" /></template></VTextField>
     </div>
     <p :id="`${id}-error`" class="au-field-error field-error" :hidden="!error" role="status">{{ error }}</p>
   </div>
