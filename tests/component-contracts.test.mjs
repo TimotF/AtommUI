@@ -197,6 +197,11 @@ test('zoom controls keep translated actions, current percentage and disable inva
  const props={percent:100,label:'Zoom <safe>',zoomInLabel:'Closer',zoomOutLabel:'Further',recenterLabel:'Fit'};
  const html=await render(h(AuZoomControls,props));
  for(const text of ['100 %','Closer','Further','Fit','Zoom &lt;safe&gt;'])assert.ok(html.includes(text));
+ for(const label of ['Closer','Further']){
+  const action=html.match(new RegExp(`<button[^>]*aria-label="${label}"[^>]*>[\\s\\S]*?</button>`))?.[0]??'';
+  assert.match(action,/<svg[^>]*aria-hidden="true"/);
+  assert.match(action,new RegExp(`<path[^>]*d="${label==='Closer'?'M4 8h8M8 4v8':'M4 8h8'}"`));
+ }
  const invalid=await render(h(AuZoomControls,{...props,min:200,max:100}));
  assert.equal((invalid.match(/<button[^>]* disabled(?:="")?/g)||[]).length,4);
  assert.ok(!html.includes('<safe>'));

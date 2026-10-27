@@ -16,12 +16,12 @@ function choose(value:number){if(unavailable.value||!choices.value.includes(valu
 </script>
 <template>
  <div class="au-zoom-controls" :class="{'au-zoom-controls-separated':separated}" role="group" :aria-label="label">
-  <AuButton :variant="separated?'outlined':'text'" :canvas="separated" icon :aria-label="zoomOutLabel" :disabled="unavailable||percent<=min" @click="emit('zoom',1.12)">−</AuButton>
+  <AuButton :variant="separated?'outlined':'text'" :canvas="separated" icon :aria-label="zoomOutLabel" :disabled="unavailable||percent<=min" @click="emit('zoom',1.12)"><AuIcon path="M4 8h8" /></AuButton>
   <VMenu v-model="open" location="top" :offset="8" :content-class="menuClass" :z-index="3" :disabled="unavailable||!choices.length" :transition="false">
    <template #activator="{props:activator}"><AuButton v-bind="activator" class="au-zoom-value" :variant="separated?'outlined':'text'" :canvas="separated" :aria-label="label" :disabled="unavailable||!choices.length" :aria-expanded="String(open)" :aria-controls="open?activator['aria-controls']:undefined">{{valid?Math.round(percent):'—'}} %</AuButton></template>
    <div role="group" :aria-label="label"><AuButton v-for="value in choices" :key="value" variant="text" :active="percent===value" @click="choose(value)">{{value}} %</AuButton></div>
   </VMenu>
-  <AuButton :variant="separated?'outlined':'text'" :canvas="separated" icon :aria-label="zoomInLabel" :disabled="unavailable||percent>=max" @click="emit('zoom',.88)">+</AuButton>
+  <AuButton :variant="separated?'outlined':'text'" :canvas="separated" icon :aria-label="zoomInLabel" :disabled="unavailable||percent>=max" @click="emit('zoom',.88)"><AuIcon path="M4 8h8M8 4v8" /></AuButton>
   <AuTooltip v-if="recenterIcon" :text="recenterLabel"><template #activator="{props:activator}"><AuButton v-bind="activator" :canvas="separated" :variant="separated?'outlined':'text'" icon :aria-label="recenterLabel" :disabled="unavailable" @click="emit('recenter')"><AuIcon path="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" /></AuButton></template></AuTooltip>
   <AuButton v-else :variant="separated?'outlined':'text'" :canvas="separated" :disabled="unavailable" @click="emit('recenter')">{{recenterLabel}}</AuButton>
   <slot name="actions" />
