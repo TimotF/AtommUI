@@ -456,7 +456,7 @@ Ces trois options sont explicites et conservent par défaut le rendu des consomm
 
 Les dimensions, les imports, les exemples et les textes restent propres aux applications. Ces variantes ne changent aucune géométrie de fabrication.
 
-### Optional numeric +/− buttons (0.27.0)
+### Optional numeric +/− buttons (0.27.0; responsive spacing 0.27.1)
 
 `AuNumericField` accepts `stepper` (false by default), `incrementLabel` and
 `decrementLabel` (translated accessible names). The buttons use `step`, `min`,

@@ -300,7 +300,9 @@
 :is(.au-root,.au-overlay) .au-numeric-stepper { display:flex; align-items:center; gap:2px; flex:0 0 auto; min-width:0; }
 :is(.au-root,.au-overlay) .au-numeric-stepper .au-numeric-step { width:28px; min-width:28px; height:var(--au-input-height); padding:0; font-size:18px; }
 :is(.au-root,.au-overlay) .au-numeric-stepper .au-numeric-control { flex:0 0 92px; width:92px; min-width:0; }
-:is(.au-root,.au-overlay) .au-numeric:has(.au-numeric-stepper) > .au-field-row > :is(label,.au-label-help) { min-width:0; overflow-wrap:anywhere; }
+:is(.au-root,.au-overlay) .au-numeric:has(.au-numeric-stepper) > .au-field-row { flex-wrap:wrap; gap:4px 8px; }
+:is(.au-root,.au-overlay) .au-numeric:has(.au-numeric-stepper) > .au-field-row > :is(label,.au-label-help) { flex:1 1 140px; min-width:0; overflow-wrap:normal; }
+:is(.au-root,.au-overlay) .au-numeric-stepper { margin-inline-start:auto; }
 @container atomm-rail (max-width: 250px) {
   :is(.au-root,.au-overlay) .au-numeric-stepper { flex:1 1 100%; }
   :is(.au-root,.au-overlay) .au-numeric-stepper .au-numeric-control { flex:1 1 auto; width:auto; }
