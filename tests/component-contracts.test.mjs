@@ -328,3 +328,18 @@ test('optional numeric steppers retain raw drafts, bounds and translated accessi
   if(modelValue)assert.ok(html.includes('value="'+modelValue+'"'));
  }
 });
+
+
+test('reference steppers are explicit and use labelled inline SVG actions',async()=>{
+ const base={id:'reference-stepped',label:'Width',modelValue:'3',stepper:true,incrementLabel:'Increase width',decrementLabel:'Decrease width'};
+ const legacy=await render(h(AuNumericField,base));
+ assert.ok(!legacy.includes('au-numeric-reference-stepper'));
+ const html=await render(h(AuNumericField,{...base,stepperAppearance:'reference'}));
+ assert.ok(html.includes('au-numeric-reference-stepper'));
+ const buttons=html.match(/<button\b[\s\S]*?<\/button>/g)??[];
+ assert.equal(buttons.length,2);
+ for(const b of buttons){assert.match(b,/<svg[^>]+aria-hidden="true"/);assert.match(b,/aria-controls="reference-stepped"/);assert.doesNotMatch(b,/>[+−]<\//);}
+ assert.match(buttons[0],/aria-label="Decrease width"/);assert.match(buttons[1],/aria-label="Increase width"/);
+ const plain=await render(h(AuNumericField,{...base,stepper:false,stepperAppearance:'reference'}));
+ assert.ok(!plain.includes('au-numeric-stepper'));assert.ok(!plain.includes('au-numeric-reference-stepper'));
+});

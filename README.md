@@ -466,3 +466,12 @@ The `update:modelValue` event carries the new raw string, followed by `adjust`
 with that same string, allowing the consumer to commit an explicit click.
 Consumers choose meaningful steps and validation; manual input is never rounded
 or repaired by the stepper. Existing consumers render unchanged without `stepper`.
+
+### Reference presentation for numeric steppers
+
+`AuNumericField stepper stepper-appearance="reference"` explicitly opts into
+a label/control row, 32px SVG icon buttons and the unchanged 92×28px input.
+The label can wrap within its column; fields narrower than240px stack the control to
+preserve readable labels and usable targets. Use `AuFieldGroups spacing="reference"`
+for the 8px vertical rhythm; the group already owns its 16px horizontal inset.
+The existing presentation and arithmetic are unchanged when the new option is omitted.

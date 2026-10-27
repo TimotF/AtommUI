@@ -307,3 +307,22 @@
   :is(.au-root,.au-overlay) .au-numeric-stepper { flex:1 1 100%; }
   :is(.au-root,.au-overlay) .au-numeric-stepper .au-numeric-control { flex:1 1 auto; width:auto; }
 }
+
+:is(.au-root,.au-overlay) .au-numeric-reference-stepper { container:au-numeric-reference / inline-size; }
+/* Explicit reference steppers fit a standard 320px rail without changing legacy rows.
+   Keep the 92px input and 32px action targets; only the label is flexible. */
+:is(.au-root,.au-overlay) .au-numeric.au-numeric-reference-stepper > .au-field-row { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; column-gap:8px; }
+:is(.au-root,.au-overlay) .au-numeric.au-numeric-reference-stepper > .au-field-row > :is(label,.au-label-help) { min-width:0; width:auto; overflow-wrap:anywhere; color:var(--color-text-primary); }
+/* Let the help affordance follow the label text instead of reserving a permanent
+   24px column that would split ordinary words in the standard rail. */
+:is(.au-root,.au-overlay) .au-numeric.au-numeric-reference-stepper > .au-field-row > .au-label-help { display:block; }
+:is(.au-root,.au-overlay) .au-numeric-reference-stepper .au-label-help > label { display:inline; overflow-wrap:break-word; hyphens:auto; }
+:is(.au-root,.au-overlay) .au-numeric-reference-stepper .au-label-help > .au-help-trigger { display:inline-flex; vertical-align:middle; margin-block:-4px; margin-inline-start:2px; }
+:is(.au-root,.au-overlay) .au-numeric-reference-stepper .au-numeric-stepper { margin-inline-start:0; flex:none; }
+:is(.au-root,.au-overlay) .au-numeric-reference-stepper .au-numeric-stepper .au-numeric-step { width:32px; min-width:32px; height:32px; min-height:32px; border-radius:8px; }
+:is(.au-root,.au-overlay) .au-numeric-reference-stepper .au-numeric-stepper .au-numeric-control { flex:0 0 92px; width:92px; }
+@container au-numeric-reference (max-width:240px) {
+  :is(.au-root,.au-overlay) .au-numeric.au-numeric-reference-stepper > .au-field-row { grid-template-columns:minmax(0,1fr); }
+  :is(.au-root,.au-overlay) .au-numeric-reference-stepper .au-numeric-stepper { width:100%; }
+  :is(.au-root,.au-overlay) .au-numeric-reference-stepper .au-numeric-stepper .au-numeric-control { flex:1 1 auto; width:auto; }
+}
