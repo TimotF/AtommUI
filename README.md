@@ -475,3 +475,9 @@ The label can wrap within its column; fields narrower than240px stack the contro
 preserve readable labels and usable targets. Use `AuFieldGroups spacing="reference"`
 for the 8px vertical rhythm; the group already owns its 16px horizontal inset.
 The existing presentation and arithmetic are unchanged when the new option is omitted.
+
+### Bidirectional numeric readouts (0.28.2)
+
+Zoom percentages and their preset choices use a left-to-right isolated run, so
+`100 %` keeps its order inside an RTL interface. The control group still mirrors
+with the interface. No new property or change of numeric value is involved.

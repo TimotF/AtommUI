@@ -110,6 +110,7 @@ test('two or three preview tabs fit their visible labels without an empty traili
   for(const width of [1280,1135,960]) for(const direction of ['ltr','rtl']) {
    await page.setViewportSize({width,height:853});
    await page.locator('html').evaluate((element,dir)=>element.setAttribute('dir',dir),direction);
+   await expect(page.locator('.au-root')).toHaveAttribute('dir',direction);
    const group=page.locator('#review-tabs');
    const [track,first,last]=await Promise.all([group.boundingBox(),group.locator('.v-tab').first().boundingBox(),group.locator('.v-tab').last().boundingBox()]);
    const start=direction==='rtl'?track!.x+track!.width-first!.x-first!.width:first!.x-track!.x;
@@ -130,6 +131,7 @@ test('preview segmented choices keep SVG on one line without changing parameter 
   for(const width of [390,960,1135,1456])for(const direction of ['ltr','rtl']){
     await page.setViewportSize({width,height:853});
     await page.locator('html').evaluate((el,dir)=>el.setAttribute('dir',dir),direction);
+    await expect(page.locator('.au-root')).toHaveAttribute('dir',direction);
     const content=await group.locator('.v-btn__content').evaluateAll(elements=>elements.map(el=>{
       const c=getComputedStyle(el),r=el.getBoundingClientRect();return {height:r.height,lineHeight:parseFloat(c.lineHeight),scroll:el.scrollWidth,width:r.width};
     }));

@@ -10,7 +10,7 @@ const explode=ref(20), controlsDisabled=ref(false);
 const open=ref(false), collapsed=ref(false), dock=ref<HTMLElement|null>(null), detached=ref(true), zoom=ref(100), count=ref('6'), canvasActive=ref(false);
 </script>
 <template>
-  <AuRoot profile="compact" :direction="query.has('rtl')?'rtl':'ltr'" class="review-controls-demo" :style="{width:query.has('width')?query.get('width')+'px':undefined}"><AuLayout standard lead-collapsible v-model:lead-collapsed="collapsed" lead-label="Examples" collapse-label="Hide examples" expand-label="Show examples" collapse-id="review-collapse" expand-id="review-expand">
+  <AuRoot profile="compact" :direction="query.has('rtl')?'rtl':undefined" class="review-controls-demo" :style="{width:query.has('width')?query.get('width')+'px':undefined}"><AuLayout standard lead-collapsible v-model:lead-collapsed="collapsed" lead-label="Examples" collapse-label="Hide examples" expand-label="Show examples" collapse-id="review-collapse" expand-id="review-expand">
     <template #lead-actions><AuButton id="review-header-action" ghost>Help</AuButton></template>
     <template #lead><p class="review-caption">Shared control review</p></template>
     <template #stage>
