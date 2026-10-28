@@ -479,3 +479,8 @@ The existing presentation and arithmetic are unchanged when the new option is om
 `AuMaterialPicker appearance="surface"` opts into the official 57px square material tiles, four columns with keyboard/focus/touch tooltips supplied by each translated title. Selection remains single-valued and preview-only. The default labelled three-column cards are unchanged.
 
 PreviewStage wheel zoom is anchored on the pointer through OrbitControls.zoomToCursor. Button/preset zoom continues to use the current orbit target.
+### Bidirectional numeric readouts (0.28.2)
+
+Zoom percentages and their preset choices use a left-to-right isolated run, so
+`100 %` keeps its order inside an RTL interface. The control group still mirrors
+with the interface. No new property or change of numeric value is involved.
