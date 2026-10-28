@@ -475,3 +475,7 @@ The label can wrap within its column; fields narrower than240px stack the contro
 preserve readable labels and usable targets. Use `AuFieldGroups spacing="reference"`
 for the 8px vertical rhythm; the group already owns its 16px horizontal inset.
 The existing presentation and arithmetic are unchanged when the new option is omitted.
+
+`AuMaterialPicker appearance="surface"` opts into the official 57px square material tiles, four columns with keyboard/focus/touch tooltips supplied by each translated title. Selection remains single-valued and preview-only. The default labelled three-column cards are unchanged.
+
+PreviewStage wheel zoom is anchored on the pointer through OrbitControls.zoomToCursor. Button/preset zoom continues to use the current orbit target.

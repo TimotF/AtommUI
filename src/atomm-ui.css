@@ -326,3 +326,5 @@
   :is(.au-root,.au-overlay) .au-numeric-reference-stepper .au-numeric-stepper { width:100%; }
   :is(.au-root,.au-overlay) .au-numeric-reference-stepper .au-numeric-stepper .au-numeric-control { flex:1 1 auto; width:auto; }
 }
+
+.au-progress .v-progress-linear__determinate { transition:none; }

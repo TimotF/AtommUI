@@ -93,5 +93,5 @@ try {
   if (!lock.packages['node_modules/@timotf/atomm-ui']?.integrity) throw new Error('Consumer lockfile lacks archive integrity.');
   console.log('npm archive and clean consumer: OK');
 } finally {
-  rmSync(consumer, { recursive: true, force: true });
+  rmSync(consumer, { recursive: true, force: true, maxRetries:3, retryDelay:100 });
 }

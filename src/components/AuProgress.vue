@@ -10,8 +10,8 @@ const displayValue = computed(() => finiteSliderValue(props.value,0,100) ?? unde
 const emit = defineEmits<{ cancel: [] }>();
 </script>
 <template>
-  <div :id="resolvedId" class="au-progress gen-progress" role="progressbar" :aria-label="label" aria-valuemin="0" aria-valuemax="100" :aria-valuenow="displayValue">
+  <div :id="resolvedId" class="au-progress gen-progress" role="group" :aria-label="label">
     <div class="au-progress-heading"><span :id="`${resolvedId}-stage`">{{ label }}</span><span :id="`${resolvedId}-value`">{{ displayValue === undefined ? '' : `${Math.round(displayValue)}%` }}</span><AuButton v-if="cancelLabel" :id="cancelId ?? `${resolvedId}-cancel`" :data-testid="cancelTestId" @click="emit('cancel')">{{ cancelLabel }}</AuButton></div>
-    <VProgressLinear :id="`${resolvedId}-bar`" color="primary" :model-value="displayValue ?? 0" :indeterminate="displayValue === undefined" height="3" aria-hidden="true" />
+    <VProgressLinear :id="`${resolvedId}-bar`" color="primary" :model-value="displayValue ?? 0" :indeterminate="displayValue === undefined" height="3" :aria-label="label" />
   </div>
 </template>

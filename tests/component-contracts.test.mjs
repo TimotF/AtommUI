@@ -56,7 +56,7 @@ test('multiple progress controls use unique IDs and invalid progress is indeterm
   assert.equal(new Set(ids).size,ids.length);
   assert.ok(html.includes('id="first-cancel"')&&html.includes('id="second-cancel"'));
   assert.ok(!html.match(/<div[^>]*id="first"[^>]*aria-valuenow/));
-  assert.ok(html.match(/<div[^>]*id="second"[^>]*aria-valuenow="100"/));
+  assert.ok(html.match(/<div[^>]*aria-valuenow="100"[^>]*id="second-bar"/));
   assert.ok(!html.includes('NaN'));
 });
 

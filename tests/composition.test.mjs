@@ -115,3 +115,10 @@ test('material pickers preserve consumer values, escaped labels, availability an
  const thumbnail=await render(h(AuMaterialThumbnail,{material:'solid',color:'#336699'}));
  assert.ok(thumbnail.includes('aria-hidden="true"')&&thumbnail.includes('fill="#336699"'));
 });
+
+ test('reference material surfaces retain translated names and single selection without changing default cards',async()=>{
+ const {AuMaterialPicker,AuProgress}=await import('../dist/atomm-ui.js');
+ const props={label:'Surface',modelValue:'pine',items:[{value:'pine',material:'pine',title:'Plywood'},{value:'walnut',material:'walnut',title:'Walnut'}]};
+ const html=await render(h(AuMaterialPicker,{...props,appearance:'surface'}));assert.match(html,/au-material-picker-surface/);assert.match(html,/aria-label="Plywood"/);assert.match(html,/aria-pressed="true"/);assert.doesNotMatch(html,/au-example-card/);
+ const progress=await render(h(AuProgress,{label:'Building',value:50,cancelLabel:'Cancel'}));assert.match(progress,/role="group"/);assert.match(progress,/role="progressbar"/);assert.match(progress,/>Cancel</);
+ });

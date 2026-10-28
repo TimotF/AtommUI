@@ -113,6 +113,7 @@ export class PreviewStage {
     this.materialLibrary = new PreviewMaterialLibrary(this.renderer.capabilities.getMaxAnisotropy());
     this.setAppearance({material:'pine',color:'#d1b98f'});
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.zoomToCursor = true;
     this.controls.enableDamping = !this.motion.matches;
     this.controls.maxPolarAngle = Math.PI * .95;
     this.controls.minPolarAngle = Math.PI * .05;
