@@ -484,3 +484,8 @@ PreviewStage wheel zoom is anchored on the pointer through OrbitControls.zoomToC
 Zoom percentages and their preset choices use a left-to-right isolated run, so
 `100 %` keeps its order inside an RTL interface. The control group still mirrors
 with the interface. No new property or change of numeric value is involved.
+
+`AuCard` exposes an optional `header-leading` slot for an independent action such
+as a drag handle beside its collapse button. The action is inside the card and
+outside the collapse button: do not put interactive controls in the `title` slot.
+The slot applies to collapsible cards; omitting it preserves the existing layout.

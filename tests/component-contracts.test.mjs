@@ -348,3 +348,11 @@ test('reference steppers are explicit and use labelled inline SVG actions',async
  const plain=await render(h(AuNumericField,{...base,stepper:false,stepperAppearance:'reference'}));
  assert.ok(!plain.includes('au-numeric-stepper'));assert.ok(!plain.includes('au-numeric-reference-stepper'));
 });
+
+test('card leading actions are siblings of the collapse button, inside the card',async()=>{
+ const {AuCard}=await import('../dist/atomm-ui.js');
+ const html=await render(h(AuCard,{id:'leading',title:'Row',initialOpen:false},{'header-leading':()=>h(AuButton,{id:'grip','aria-label':'Move'},()=> 'Grip'),default:()=> 'Options'}));
+ assert.match(html,/au-card-title-with-leading/);assert.match(html,/id="grip"/);assert.match(html,/id="leading-title"[^>]*aria-expanded="false"/);
+ const action=html.indexOf('id="grip"'),toggle=html.indexOf('id="leading-title"');assert(action<toggle);assert(html.slice(action,toggle).includes('</button>'));
+ assert.match(html,/id="leading"[^>]*hidden/);
+});

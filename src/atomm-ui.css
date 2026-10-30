@@ -265,6 +265,10 @@
 .au-root .au-layout-collapsible:has(.au-layout-expand) .au-preview-header { padding-block-start:60px; }
 
 .au-root .au-card-title { margin:0;font:inherit; }
+.au-root .au-card-title-with-leading { display:flex;align-items:center; }
+.au-root .au-card-title-with-leading.au-card-title-expanded { border-bottom:var(--au-border-width) solid var(--color-stroke-divider); }
+.au-root .au-card-title-with-leading .au-card-header { flex:1;min-width:0;width:auto;border-bottom:0; }
+.au-root .au-card-leading { display:flex;align-items:center;padding-inline-start:var(--au-space-8); }
 
 /* Shared action menus use the same compact rows as the official selectors. */
 .au-overlay.au-action-menu { min-width: 160px; max-width: min(360px,calc(100vw - 16px)); }
