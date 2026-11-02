@@ -489,3 +489,7 @@ with the interface. No new property or change of numeric value is involved.
 as a drag handle beside its collapse button. The action is inside the card and
 outside the collapse button: do not put interactive controls in the `title` slot.
 The slot applies to collapsible cards; omitting it preserves the existing layout.
+
+### Progress cancellation in compact layouts
+
+The cancel action in `AuProgress` uses the same 32px height as compact buttons. The default density profile keeps its historical height. No consumer override or additional sizing prop is needed.

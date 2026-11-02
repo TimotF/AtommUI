@@ -79,6 +79,12 @@
 :is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .v-field__input { padding-inline: var(--au-space-8); }
 :is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-help-trigger { border-radius: 50%; }
 
+/* Progress cancellation is a regular compact action, not a 28px input. */
+:is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) .au-progress-heading .au-button {
+  height: var(--au-control-height);
+  min-height: var(--au-control-height);
+}
+
 :is(.au-root.au-profile-compact, .au-overlay.au-profile-compact) :is(.v-tabs,.au-segmented-control,.v-btn-toggle) {
   height: var(--au-control-height);
   min-height: var(--au-control-height);
