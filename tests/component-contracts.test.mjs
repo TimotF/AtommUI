@@ -356,3 +356,19 @@ test('card leading actions are siblings of the collapse button, inside the card'
  const action=html.indexOf('id="grip"'),toggle=html.indexOf('id="leading-title"');assert(action<toggle);assert(html.slice(action,toggle).includes('</button>'));
  assert.match(html,/id="leading"[^>]*hidden/);
 });
+
+test('toolbar colour picker is a named action without a field label, and spectra have unique IDs',async()=>{
+ const props={label:'Custom ink',hexLabel:'Hex colour',invalidMessage:'Enter six digits',modelValue:'#2a6b8c',presentation:'button',swatch:'spectrum'};
+ const html=await render([h(AuColorField,{...props,id:'ink-one'}),h(AuColorField,{...props,id:'ink-two'})]);
+ assert.equal((html.match(/class="au-color-field-button"/g)||[]).length,2);
+ assert.ok(!html.includes('class="au-color-label"'));
+ assert.ok(html.includes('aria-label="Custom ink"'));
+ assert.equal((html.match(/aria-haspopup="dialog"/g)||[]).length,2);
+ assert.ok(html.includes('fill="#2a6b8c"'));
+ const ids=[...html.matchAll(/<linearGradient id="([^"]+)"/g)].map(m=>m[1]);assert.equal(ids.length,2);assert.notEqual(ids[0],ids[1]);
+ for(const id of ids)assert.ok(html.includes(`fill="url(#${id})"`));
+ const disabled=await render(h(AuColorField,{...props,id:'invalid-ink',disabled:true,modelValue:'url(https://invalid.example/paint)'}));
+ assert.ok(!disabled.includes('invalid.example'));
+ assert.match(disabled.match(/<button[^>]*id="invalid-ink"[^>]*>/)?.[0]??'',/\sdisabled(?:="")?(?=\s|>)/);
+ assert.ok(!disabled.includes('aria-pressed'));
+});

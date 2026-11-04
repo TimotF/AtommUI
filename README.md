@@ -501,3 +501,12 @@ The slot applies to collapsible cards; omitting it preserves the existing layout
 ### Progress cancellation in compact layouts
 
 The cancel action in `AuProgress` uses the same 32px height as compact buttons. The default density profile keeps its historical height. No consumer override or additional sizing prop is needed.
+
+### Toolbar colour picker (0.30.0)
+
+`AuColorField` keeps its existing labelled row by default. For a toolbar use
+`presentation="button"`; the required `label` remains the accessible button name
+and its hover/focus/touch help. `swatch="spectrum"` shows a multicolour square with
+the current ink as a small inset. Without that option the button shows the ink.
+The same picker, HEX validation, disabled state and model events are retained.
+No consumer opts in automatically.

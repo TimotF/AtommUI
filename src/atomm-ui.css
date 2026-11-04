@@ -332,3 +332,9 @@
 }
 
 .au-progress .v-progress-linear__determinate { transition:none; }
+
+/* Optional toolbar presentation; the property-row colour field stays unchanged. */
+.au-color-field-button{display:inline-flex;flex:none;align-items:center;min-width:0}
+:is(.au-root,.au-overlay) .au-color-field-button .au-color-button{width:32px;min-width:32px;height:32px;padding:4px}
+.au-color-field-button .au-color-swatch{width:24px;height:24px;border-radius:4px}
+.au-color-spectrum{display:block;width:24px;height:24px;flex:none}
