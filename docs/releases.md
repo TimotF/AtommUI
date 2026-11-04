@@ -1,5 +1,9 @@
 # Distribuer AtommUI
 
+## 0.29.0 — retours de review Drawing to Keepsake
+
+Ajoute `AuFileDropzone` : zone clavier/clic/glisser-déposer, émission du premier fichier, réinitialisation du sélecteur, états désactivé/chargement/erreur et action publique `choose()`. Le consommateur conserve le décodage et les limites d’import. Ajoute les options `AuSwitch help-placement="inline"` / `AuHelp inline` et `AuFieldGroup heading-style="plain"` pour rapprocher l’aide du libellé et retirer les règles décoratives. Les présentations par défaut restent inchangées ; seul le générateur concerné adopte ces options. Le paquet repart de 0.28.5 et inclut donc les correctifs déjà publiés 0.28.4–0.28.5.
+
 La source canonique est ce dépôt. `@timotf/atomm-ui` est distribué comme une vraie archive npm `.tgz` attachée à une GitHub Release publique ; aucun compte ou jeton npm n'est nécessaire pour l'installer. Vue et Vuetify restent des dépendances partagées avec l'application.
 
 ## Version et archive

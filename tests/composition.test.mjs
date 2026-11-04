@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSSRApp, h, ref } from 'vue';
 import { renderToString } from '@vue/server-renderer';
-import { AuRoot, AuMaterialPicker, AuMaterialThumbnail, AuHistoryControls, AuFieldGroups, AuFieldGroup, AuNumericField, AuSceneControls, AuOnboarding, AuOnboardingCard, useOnboarding, readOnboardingProgress, pendingOnboardingSteps, positionOnboarding, createAtommVuetify } from '../dist/atomm-ui.js';
+import { AuFileDropzone, AuHelp, AuSwitch, AuRoot, AuMaterialPicker, AuMaterialThumbnail, AuHistoryControls, AuFieldGroups, AuFieldGroup, AuNumericField, AuSceneControls, AuOnboarding, AuOnboardingCard, useOnboarding, readOnboardingProgress, pendingOnboardingSteps, positionOnboarding, createAtommVuetify } from '../dist/atomm-ui.js';
 
 async function render(children) {
   return renderToString(createSSRApp(() => h(AuRoot, {profile:'compact'}, () => children)).use(createAtommVuetify()));
@@ -122,3 +122,16 @@ test('material pickers preserve consumer values, escaped labels, availability an
  const html=await render(h(AuMaterialPicker,{...props,appearance:'surface'}));assert.match(html,/au-material-picker-surface/);assert.match(html,/aria-label="Plywood"/);assert.match(html,/aria-pressed="true"/);assert.doesNotMatch(html,/au-example-card/);
  const progress=await render(h(AuProgress,{label:'Building',value:50,cancelLabel:'Cancel'}));assert.match(progress,/role="group"/);assert.match(progress,/role="progressbar"/);assert.match(progress,/>Cancel</);
  });
+
+
+test('plain groups preserve heading associations without a decorative rule; legacy groups stay unchanged',async()=>{
+ const plain=await render(h(AuFieldGroup,{id:'plain',title:'Dimensions',headingStyle:'plain'},()=>h(AuNumericField,{id:'plain-height',label:'Height',modelValue:80})));
+ assert.match(plain,/aria-labelledby="plain-title"/);assert.match(plain,/for="plain-height"/);assert.ok(!plain.includes('class="au-group-rule"'));
+ const legacy=await render(h(AuFieldGroup,{title:'Dimensions'},()=>''));assert.match(legacy,/class="au-group-rule"/);
+ const help=await render(h(AuSwitch,{id:'background',label:'Automatic background removal',help:'Try disabling',helpPlacement:'inline',modelValue:true}));assert.match(help,/au-label-help-inline/);assert.match(help,/for="background"/);assert.match(help,/aria-label="Automatic background removal"/);
+});
+test('file dropzone exposes one named native file action with disabled/loading/error states',async()=>{
+ const base={id:'image',label:'Drop an image <here>',hint:'or click to choose',accept:'image/png,image/jpeg'};
+ const html=await render(h(AuFileDropzone,base));assert.match(html,/type="file"/);assert.match(html,/accept="image\/png,image\/jpeg"/);assert.match(html,/aria-describedby="image-hint"/);assert.ok(!html.includes('<here>'));
+ const blocked=await render(h(AuFileDropzone,{...base,loading:true,error:'Choose a PNG'}));assert.match(blocked,/aria-busy="true"/);assert.match(blocked,/<button[^>]*disabled/);assert.match(blocked,/<input[^>]*disabled/);assert.match(blocked,/aria-describedby="image-hint image-error"/);assert.match(blocked,/role="alert"/);
+});

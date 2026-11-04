@@ -50,4 +50,5 @@ export { default as AuDialog } from './components/AuDialog.vue';
 export { default as AuTipsButton } from './components/AuTipsButton.vue';
 
 export { default as AuActionMenu } from './components/AuActionMenu.vue';
+export { default as AuFileDropzone } from './components/AuFileDropzone.vue';
 export type { ActionMenuItem } from './components/AuActionMenu.vue';

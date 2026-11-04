@@ -1,5 +1,13 @@
 # AtommUI
 
+### Import and plain field headings (0.29.0)
+
+`AuFileDropzone` accepts translated `label`, `hint`, optional `id`, native `accept`, `disabled`, `loading` and `error`. It emits `select(File)` for the first picked or dropped file. The consuming app owns MIME/size validation and decoding. Cancelling the native picker emits nothing; selecting the same file again works. The public button supports keyboard, focus and drag/drop states; the optional error is associated with it.
+
+`AuSwitch help-placement="inline"` places the help target directly after the end of the label, including when it wraps. This opts into `AuHelp inline`; default placement and tooltip behavior remain compatible.
+
+`AuFieldGroup heading-style="plain"` uses a plain 12px/500 label without a decorative line. The default remains `rule`. Both preserve heading IDs, grouping and optional disclosure behavior. These APIs require no consumer CSS targeting shared internals.
+
 ### Correctifs 0.18.2
 
 Dans la disposition `standard`, l’aperçu passe avant les panneaux lorsque le conteneur est inférieur à 960 px ; la disposition historique conserve son ordre. Le pied d’export reste collant.
