@@ -90,7 +90,7 @@ button.au-group-heading-line:focus-visible { outline: 2px solid var(--color-stro
 
 /* Opt-in composition: preserve legacy consumers while matching the plain property labels. */
 .au-field-group-plain .au-group-heading { color:var(--color-text-primary); }
-.au-field-group-plain .au-group-heading :is(h3,h4) { font-weight:500;line-height:16px; }
+.au-field-group-plain .au-group-heading :is(h3,h4),.au-field-group-reference .au-group-heading :is(h3,h4) { font-weight:500;line-height:16px; }
 :is(.au-root,.au-overlay) .au-label-help.au-label-help-inline { display:block; }
 :is(.au-root,.au-overlay) .au-label-help-inline>label { display:inline; }
 :is(.au-root,.au-overlay) .au-label-help-inline>.au-help-trigger { display:inline-flex;vertical-align:middle;margin-block:-4px;margin-inline-start:2px; }

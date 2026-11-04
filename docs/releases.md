@@ -1,5 +1,10 @@
 # Distribuer AtommUI
 
+## Candidate 0.29.1 — séparateurs conservés
+
+À la demande du propriétaire, `AuFieldGroup heading-style="reference"` conserve la règle tout en utilisant 12px/500/16. Le générateur adopte cette option à la place du prototype sans ligne. Les valeurs par défaut restent identiques. La candidate 0.29.0 et son tag local ne sont pas publiés ni remplacés ; 0.29.1 identifie ce nouvel état. La publication reste en attente de l’autorisation spécifique.
+
+
 ## 0.29.0 — retours de review Drawing to Keepsake
 
 Ajoute `AuFileDropzone` : zone clavier/clic/glisser-déposer, émission du premier fichier, réinitialisation du sélecteur, états désactivé/chargement/erreur et action publique `choose()`. Le consommateur conserve le décodage et les limites d’import. Ajoute les options `AuSwitch help-placement="inline"` / `AuHelp inline` et `AuFieldGroup heading-style="plain"` pour rapprocher l’aide du libellé et retirer les règles décoratives. Les présentations par défaut restent inchangées ; seul le générateur concerné adopte ces options. Le paquet repart de 0.28.5 et inclut donc les correctifs déjà publiés 0.28.4–0.28.5.

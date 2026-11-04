@@ -128,6 +128,7 @@ test('plain groups preserve heading associations without a decorative rule; lega
  const plain=await render(h(AuFieldGroup,{id:'plain',title:'Dimensions',headingStyle:'plain'},()=>h(AuNumericField,{id:'plain-height',label:'Height',modelValue:80})));
  assert.match(plain,/aria-labelledby="plain-title"/);assert.match(plain,/for="plain-height"/);assert.ok(!plain.includes('class="au-group-rule"'));
  const legacy=await render(h(AuFieldGroup,{title:'Dimensions'},()=>''));assert.match(legacy,/class="au-group-rule"/);
+ const reference=await render(h(AuFieldGroup,{id:'reference',title:'Dimensions',headingStyle:'reference'},()=>''));assert.match(reference,/au-field-group-reference/);assert.match(reference,/class="au-group-rule"/);assert.match(reference,/aria-labelledby="reference-title"/);
  const help=await render(h(AuSwitch,{id:'background',label:'Automatic background removal',help:'Try disabling',helpPlacement:'inline',modelValue:true}));assert.match(help,/au-label-help-inline/);assert.match(help,/for="background"/);assert.match(help,/aria-label="Automatic background removal"/);
 });
 test('file dropzone exposes one named native file action with disabled/loading/error states',async()=>{
