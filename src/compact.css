@@ -132,6 +132,53 @@
 
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-numeric-control .v-field__input { text-align: start; }
 
+/* Typography is explicit per role: Vuetify's layered defaults and the generic
+   font reset must not change the compact reference register. Other density
+   profiles retain their existing rendering. */
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) :is(.au-field-row > label,.au-label-help > label,.au-select-field > label,.au-text-field-main > label,.au-color-label,.au-color-field > .au-label-help > span,.au-color-hex > label) {
+  font: 400 12px/16px var(--au-font);
+  color: var(--color-text-primary);
+}
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) :is(.v-field__input,.au-select-trigger,.au-select-native,.au-color-hex input) {
+  font: 400 12px/16px var(--au-font);
+  letter-spacing: normal;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .v-text-field__suffix {
+  font: 400 10px/14px var(--au-font);
+  color: var(--color-text-tertiary);
+}
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button {
+  line-height: 20px;
+}
+/* A collapsible card uses AuButton for interaction, but its text is a title. */
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button.au-card-header {
+  font: 500 12px/16px var(--au-font);
+}
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) :is(.v-tabs .v-tab,.au-segmented-option,.v-btn-toggle > .v-btn) {
+  font: 500 12px/16px var(--au-font);
+}
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button.au-zoom-value {
+  font: 400 12px/16px var(--au-font);
+  font-variant-numeric: tabular-nums;
+}
+.au-root.au-profile-compact .au-layout-lead-header h2 {
+  font: 500 14px/20px var(--au-font);
+}
+.au-root.au-profile-compact .au-field-group-reference .au-group-heading {
+  color: var(--color-text-primary);
+}
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-dialog-card {
+  font: 400 12px/16px var(--au-font);
+}
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) :is(.au-dialog-card > h2,.au-dialog-header h2) {
+  font: 600 16px/22px var(--au-font);
+}
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) :is(.au-field-error,.au-color-hex .au-field-error) {
+  font: 400 12px/16px var(--au-font);
+}
+
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-switch {
   --v-switch-scale: .8;
   --v-switch-track-height: 20px;
