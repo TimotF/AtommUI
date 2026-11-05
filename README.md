@@ -510,3 +510,7 @@ and its hover/focus/touch help. `swatch="spectrum"` shows a multicolour square w
 the current ink as a small inset. Without that option the button shows the ink.
 The same picker, HEX validation, disabled state and model events are retained.
 No consumer opts in automatically.
+
+## Switch track hit area (0.30.2)
+
+The complete compact switch track uses Vuetify’s native track-click handler. Both ends of the track, the thumb and the associated label toggle exactly once; disabled/loading controls stay inactive. No visual metrics or consumer overrides are needed. Help remains a separate action.
