@@ -147,7 +147,8 @@
 }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .v-text-field__suffix {
   font: 400 10px/14px var(--au-font);
-  color: var(--color-text-tertiary);
+  /* A physical unit is part of the value and must remain readable on the fill. */
+  color: var(--color-text-secondary);
 }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button {
   line-height: 20px;
