@@ -372,3 +372,19 @@ test('toolbar colour picker is a named action without a field label, and spectra
  assert.match(disabled.match(/<button[^>]*id="invalid-ink"[^>]*>/)?.[0]??'',/\sdisabled(?:="")?(?=\s|>)/);
  assert.ok(!disabled.includes('aria-pressed'));
 });
+
+
+test('full canvas SVG mode has opt-in framing and rulers without phantom plot gutters',async()=>{
+ const props={bounds:{x:0,y:0,width:100,height:50},label:'Artwork',grid:false};
+ const normal=await render(h(AuSvgViewport,props));
+ assert.match(normal,/au-svg-viewport-ruler/);assert.doesNotMatch(normal,/au-svg-viewport-canvas/);
+ const full=await render(h(AuSvgViewport,{...props,appearance:'canvas',rulers:false,fitPadding:{top:72,right:16,bottom:96,left:16}}));
+ assert.match(full,/au-svg-viewport-canvas/);assert.doesNotMatch(full,/class="au-svg-viewport-ruler|class="au-svg-viewport-unit/);
+ assert.match(full,/--au-svg-ruler-width:0px/);assert.match(full,/--au-svg-ruler-height:0px/);
+ const view=full.match(/class="au-svg-viewport-pieces"[^>]*viewBox="([^"]+)"/)[1].split(' ').map(Number);
+ const ppm=600/view[2],x=(50-view[0])*ppm,y=(25-view[1])*ppm;
+ assert(Math.abs(x-300)<1e-8);assert(Math.abs(y-(500+72-96)/2)<1e-8);
+ assert(view.every(Number.isFinite));
+ const invalid=await render(h(AuSvgViewport,{...props,rulers:false,fitPadding:{top:NaN,right:-1,bottom:Infinity}}));
+ assert.doesNotMatch(invalid,/NaN|Infinity/);
+});

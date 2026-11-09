@@ -2,15 +2,16 @@
 import {computed,onBeforeUnmount,onMounted,ref,watch} from 'vue';
 import type { SvgBounds } from '../viewport.js';
 import { safeSvgBounds } from '../viewport.js';
-const props=withDefaults(defineProps<{bounds:SvgBounds;label:string;displayUnit?:'mm'|'in';locale?:string;grid?:boolean;maxZoom?:number}>(),{grid:true});
+const props=withDefaults(defineProps<{bounds:SvgBounds;label:string;displayUnit?:'mm'|'in';locale?:string;grid?:boolean;maxZoom?:number;appearance?:'framed'|'canvas';rulers?:boolean;fitPadding?:{top?:number;right?:number;bottom?:number;left?:number}}>(),{grid:true,rulers:true,appearance:'framed'});
 const emit=defineEmits<{zoomchange:[percent:number]}>();
 const toDisplay=(value:number,unit:string)=>unit==='in'?value/25.4:value;
 const fromDisplay=(value:number,unit:string)=>unit==='in'?value*25.4:value;
 const mount=ref<HTMLElement>(),scale=ref(1),width=ref(600),height=ref(500),center=ref({x:150,y:150}),dragging=ref(false);
-const rulerWidth=40,rulerHeight=24;
+const rulerWidth=computed(()=>props.rulers?40:0),rulerHeight=computed(()=>props.rulers?24:0);
+const fitPadding=computed(()=>Object.fromEntries(['top','right','bottom','left'].map(side=>{const value=props.fitPadding?.[side as keyof NonNullable<typeof props.fitPadding>];return[side,Number.isFinite(value)?Math.max(0,value!):20];})) as Record<'top'|'right'|'bottom'|'left',number>);
 const canvas=computed(()=>safeSvgBounds(props.bounds));
-const plotWidth=computed(()=>Math.max(1,width.value-rulerWidth)),plotHeight=computed(()=>Math.max(1,height.value-rulerHeight));
-const fittedPixelsPerMm=computed(()=>Math.max(.0001,Math.min(Math.max(1,plotWidth.value-40)/Math.max(1,canvas.value.width),Math.max(1,plotHeight.value-40)/Math.max(1,canvas.value.height))));
+const plotWidth=computed(()=>Math.max(1,width.value-rulerWidth.value)),plotHeight=computed(()=>Math.max(1,height.value-rulerHeight.value));
+const fittedPixelsPerMm=computed(()=>Math.max(.0001,Math.min(Math.max(1,plotWidth.value-fitPadding.value.left-fitPadding.value.right)/Math.max(1,canvas.value.width),Math.max(1,plotHeight.value-fitPadding.value.top-fitPadding.value.bottom)/Math.max(1,canvas.value.height))));
 const pixelsPerMm=computed(()=>fittedPixelsPerMm.value*scale.value);
 const viewport=computed(()=>{const w=plotWidth.value/pixelsPerMm.value,h=plotHeight.value/pixelsPerMm.value;return{x:center.value.x-w/2,y:center.value.y-h/2,width:w,height:h};});
 const viewBox=computed(()=>{const b=viewport.value;return `${b.x} ${b.y} ${b.width} ${b.height}`;});
@@ -23,10 +24,10 @@ const minorX=computed(()=>ticks(viewport.value.x,viewport.value.width,majorStep.
 const xPixel=(value:number)=>(value-viewport.value.x)*pixelsPerMm.value,yPixel=(value:number)=>(value-viewport.value.y)*pixelsPerMm.value;
 const label=(value:number)=>new Intl.NumberFormat(props.locale??'en',{maximumFractionDigits:Math.max(0,Math.min(6,-Math.floor(Math.log10(toDisplay(majorStep.value,unit.value)))))}).format(toDisplay(Object.is(value,-0)?0:value,unit.value));
 
-let observer:ResizeObserver|undefined;
+let observer:ResizeObserver|undefined,fitActive=true;
 let down:{x:number;y:number;center:{x:number;y:number};pixelsPerMm:number;pointerId:number;target:Element|null;moved:boolean}|null=null;
-function fit(){center.value={x:canvas.value.x+canvas.value.width/2,y:canvas.value.y+canvas.value.height/2};scale.value=1;emit('zoomchange',100);}
-function setZoom(percent:number,anchor?:{x:number;y:number}){if(!Number.isFinite(percent))return;const next=Math.max(.1,Math.min(Math.max(.1,(props.maxZoom??4000)/100),percent/100));if(anchor){const before=pixelsPerMm.value,world={x:viewport.value.x+anchor.x/before,y:viewport.value.y+anchor.y/before},after=fittedPixelsPerMm.value*next;center.value={x:world.x-(anchor.x-plotWidth.value/2)/after,y:world.y-(anchor.y-plotHeight.value/2)/after};}scale.value=next;emit('zoomchange',Math.round(next*100));}
+function fit(){fitActive=true;scale.value=1;const p=fitPadding.value;center.value={x:canvas.value.x+canvas.value.width/2+(p.right-p.left)/(2*pixelsPerMm.value),y:canvas.value.y+canvas.value.height/2+(p.bottom-p.top)/(2*pixelsPerMm.value)};emit('zoomchange',100);}
+function setZoom(percent:number,anchor?:{x:number;y:number}){if(!Number.isFinite(percent))return;fitActive=false;const next=Math.max(.1,Math.min(Math.max(.1,(props.maxZoom??4000)/100),percent/100));if(anchor){const before=pixelsPerMm.value,world={x:viewport.value.x+anchor.x/before,y:viewport.value.y+anchor.y/before},after=fittedPixelsPerMm.value*next;center.value={x:world.x-(anchor.x-plotWidth.value/2)/after,y:world.y-(anchor.y-plotHeight.value/2)/after};}scale.value=next;emit('zoomchange',Math.round(next*100));}
 /** factor < 1 zooms in, matching the reference generator. */
 function zoom(factor:number){if(Number.isFinite(factor)&&factor>0)setZoom(scale.value*100/factor);}
 function wheel(event:WheelEvent){
@@ -34,11 +35,11 @@ function wheel(event:WheelEvent){
  // Trackpad pinch arrives as Ctrl+wheel with small deltas. Match the 3D
  // preview's tenfold pinch gain without changing ordinary wheel scrolling.
  const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?plotHeight.value:1)*(event.ctrlKey?10:1);
- setZoom(scale.value*100/Math.exp(Math.max(-500,Math.min(500,delta))*.0015),{x:event.clientX-rect.left-rulerWidth,y:event.clientY-rect.top-rulerHeight});
+ setZoom(scale.value*100/Math.exp(Math.max(-500,Math.min(500,delta))*.0015),{x:event.clientX-rect.left-rulerWidth.value,y:event.clientY-rect.top-rulerHeight.value});
 }
 const pointers=new Map<number,{x:number;y:number}>();
 let pinch:{distance:number;scale:number;world:{x:number;y:number}}|null=null;
-let initial:{center:{x:number;y:number};scale:number}|null=null;
+let initial:{center:{x:number;y:number};scale:number;fitActive:boolean}|null=null;
 function pair(){return [...pointers.values()].slice(0,2);}
 function midpoint(){const [a,b]=pair();return {x:(a.x+b.x)/2,y:(a.y+b.y)/2};}
 function local(point:{x:number;y:number}){const r=mount.value!.querySelector('.au-svg-viewport-pieces')!.getBoundingClientRect();return{x:point.x-r.left,y:point.y-r.top};}
@@ -49,7 +50,7 @@ function rebase(){
 }
 function pointerDown(event:PointerEvent){
  if(event.pointerType!=='touch'&&(!event.isPrimary||event.button!==0&&event.button!==1))return;
- if(!pointers.size)initial={center:{...center.value},scale:scale.value};
+ if(!pointers.size)initial={center:{...center.value},scale:scale.value,fitActive};
  pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});mount.value?.focus({preventScroll:true});mount.value?.setPointerCapture(event.pointerId);rebase();
 }
 function pointerMove(event:PointerEvent){
@@ -61,7 +62,7 @@ function pointerMove(event:PointerEvent){
  }
  if(!down||down.pointerId!==event.pointerId)return;
  const dx=event.clientX-down.x,dy=event.clientY-down.y;if(Math.hypot(dx,dy)>5)down.moved=true;if(!down.moved)return;
- dragging.value=true;center.value={x:down.center.x-dx/down.pixelsPerMm,y:down.center.y-dy/down.pixelsPerMm};
+ fitActive=false;dragging.value=true;center.value={x:down.center.x-dx/down.pixelsPerMm,y:down.center.y-dy/down.pixelsPerMm};
 }
 function pointerUp(event:PointerEvent){
  if(!pointers.delete(event.pointerId))return;
@@ -70,7 +71,7 @@ function pointerUp(event:PointerEvent){
 }
 function cancelGesture(){
  const ids=[...pointers.keys()];pointers.clear();pinch=null;down=null;dragging.value=false;
- if(initial){center.value=initial.center;scale.value=initial.scale;emit('zoomchange',Math.round(scale.value*100));initial=null;}
+ if(initial){center.value=initial.center;scale.value=initial.scale;fitActive=initial.fitActive;emit('zoomchange',Math.round(scale.value*100));initial=null;}
  for(const id of ids)if(mount.value?.hasPointerCapture(id))mount.value.releasePointerCapture(id);
 }
 function pointerCancel(event:PointerEvent){if(pointers.has(event.pointerId))cancelGesture();}
@@ -81,14 +82,15 @@ function frameBounds(bounds:SvgBounds,padding=24){
  setZoom(100*Math.min(Math.max(1,plotWidth.value-2*inset)/bounds.width,Math.max(1,plotHeight.value-2*inset)/bounds.height)/fittedPixelsPerMm.value);
  center.value={x:bounds.x+bounds.width/2,y:bounds.y+bounds.height/2};
 }
-function keyboard(event:KeyboardEvent){if(event.key==='Escape'){cancelGesture();return;}if(event.key==='0'){event.preventDefault();fit();}else if(event.key==='+'||event.key==='='){event.preventDefault();zoom(.88);}else if(event.key==='-'){event.preventDefault();zoom(1.12);}else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)){event.preventDefault();const step=40/pixelsPerMm.value;center.value={x:center.value.x+(event.key==='ArrowRight'?step:event.key==='ArrowLeft'?-step:0),y:center.value.y+(event.key==='ArrowDown'?step:event.key==='ArrowUp'?-step:0)};}}
+function keyboard(event:KeyboardEvent){if(event.key==='Escape'){cancelGesture();return;}if(event.key==='0'){event.preventDefault();fit();}else if(event.key==='+'||event.key==='='){event.preventDefault();zoom(.88);}else if(event.key==='-'){event.preventDefault();zoom(1.12);}else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)){event.preventDefault();fitActive=false;const step=40/pixelsPerMm.value;center.value={x:center.value.x+(event.key==='ArrowRight'?step:event.key==='ArrowLeft'?-step:0),y:center.value.y+(event.key==='ArrowDown'?step:event.key==='ArrowUp'?-step:0)};}}
 watch([()=>canvas.value.x,()=>canvas.value.y,()=>canvas.value.width,()=>canvas.value.height],fit,{immediate:true});
+watch([plotWidth,plotHeight,fitPadding],()=>{if(fitActive)fit();});
 onMounted(()=>{observer=new ResizeObserver(entries=>{const size=entries[0].contentRect;if(size.width>0&&size.height>0){width.value=size.width;height.value=size.height;}});observer.observe(mount.value!);fit();});
 onBeforeUnmount(()=>{observer?.disconnect();pointers.clear();down=null;pinch=null;initial=null;});
 defineExpose({zoom,fit,setZoom,frameBounds});
 </script>
 <template>
- <div ref="mount" class="au-svg-viewport" :class="{dragging}" role="region" :aria-label="props.label" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown + - 0 Escape" tabindex="0" @pointerdown="pointerDown" @pointermove="pointerMove" @pointerup="pointerUp" @pointercancel="pointerCancel" @lostpointercapture="pointerCancel" @wheel.prevent="wheel" @keydown="keyboard">
+ <div ref="mount" class="au-svg-viewport" :class="{dragging,'au-svg-viewport-canvas':appearance==='canvas'}" :style="{'--au-svg-ruler-width':rulerWidth+'px','--au-svg-ruler-height':rulerHeight+'px'}" role="region" :aria-label="props.label" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown + - 0 Escape" tabindex="0" @pointerdown="pointerDown" @pointermove="pointerMove" @pointerup="pointerUp" @pointercancel="pointerCancel" @lostpointercapture="pointerCancel" @wheel.prevent="wheel" @keydown="keyboard">
   <div class="au-svg-viewport-plot">
    <svg v-if="grid !== false" class="au-svg-viewport-grid" :viewBox="viewBox" preserveAspectRatio="none" aria-hidden="true">
     <g class="grid-minor"><line v-for="x in minorX" :key="'x'+x" :x1="x" :x2="x" :y1="viewport.y" :y2="viewport.y+viewport.height"/><line v-for="y in minorY" :key="'y'+y" :y1="y" :y2="y" :x1="viewport.x" :x2="viewport.x+viewport.width"/></g>
@@ -99,15 +101,15 @@ defineExpose({zoom,fit,setZoom,frameBounds});
     <g class="au-svg-overlay" data-preview-only="true"><slot name="overlay" /></g>
    </svg>
   </div>
-  <svg class="au-svg-viewport-ruler ruler-x" :viewBox="`0 0 ${plotWidth} ${rulerHeight}`" preserveAspectRatio="none" aria-hidden="true"><line v-for="x in minorX" :key="'minor'+x" :x1="xPixel(x)" :x2="xPixel(x)" y1="19" y2="24"/><g v-for="x in majorX" :key="x"><line :x1="xPixel(x)" :x2="xPixel(x)" y1="15" y2="24"/><text :x="xPixel(x)" y="11" text-anchor="middle">{{label(x)}}</text></g></svg>
-  <svg class="au-svg-viewport-ruler ruler-y" :viewBox="`0 0 ${rulerWidth} ${plotHeight}`" preserveAspectRatio="none" aria-hidden="true"><line v-for="y in minorY" :key="'minor'+y" :y1="yPixel(y)" :y2="yPixel(y)" x1="35" x2="40"/><g v-for="y in majorY" :key="y"><line :y1="yPixel(y)" :y2="yPixel(y)" x1="31" x2="40"/><text x="3" :y="yPixel(y)-4">{{label(y)}}</text></g></svg>
-  <span class="au-svg-viewport-unit" aria-hidden="true">{{unit}}</span>
+  <svg v-if="rulers" class="au-svg-viewport-ruler ruler-x" :viewBox="`0 0 ${plotWidth} ${rulerHeight}`" preserveAspectRatio="none" aria-hidden="true"><line v-for="x in minorX" :key="'minor'+x" :x1="xPixel(x)" :x2="xPixel(x)" y1="19" y2="24"/><g v-for="x in majorX" :key="x"><line :x1="xPixel(x)" :x2="xPixel(x)" y1="15" y2="24"/><text :x="xPixel(x)" y="11" text-anchor="middle">{{label(x)}}</text></g></svg>
+  <svg v-if="rulers" class="au-svg-viewport-ruler ruler-y" :viewBox="`0 0 ${rulerWidth} ${plotHeight}`" preserveAspectRatio="none" aria-hidden="true"><line v-for="y in minorY" :key="'minor'+y" :y1="yPixel(y)" :y2="yPixel(y)" x1="35" x2="40"/><g v-for="y in majorY" :key="y"><line :y1="yPixel(y)" :y2="yPixel(y)" x1="31" x2="40"/><text x="3" :y="yPixel(y)-4">{{label(y)}}</text></g></svg>
+  <span v-if="rulers" class="au-svg-viewport-unit" aria-hidden="true">{{unit}}</span>
  </div>
 </template>
 
 <style scoped>
-.au-svg-viewport{position:relative;width:100%;height:100%;min-height:120px;overflow:hidden;outline:none;touch-action:none;background:var(--color-bg-editor);user-select:none;cursor:grab;border:1px solid var(--color-stroke-default);border-radius:var(--au-radius-card)}.au-svg-viewport.dragging{cursor:grabbing}
-.au-svg-viewport-plot{position:absolute;inset:24px 0 0 40px;overflow:hidden}.au-svg-viewport-grid,.au-svg-viewport-pieces{position:absolute;inset:0;width:100%;height:100%;display:block}.au-svg-viewport-grid{pointer-events:none}.au-svg-viewport-grid line{vector-effect:non-scaling-stroke;stroke-width:1px}.grid-minor{stroke:var(--color-bg-hover)}.grid-major{stroke:var(--color-stroke-default)}
+.au-svg-viewport{position:relative;width:100%;height:100%;min-height:120px;overflow:hidden;outline:none;touch-action:none;background:var(--color-bg-editor);user-select:none;cursor:grab;border:1px solid var(--color-stroke-default);border-radius:var(--au-radius-card)}.au-svg-viewport.au-svg-viewport-canvas{border:0;border-radius:0}.au-svg-viewport.dragging{cursor:grabbing}
+.au-svg-viewport-plot{position:absolute;inset:var(--au-svg-ruler-height) 0 0 var(--au-svg-ruler-width);overflow:hidden}.au-svg-viewport-grid,.au-svg-viewport-pieces{position:absolute;inset:0;width:100%;height:100%;display:block}.au-svg-viewport-grid{pointer-events:none}.au-svg-viewport-grid line{vector-effect:non-scaling-stroke;stroke-width:1px}.grid-minor{stroke:var(--color-bg-hover)}.grid-major{stroke:var(--color-stroke-default)}
 .au-svg-content{fill:none;stroke:var(--color-operation-cut);stroke-width:.85px}.au-svg-content :deep(path),.au-svg-content :deep(circle),.au-svg-content :deep(rect),.au-svg-content :deep(line),.au-svg-content :deep(polyline),.au-svg-content :deep(polygon),.au-svg-content :deep(ellipse){vector-effect:non-scaling-stroke}
 .au-svg-viewport-ruler{position:absolute;display:block;background:var(--color-bg-subtlest);pointer-events:none}.ruler-x{top:0;left:40px;width:calc(100% - 40px);height:24px;border-bottom:1px solid var(--color-stroke-default)}.ruler-y{top:24px;left:0;height:calc(100% - 24px);width:40px;border-right:1px solid var(--color-stroke-default)}.au-svg-viewport-ruler line{stroke:var(--color-text-tertiary);stroke-width:1px}.au-svg-viewport-ruler text{font:10px system-ui,sans-serif;fill:var(--color-text-secondary);font-variant-numeric:tabular-nums}.au-svg-viewport-unit{position:absolute;left:0;top:0;width:40px;height:24px;display:grid;place-items:center;background:var(--color-bg-subtlest);color:var(--color-text-secondary);font-size:10px;border-right:1px solid var(--color-stroke-default);border-bottom:1px solid var(--color-stroke-default);pointer-events:none}
 </style>

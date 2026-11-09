@@ -514,3 +514,7 @@ No consumer opts in automatically.
 ## Switch track hit area (0.30.2)
 
 The complete compact switch track uses Vuetify’s native track-click handler. Both ends of the track, the thumb and the associated label toggle exactly once; disabled/loading controls stay inactive. No visual metrics or consumer overrides are needed. Help remains a separate action.
+
+### Full-canvas SVG preview (0.30.4)
+
+`AuSvgViewport appearance="canvas"` removes the inset frame (border and radius); its parent still owns layout and fills the available canvas. The default `framed` presentation is unchanged. `:rulers="false"` removes both rulers and the corner unit, returning their space to the plot; defaults to `true`. Pass `fitPadding={{top:72,right:16,bottom:96,left:16}}` to keep fitted artwork clear of overlaid controls without shrinking or nesting the canvas. Values are pixels and default to 20 on each side. Pan, pointer-centred zoom and manufacturing coordinates are unchanged. Fit follows resize until a manual pan/zoom; such a view keeps its camera. Both settings are preview-only and never change the export.
