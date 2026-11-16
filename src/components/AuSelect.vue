@@ -4,7 +4,7 @@ import AuHelp from './AuHelp.vue';
 import {compactProfileKey} from '../profile.js';
 import {isOptionValue,type UiOption} from '../contracts.js';
 defineOptions({inheritAttrs:false});
-const props=defineProps<{id:string;label:string;modelValue:string;items:readonly UiOption[];help?:string;helpLabel?:string;disabled?:boolean;stacked?:boolean;native?:boolean}>();
+const props=defineProps<{id:string;label:string;modelValue:string;items:readonly UiOption[];help?:string;helpLabel?:string;helpPlacement?:'inline'|'separate';disabled?:boolean;stacked?:boolean;native?:boolean}>();
 const emit=defineEmits<{'update:modelValue':[value:string]}>();
 const compact=inject(compactProfileKey,()=>false),trigger=ref<HTMLButtonElement>(),menu=ref<HTMLElement>(),open=ref(false),active=ref(-1),touch=ref(false),position=ref<Record<string,string>>({}),direction=ref('ltr'),portal=ref<string|HTMLElement>('body');
 const nativeControl=computed(()=>props.native||touch.value),selected=computed(()=>props.items.find(item=>item.value===props.modelValue));
@@ -59,7 +59,7 @@ onBeforeUnmount(()=>{close();observer?.disconnect();media?.removeEventListener('
 </script>
 <template>
  <div class="au-select-field" :class="{'au-field-row field-row':!stacked}">
-  <AuHelp v-if="help" :label="helpLabel??label" :text="help" :help-key="id"><label :for="id">{{label}}</label></AuHelp><label v-else :for="id">{{label}}</label>
+  <AuHelp v-if="help || $slots.help" :inline="helpPlacement==='inline'" :label="helpLabel??label" :text="help??''" :help-key="id"><label :for="id">{{label}}</label><template v-if="$slots.help" #content><slot name="help"/></template></AuHelp><label v-else :for="id">{{label}}</label>
   <select v-if="nativeControl" v-bind="$attrs" :id="id" class="au-select-control au-select-native" :aria-label="label" :value="modelValue" :disabled="disabled" @change="update(($event.target as HTMLSelectElement).value)">
    <option v-if="!selected" :value="modelValue" selected disabled hidden>{{modelValue}}</option><option v-for="item in items" :key="item.value" :value="item.value" :selected="item.value===modelValue" :disabled="item.disabled">{{item.title}}</option>
   </select>

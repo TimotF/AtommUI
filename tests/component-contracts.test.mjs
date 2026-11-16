@@ -388,3 +388,22 @@ test('full canvas SVG mode has opt-in framing and rulers without phantom plot gu
  const invalid=await render(h(AuSvgViewport,{...props,rulers:false,fitPadding:{top:NaN,right:-1,bottom:Infinity}}));
  assert.doesNotMatch(invalid,/NaN|Infinity/);
 });
+
+
+test('illustrated select, slider, numeric and color help stay beside the label only when requested',async()=>{
+ const cases=[
+  [AuSelect,{id:'help-select',modelValue:'a',items:[{value:'a',title:'A'}]}],
+  [AuSlider,{id:'help-slider',modelValue:25}],
+  [AuNumericField,{id:'help-number',modelValue:'0,'}],
+  [AuColorField,{id:'help-color',modelValue:'#123456',hexLabel:'Hex',invalidMessage:'Invalid'}],
+ ];
+ for(const direction of ['ltr','rtl'])for(const [component,props] of cases){
+  for(const helpPlacement of [undefined,'inline']){
+   const html=await render(h(component,{...props,label:'A long wrapped field label',helpPlacement},{help:()=>h('svg',{role:'img','aria-label':'Explanation'})}),direction);
+   assert.ok(html.includes('data-help="'+props.id+'"'));
+   assert.ok(html.includes('aria-label="A long wrapped field label"'));
+   assert.equal(html.includes('au-label-help-inline'),helpPlacement==='inline');
+   assert.ok(!html.includes('helpplacement='));
+  }
+ }
+});

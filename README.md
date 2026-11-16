@@ -1,5 +1,10 @@
 # AtommUI
 
+### Illustrated field help (0.31.0)
+
+`AuSelect`, `AuSlider`, `AuNumericField` and `AuColorField` accept `help-placement="inline"`, matching `AuSwitch`. The help button follows the end of a wrapped label. Defaults remain unchanged. Select, slider and color fields also accept a `help` slot for illustrated content, using the existing keyboard/touch-accessible `AuHelp`. Button-only color fields keep their existing tooltip behavior. Consumers own the illustration and translated text.
+
+
 ### Import and field headings (0.29.1 candidate)
 
 `AuFileDropzone` accepts translated `label`, `hint`, optional `id`, native `accept`, `disabled`, `loading` and `error`. It emits `select(File)` for the first picked or dropped file. The consuming app owns MIME/size validation and decoding. Cancelling the native picker emits nothing; selecting the same file again works. The public button supports keyboard, focus and drag/drop states; the optional error is associated with it.

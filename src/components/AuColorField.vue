@@ -8,7 +8,7 @@ import AuTooltip from './AuTooltip.vue';
 import { compactProfileKey } from '../profile.js';
 import { safeHexColor } from '../contracts.js';
 defineOptions({ inheritAttrs: false });
-const props = defineProps<{ id: string; label: string; modelValue: string; hexLabel: string; invalidMessage: string; disabled?: boolean; help?: string; helpLabel?: string; presentation?: 'field' | 'button'; swatch?: 'color' | 'spectrum' }>();
+const props = defineProps<{ id: string; label: string; modelValue: string; hexLabel: string; invalidMessage: string; disabled?: boolean; help?: string; helpLabel?: string; helpPlacement?: 'inline' | 'separate'; presentation?: 'field' | 'button'; swatch?: 'color' | 'spectrum' }>();
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>();
 const compact = inject(compactProfileKey, () => false);
 const open = ref(false), draft = ref(safeHexColor(props.modelValue));
@@ -29,7 +29,7 @@ watch(() => props.disabled, value => { if (value) open.value = false; });
 </script>
 <template>
   <div :class="presentation === 'button' ? 'au-color-field-button' : 'au-field-row au-color-field field-row'">
-    <AuHelp v-if="presentation !== 'button' && help" :label="helpLabel ?? label" :text="help" :help-key="id"><span :id="`${id}-label`">{{ label }}</span></AuHelp>
+    <AuHelp v-if="presentation !== 'button' && (help || $slots.help)" :inline="helpPlacement==='inline'" :label="helpLabel ?? label" :text="help ?? ''" :help-key="id"><span :id="`${id}-label`">{{ label }}</span><template v-if="$slots.help" #content><slot name="help"/></template></AuHelp>
     <span v-else-if="presentation !== 'button'" :id="`${id}-label`" class="au-color-label">{{ label }}</span>
     <VMenu v-model="open" :disabled="disabled" :close-on-content-click="false" location="top end" :offset="8" :z-index="3" :content-class="contentClass" :max-width="'calc(100vw - 24px)'" :transition="false" :activator-props="{ 'aria-haspopup': 'dialog' }">
       <template #activator="{ props: activator }">
