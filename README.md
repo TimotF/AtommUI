@@ -548,3 +548,10 @@ size. The large drawing entry was explicitly approved by its product owner;
 acceptance by Atomm remains a separate review. Existing default/reference cards
 and all ordinary buttons are unchanged unless the consumer opts in. No local
 CSS override is required.
+
+`AuFileDropzone compact` opts into a112px minimum entry surface.
+`AuExampleCard appearance="action" layout="tile" compact` uses the same minimum
+height, a48px illustration and the dropzone's `bg-control` surface in the compact
+profile. Defaults are preserved. The import wrapper can stretch within an equal-row
+grid; the consumer owns that layout and its translated separators. Both surfaces
+can grow to fit wrapping labels rather than clipping their content.

@@ -310,6 +310,9 @@
 .au-root .au-example-card.au-example-action.au-example-action-stacked { min-height:160px; padding:16px; }
 .au-root .au-example-card.au-example-action-stacked .v-btn__content { flex-direction:column; align-items:center; justify-content:center; gap:8px; }
 .au-root .au-example-card.au-example-action-stacked .au-example-title { flex:none; width:100%; text-align:center; }
+.au-root .au-example-card.au-example-action.au-example-action-stacked.au-example-action-compact { min-height:112px; padding:16px; }
+.au-root .au-example-card.au-example-action-compact .au-example-preview { flex-basis:48px; width:48px; height:48px; }
+
 .au-root .au-example-card.au-example-action:not(:disabled):hover { transform:none; }
 .au-root .au-example-card.au-example-action:not(:disabled):hover .au-example-preview { transform:none; }
 

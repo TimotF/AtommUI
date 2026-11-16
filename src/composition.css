@@ -104,3 +104,7 @@ button.au-group-heading-line:focus-visible { outline: 2px solid var(--color-stro
 .au-file-dropzone-target:disabled { cursor:not-allowed;opacity:.5; }
 .au-file-dropzone-error .au-file-dropzone-target { border-color:var(--color-error); }
 .au-file-dropzone-message { margin:8px 0 0;font-size:12px;line-height:16px;color:var(--color-error); }
+
+/* Optional compact entry surfaces; default imports retain their 160px size. */
+.au-file-dropzone.au-file-dropzone-compact { display:flex; flex-direction:column; }
+.au-file-dropzone-compact .au-file-dropzone-target { flex:1; min-height:112px; padding:16px; }

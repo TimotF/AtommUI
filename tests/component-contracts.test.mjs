@@ -416,6 +416,9 @@ test('illustrated action cards opt into the button shell without toggle semantic
  const stacked=await render(h(AuExampleCard,{title:'Draw your own',appearance:'action',layout:'tile'}));
  assert.match(stacked,/au-example-action-stacked/);
  assert.doesNotMatch(stacked,/au-example-row/);
+ const compact=await render(h(AuExampleCard,{title:'Draw',appearance:'action',compact:true}));
+ assert.match(compact,/au-example-action-compact/);
+ assert.match(compact,/v-btn--variant-flat/);
  assert.match(action,/au-button/);
  assert.match(action,/v-btn--variant-tonal/);
  assert.match(action,/aria-label="Draw &lt;your own&gt;"/);

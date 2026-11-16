@@ -219,3 +219,7 @@
 /* The standard template's re-open action follows its 40 px / 8 px button.
    Legacy layouts and consumers without the compact profile stay unchanged. */
 .au-root.au-profile-compact .au-layout-standard .au-layout-expand { border-radius:8px; }
+
+/* The compact illustrated entry shares the file dropzone's grey surface. */
+.au-root.au-profile-compact .au-example-card.au-example-action.au-example-action-compact { background:var(--color-bg-control); color:var(--color-text-primary); border:1px solid var(--color-stroke-divider); box-shadow:var(--au-shadow-card); }
+.au-root.au-profile-compact .au-example-card.au-example-action.au-example-action-compact:not(:disabled):hover { background:var(--color-bg-control); border-color:var(--color-stroke-active); }

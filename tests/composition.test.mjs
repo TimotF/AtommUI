@@ -134,6 +134,7 @@ test('plain groups preserve heading associations without a decorative rule; lega
 test('file dropzone exposes one named native file action with disabled/loading/error states',async()=>{
  const base={id:'image',label:'Drop an image <here>',hint:'or click to choose',accept:'image/png,image/jpeg'};
  const html=await render(h(AuFileDropzone,base));assert.match(html,/type="file"/);assert.match(html,/accept="image\/png,image\/jpeg"/);assert.match(html,/aria-describedby="image-hint"/);assert.ok(!html.includes('<here>'));
+ const compact=await render(h(AuFileDropzone,{...base,compact:true}));assert.match(compact,/au-file-dropzone-compact/);assert.match(compact,/type="file"/);assert.match(compact,/aria-describedby="image-hint"/);assert.doesNotMatch(html,/au-file-dropzone-compact/);
  const blocked=await render(h(AuFileDropzone,{...base,loading:true,error:'Choose a PNG'}));assert.match(blocked,/aria-busy="true"/);assert.match(blocked,/<button[^>]*disabled/);assert.match(blocked,/<input[^>]*disabled/);assert.match(blocked,/aria-describedby="image-hint image-error"/);assert.match(blocked,/role="alert"/);
 });
 
