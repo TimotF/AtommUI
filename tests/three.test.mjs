@@ -112,3 +112,26 @@ test('photographic maps retain physical scale, separate colour/data spaces and r
   library.dispose();assert.equal(disposed.length,6);
  } finally {await server.close();}
 });
+
+test('content replacement rebases zoom and clipping while preserving even an out-of-range camera pose',async()=>{
+ const {PreviewStage}=await import('../dist/three.js');
+ const {PerspectiveCamera,Group,Vector3}=await import('three');
+ const camera=new PerspectiveCamera(35,1,.01,10000);camera.position.set(30,20,200);
+ const target=new Vector3(3,4,5),limits=[];
+ const stage=Object.assign(Object.create(PreviewStage.prototype),{
+  camera,controls:{target,minDistance:1,maxDistance:9999},content:new Group(),overlay:new Group(),
+  ready:true,viewport:'600:600',rebuilds:0,framingCenter:new Vector3(),options:{},lastPercent:0,
+  clear(){this.content.clear();},invalidate(){},reportZoom(){},publishDiagnostics(){},onZoom(){},onLimits:x=>limits.push(x),
+ });
+ const pose=camera.position.clone(),pan=target.clone();
+ stage.setContent([],{width:40,height:50,thickness:3});const first=stage.fitDistance,far=camera.far;
+ stage.setContent([],{width:160,height:200,thickness:3});
+ assert(stage.fitDistance>first*3.9);assert(camera.far>far*3.9);
+ assert(camera.position.equals(pose));assert(target.equals(pan));assert(limits.length===2);
+ // Tiny replacement must not make OrbitControls clamp the existing camera on its next update.
+ stage.setContent([],{width:2,height:3,thickness:1});
+ const distance=camera.position.distanceTo(target);
+ assert(stage.controls.minDistance<=distance&&stage.controls.maxDistance>=distance);
+ assert(camera.far>camera.position.length());assert(camera.position.equals(pose));assert(target.equals(pan));
+ const expanded=stage.controls.maxDistance;stage.updateBounds();assert(stage.controls.maxDistance<expanded);
+});

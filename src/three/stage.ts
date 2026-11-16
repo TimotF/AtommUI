@@ -241,6 +241,7 @@ export class PreviewStage {
     this.overlay.position.copy(this.content.position);
     // Rebuild only the content: preserve camera, controls, pan, and the persistent motion rig.
     if (!this.ready && this.viewport) this.fit();
+    else if (this.ready) { this.updateBounds(true); this.reportZoom(); }
     this.invalidate(); this.publishDiagnostics();
   }
 
@@ -257,7 +258,7 @@ export class PreviewStage {
     assemblyFrame(bounds,this.camera.aspect,this.camera.fov,this.camera.up,new THREE.Vector3(...(this.options.direction??[.12,.13,1])));
     this.clear();this.dimensions=undefined;this.assemblyBounds=bounds.clone();this.rebuilds++;
     this.overlay.clear();this.overlay.scale.set(1,1,1);this.overlay.position.set(0,0,0);this.overlay.add(object);
-    if(!this.ready&&this.viewport)this.fit();this.invalidate();this.publishDiagnostics();
+    if(!this.ready&&this.viewport)this.fit();else if(this.ready){this.updateBounds(true);this.reportZoom();}this.invalidate();this.publishDiagnostics();
   }
   /** Shared appearance materials may be referenced by consumer meshes, never disposed by them. */
   get materials(){return {face:this.face,edge:this.edge} as const;}
@@ -275,13 +276,25 @@ export class PreviewStage {
     return this.raycaster.intersectObjects(objects,recursive);
   }
 
-  private updateBounds() {
+  private updateBounds(preservePose = false) {
+    // A rebuild rebases zoom/clipping to the new object without moving a
+    // user-owned camera. Include its current distance until the next Fit/resize
+    // so OrbitControls.update cannot snap an out-of-range pose on the next frame.
+    const distance = preservePose ? this.camera.position.distanceTo(this.controls.target) : undefined;
+    const retainPose = () => {
+      if (distance === undefined || !Number.isFinite(distance) || distance <= 0) return;
+      this.controls.minDistance = Math.min(this.controls.minDistance, distance * (1 - 1e-10));
+      this.controls.maxDistance = Math.max(this.controls.maxDistance, distance * (1 + 1e-10));
+      this.camera.near = Math.min(this.camera.near, distance / 100);
+      this.camera.far = Math.max(this.camera.far, this.camera.position.distanceTo(this.framingCenter) * 2);
+      this.camera.updateProjectionMatrix();
+    };
     if(this.assemblyBounds){
       const frame=assemblyFrame(this.assemblyBounds,this.camera.aspect,this.camera.fov,this.camera.up,new THREE.Vector3(...(this.options.direction??[.12,.13,1])));
       this.framingCenter.copy(frame.center);this.fitDistance=frame.distance;
       this.camera.near=Math.max(.01,frame.radius/1000);this.camera.far=this.fitDistance*40;this.camera.updateProjectionMatrix();
       this.controls.minDistance=frame.radius*1.2;this.controls.maxDistance=Math.max(frame.radius*8,this.fitDistance*2);
-      this.onLimits?.({min:Math.ceil(this.fitDistance/this.controls.maxDistance*100),max:Math.floor(this.fitDistance/this.controls.minDistance*100)});return;
+      retainPose();this.onLimits?.({min:Math.ceil(this.fitDistance/this.controls.maxDistance*100),max:Math.floor(this.fitDistance/this.controls.minDistance*100)});return;
     }
     if (!this.dimensions) return;
     this.framingCenter.set(0,0,0);
@@ -292,7 +305,7 @@ export class PreviewStage {
     this.camera.near = Math.max(.01, radius / 1000); this.camera.far = this.fitDistance * 40;
     this.camera.updateProjectionMatrix();
     this.controls.minDistance = radius * 1.2; this.controls.maxDistance = Math.max(radius * 8, this.fitDistance * 2);
-    this.onLimits?.({ min: Math.ceil(this.fitDistance / this.controls.maxDistance * 100), max: Math.floor(this.fitDistance / this.controls.minDistance * 100) });
+    retainPose();this.onLimits?.({ min: Math.ceil(this.fitDistance / this.controls.maxDistance * 100), max: Math.floor(this.fitDistance / this.controls.minDistance * 100) });
   }
 
   fit() {
