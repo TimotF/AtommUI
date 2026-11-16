@@ -534,8 +534,10 @@ This preview-only choice never alters fabrication SVGs. Consumers supply their t
 
 ### Illustrated action card (0.33.0, unpublished preview)
 
-`AuExampleCard appearance="action"` opts into a horizontal illustrated action:
-a contained80px preview, a wrapping14px label and a minimum112px card height.
+`AuExampleCard appearance="action"` opts into an illustrated action card.
+The default `layout="tile"` centres an80px illustration above its wrapping14px
+label, with a minimum160px height matching an import drop zone. `layout="row"`
+keeps the horizontal illustration-and-label layout with a minimum112px height.
 It reuses the ordinary button shell, including its fill, shadow, hover, active,
 focus, loading and disabled states. Its native button is an action by default;
 only pass `active` for a toggle. The slot is decorative and must not contain

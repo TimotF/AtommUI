@@ -410,9 +410,12 @@ test('illustrated select, slider, numeric and color help stay beside the label o
 
 
 test('illustrated action cards opt into the button shell without toggle semantics',async()=>{
- const action=await render(h(AuExampleCard,{title:'Draw <your own>',appearance:'action'},()=>h('svg',{viewBox:'0 0 80 80'})));
+ const action=await render(h(AuExampleCard,{title:'Draw <your own>',appearance:'action',layout:'row'},()=>h('svg',{viewBox:'0 0 80 80'})));
  assert.match(action,/<button[^>]*class="[^"]*au-example-action/);
  assert.match(action,/au-example-row/);
+ const stacked=await render(h(AuExampleCard,{title:'Draw your own',appearance:'action',layout:'tile'}));
+ assert.match(stacked,/au-example-action-stacked/);
+ assert.doesNotMatch(stacked,/au-example-row/);
  assert.match(action,/au-button/);
  assert.match(action,/v-btn--variant-tonal/);
  assert.match(action,/aria-label="Draw &lt;your own&gt;"/);
