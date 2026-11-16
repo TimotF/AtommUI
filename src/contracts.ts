@@ -1,6 +1,6 @@
 export type UiLocale = 'fr' | 'en';
 export interface UiOption { value: string; title: string; disabled?: boolean; color?: string }
-export type UiMaterialKind = 'pine' | 'walnut' | 'solid';
+export type UiMaterialKind = 'pine' | 'walnut' | 'solid' | 'acrylic';
 export interface UiMaterialOption extends UiOption { material: UiMaterialKind }
 export interface UiTab extends UiOption { testId?: string; compactTitle?: string }
 export interface UiSwatch { value: string; color: string; title: string; dark?: boolean }

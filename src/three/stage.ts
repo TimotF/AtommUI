@@ -57,8 +57,8 @@ export class PreviewStage {
   private materialLibrary: PreviewMaterialLibrary;
   private edgeTexture = plywoodEdgeTexture();
   private appearanceRevision = 0;
-  private face = new THREE.MeshStandardMaterial({ roughness: .8 });
-  private edge = new THREE.MeshStandardMaterial({ color: '#66533b', roughness: .95 });
+  private face = new THREE.MeshPhysicalMaterial({ roughness: .8 });
+  private edge = new THREE.MeshPhysicalMaterial({ color: '#66533b', roughness: .95 });
   private engraving = new THREE.MeshBasicMaterial({ color: '#553018', side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -4 });
   private observer: ResizeObserver;
   private motion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -207,16 +207,25 @@ export class PreviewStage {
   setAppearance(appearance: PreviewAppearance) {
     if (this.disposed) return;
     const revision = ++this.appearanceRevision;
+    const acrylic = appearance.material === 'acrylic';
     const solid = appearance.material === 'solid';
     const kind = appearance.material === 'walnut' ? 'walnut' : 'pine', surface = materialSurfaces[kind];
-    this.face.color.set(solid ? appearance.color : surface.fallback);
+    // Reset every optical property when leaving acrylic. Geometry and camera stay intact.
+    for (const material of [this.face, this.edge]) {
+      material.metalness = 0; material.transmission = acrylic ? .86 : 0;
+      material.ior = 1.49; material.thickness = acrylic ? this.dimensions?.thickness ?? 3 : 0;
+      material.clearcoat = acrylic ? 1 : 0; material.clearcoatRoughness = .08;
+      material.attenuationColor.set('#c9e7ed'); material.attenuationDistance = acrylic ? 120 : Infinity;
+    }
+    this.face.color.set(solid ? appearance.color : acrylic ? '#e5f4f6' : surface.fallback);
     this.face.map = this.face.bumpMap = this.face.normalMap = this.face.roughnessMap = null;
-    this.face.roughness = solid ? .45 : .95; this.face.needsUpdate = true;
-    this.edge.map = solid ? null : this.edgeTexture;
-    this.edge.color.set(solid ? appearance.color : '#ffffff').multiplyScalar(solid ? .7 : 1);
+    this.face.roughness = acrylic ? .12 : solid ? .45 : .95; this.face.needsUpdate = true;
+    this.edge.map = solid || acrylic ? null : this.edgeTexture;
+    this.edge.color.set(solid ? appearance.color : acrylic ? '#b5dce4' : '#ffffff').multiplyScalar(solid ? .7 : 1);
+    this.edge.roughness = acrylic ? .16 : .95;
     this.edge.needsUpdate = true;
     this.invalidate();
-    if (solid) return;
+    if (solid || acrylic) return;
     const maps = this.materialLibrary.get(kind);
     void maps.ready.then(ready => {
       // A late image decode must not replace a newer material or revive a disposed stage.
@@ -233,6 +242,7 @@ export class PreviewStage {
     this.assemblyBounds=undefined;
     this.content.scale.y=this.overlay.scale.y=-1;
     this.clear(); this.dimensions = { ...size }; this.rebuilds++;
+    if (this.face.transmission > 0) this.face.thickness = this.edge.thickness = size.thickness;
     for (const data of meshes) {
       const geometry = geometryFromPreview(data);
       this.content.add(new THREE.Mesh(geometry, data.engraved ? this.engraving : [this.face, this.edge]));

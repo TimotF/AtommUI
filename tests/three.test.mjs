@@ -115,11 +115,11 @@ test('photographic maps retain physical scale, separate colour/data spaces and r
 
 test('content replacement rebases zoom and clipping while preserving even an out-of-range camera pose',async()=>{
  const {PreviewStage}=await import('../dist/three.js');
- const {PerspectiveCamera,Group,Vector3}=await import('three');
+ const {PerspectiveCamera,Group,Vector3,MeshPhysicalMaterial}=await import('three');
  const camera=new PerspectiveCamera(35,1,.01,10000);camera.position.set(30,20,200);
  const target=new Vector3(3,4,5),limits=[];
  const stage=Object.assign(Object.create(PreviewStage.prototype),{
-  camera,controls:{target,minDistance:1,maxDistance:9999},content:new Group(),overlay:new Group(),
+  camera,face:new MeshPhysicalMaterial(),edge:new MeshPhysicalMaterial(),controls:{target,minDistance:1,maxDistance:9999},content:new Group(),overlay:new Group(),
   ready:true,viewport:'600:600',rebuilds:0,framingCenter:new Vector3(),options:{},lastPercent:0,
   clear(){this.content.clear();},invalidate(){},reportZoom(){},publishDiagnostics(){},onZoom(){},onLimits:x=>limits.push(x),
  });
@@ -134,4 +134,15 @@ test('content replacement rebases zoom and clipping while preserving even an out
  assert(stage.controls.minDistance<=distance&&stage.controls.maxDistance>=distance);
  assert(camera.far>camera.position.length());assert(camera.position.equals(pose));assert(target.equals(pan));
  const expanded=stage.controls.maxDistance;stage.updateBounds();assert(stage.controls.maxDistance<expanded);
+});
+
+test('acrylic uses physical optics, no wood maps, and restores wood/solid without stale maps',async()=>{
+ const THREE=await import('three'),{PreviewStage}=await import('../dist/three.js');let finishWood,loads=0,frames=0;
+ const woodMap=new THREE.Texture(),stage={disposed:false,appearanceRevision:0,dimensions:{thickness:4},face:new THREE.MeshPhysicalMaterial(),edge:new THREE.MeshPhysicalMaterial(),edgeTexture:new THREE.Texture(),materialLibrary:{get(){loads++;return{ready:new Promise(r=>finishWood=r),color:woodMap,normal:new THREE.Texture(),roughness:new THREE.Texture()};}},invalidate(){frames++;}};
+ const set=value=>PreviewStage.prototype.setAppearance.call(stage,{material:value,color:'#224466'});
+ set('pine');set('acrylic');finishWood(true);await Promise.resolve();
+ assert.equal(loads,1);assert.equal(stage.face.transmission,.86);assert.equal(stage.face.ior,1.49);assert.equal(stage.face.thickness,4);assert.equal(stage.face.map,null);assert.equal(stage.face.normalMap,null);assert.equal(stage.edge.map,null);assert.equal(stage.face.clearcoat,1);
+ set('solid');assert.equal(stage.face.transmission,0);assert.equal(stage.face.clearcoat,0);assert.equal(stage.face.thickness,0);assert.equal(stage.face.color.getHexString(),'224466');assert.equal(stage.face.roughness,.45);
+ set('pine');finishWood(true);await Promise.resolve();assert.equal(stage.face.transmission,0);assert.equal(stage.face.map,woodMap);assert.equal(stage.edge.map,stage.edgeTexture);assert(frames>0);
+ for(const resource of [stage.face,stage.edge,stage.edgeTexture,woodMap])resource.dispose();
 });

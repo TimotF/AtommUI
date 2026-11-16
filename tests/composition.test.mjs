@@ -136,3 +136,10 @@ test('file dropzone exposes one named native file action with disabled/loading/e
  const html=await render(h(AuFileDropzone,base));assert.match(html,/type="file"/);assert.match(html,/accept="image\/png,image\/jpeg"/);assert.match(html,/aria-describedby="image-hint"/);assert.ok(!html.includes('<here>'));
  const blocked=await render(h(AuFileDropzone,{...base,loading:true,error:'Choose a PNG'}));assert.match(blocked,/aria-busy="true"/);assert.match(blocked,/<button[^>]*disabled/);assert.match(blocked,/<input[^>]*disabled/);assert.match(blocked,/aria-describedby="image-hint image-error"/);assert.match(blocked,/role="alert"/);
 });
+
+test('acrylic material has its own thumbnail and preserves translated picker semantics',async()=>{
+ const {AuMaterialPicker,AuMaterialThumbnail}=await import('../dist/atomm-ui.js');
+ const html=await render(h(AuMaterialPicker,{label:'Matériau',modelValue:'acrylic',appearance:'surface',items:[{value:'pine',material:'pine',title:'Bois'},{value:'acrylic',material:'acrylic',title:'Acrylique'}]}));
+ assert.match(html,/aria-label="Acrylique"/);assert.match(html,/aria-pressed="true"/);
+ const thumbnail=await render(h(AuMaterialThumbnail,{material:'acrylic'}));assert.doesNotMatch(thumbnail,/<image/);assert.match(thumbnail,/fill-opacity=".65"/);
+});
