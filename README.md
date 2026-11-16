@@ -531,3 +531,18 @@ The complete compact switch track uses Vuetify’s native track-click handler. B
 lightly tinted physical acrylic material (transmission, IOR 1.49, thickness in mm),
 without wood textures. Switching back restores the previous wood/solid behavior.
 This preview-only choice never alters fabrication SVGs. Consumers supply their translated label.
+
+### Illustrated action card (0.33.0, unpublished preview)
+
+`AuExampleCard appearance="action"` opts into a horizontal illustrated action:
+a contained80px preview, a wrapping14px label and a minimum112px card height.
+It reuses the ordinary button shell, including its fill, shadow, hover, active,
+focus, loading and disabled states. Its native button is an action by default;
+only pass `active` for a toggle. The slot is decorative and must not contain
+interactive controls. The consumer supplies the title and illustration.
+
+This is a product-specific illustrated **card**, not the official32/40px button
+size. The large drawing entry was explicitly approved by its product owner;
+acceptance by Atomm remains a separate review. Existing default/reference cards
+and all ordinary buttons are unchanged unless the consumer opts in. No local
+CSS override is required.

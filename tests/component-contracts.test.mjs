@@ -407,3 +407,21 @@ test('illustrated select, slider, numeric and color help stay beside the label o
   }
  }
 });
+
+
+test('illustrated action cards opt into the button shell without toggle semantics',async()=>{
+ const action=await render(h(AuExampleCard,{title:'Draw <your own>',appearance:'action'},()=>h('svg',{viewBox:'0 0 80 80'})));
+ assert.match(action,/<button[^>]*class="[^"]*au-example-action/);
+ assert.match(action,/au-example-row/);
+ assert.match(action,/au-button/);
+ assert.match(action,/v-btn--variant-tonal/);
+ assert.match(action,/aria-label="Draw &lt;your own&gt;"/);
+ assert.doesNotMatch(action,/aria-pressed/);
+ assert.match(action,/au-example-preview" aria-hidden="true"/);
+ const pending=await render(h(AuExampleCard,{title:'Create',appearance:'action',loading:true,disabled:true}));
+ assert.match(pending,/aria-busy="true"/);
+ assert.match(pending,/<button[^>]*disabled/);
+ const ordinary=await render(h(AuExampleCard,{title:'Existing'}));
+ assert.doesNotMatch(ordinary,/au-example-action|au-button|aria-busy/);
+ assert.match(ordinary,/v-btn--variant-text/);
+});

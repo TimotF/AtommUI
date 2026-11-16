@@ -207,6 +207,7 @@
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button:not(.au-button-primary):not(:disabled):hover { background:var(--color-bg-hover); }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button:not(.au-button-primary):not(:disabled):active { background:var(--color-bg-active); }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button:not(.au-button-primary):disabled { box-shadow:none;opacity:.5; }
+.au-root.au-profile-compact .au-example-card.au-example-action:not(:disabled):hover { box-shadow:var(--au-shadow-card); }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-slider { --v-slider-thumb-size:12px;--v-slider-track-size:3px; }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-slider .v-slider-thumb__surface { background:var(--color-bg-default);border:2px solid var(--color-brand-default);box-shadow:none; }
 

@@ -300,6 +300,16 @@
 .au-root .au-example-card.au-example-reference.au-example-reference-image:not(.au-example-row) .au-example-preview{padding:0;overflow:hidden}
 .au-root .au-example-card.au-example-reference.au-example-reference-image:not(.au-example-row) .au-example-preview img{object-fit:cover;border-radius:7px}
 
+/* Opt-in illustrated action card. The public button shell supplies its states;
+   only this card's content layout is larger than the ordinary 32/40px actions. */
+.au-root .au-example-card.au-example-action { height:auto; min-height:112px; max-width:100%; padding:12px; border-radius:8px; transform:none; transition:background-color var(--au-transition-duration) var(--au-transition-easing), border-color var(--au-transition-duration) var(--au-transition-easing); }
+.au-root .au-example-card.au-example-action .v-btn__content { min-width:0; align-items:center; }
+.au-root .au-example-card.au-example-action .au-example-preview { flex:0 0 80px; width:80px; height:80px; color:inherit; transform:none; transition:none; }
+.au-root .au-example-card.au-example-action .au-example-preview :is(img,svg) { object-fit:contain; transform:none; transition:none; }
+.au-root .au-example-card.au-example-action .au-example-title { flex:1; min-width:0; padding:0; font:500 14px/20px var(--au-font); color:inherit; background:transparent; text-align:start; white-space:normal; overflow-wrap:anywhere; }
+.au-root .au-example-card.au-example-action:not(:disabled):hover { transform:none; }
+.au-root .au-example-card.au-example-action:not(:disabled):hover .au-example-preview { transform:none; }
+
 /* Optional numeric steppers own their layout; the ordinary numeric field is unchanged. */
 :is(.au-root,.au-overlay) .au-numeric-stepper { display:flex; align-items:center; gap:2px; flex:0 0 auto; min-width:0; }
 :is(.au-root,.au-overlay) .au-numeric-stepper .au-numeric-step { width:28px; min-width:28px; height:var(--au-input-height); padding:0; font-size:18px; }
