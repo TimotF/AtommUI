@@ -315,6 +315,7 @@
 
 .au-root .au-example-card.au-example-action:not(:disabled):hover { transform:none; }
 .au-root .au-example-card.au-example-action:not(:disabled):hover .au-example-preview { transform:none; }
+.au-root .au-example-card.au-example-action:not(.au-example-row):not(:disabled):hover .au-example-preview :is(img,svg) { transform:none; }
 
 /* Optional numeric steppers own their layout; the ordinary numeric field is unchanged. */
 :is(.au-root,.au-overlay) .au-numeric-stepper { display:flex; align-items:center; gap:2px; flex:0 0 auto; min-width:0; }
