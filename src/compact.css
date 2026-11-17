@@ -210,6 +210,9 @@
 .au-root.au-profile-compact .au-example-card.au-example-action:not(:disabled):hover { box-shadow:var(--au-shadow-card); }
 .au-root.au-profile-compact .au-example-card.au-example-action .au-example-title { font:500 14px/20px var(--au-font); }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-slider { --v-slider-thumb-size:12px;--v-slider-track-size:3px; }
+/* Vuetify adds 2px to the hit track; keep only the painted fill at the token size. */
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-slider.v-input--horizontal .v-slider-track__fill { height:var(--v-slider-track-size); }
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-slider.v-input--vertical .v-slider-track__fill { width:var(--v-slider-track-size); }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-slider .v-slider-thumb__surface { background:var(--color-bg-default);border:2px solid var(--color-brand-default);box-shadow:none; }
 
 /* Opt-in canvas actions: input radii and rail buttons keep their existing skin. */

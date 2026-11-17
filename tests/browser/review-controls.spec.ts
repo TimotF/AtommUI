@@ -162,3 +162,19 @@ test('shared action menus use compact rows, skip disabled actions and close on s
  const help=page.getByRole('button',{name:'Help: fit correction',exact:true}),rect=await help.boundingBox();expect(rect!.width).toBeGreaterThanOrEqual(24);expect(rect!.height).toBeGreaterThanOrEqual(24);
  await help.focus();await expect(page.getByRole('tooltip')).toContainText('Measure the actual thickness.');await page.keyboard.press('Escape');
 });
+
+
+test('compact slider paints both tracks at 3px without shrinking the pointer target',async({page})=>{
+ for(const direction of ['ltr','rtl']){
+  await page.goto('/tests/fixtures/review.html'+(direction==='rtl'?'?rtl':''));
+  const slider=page.getByRole('slider',{name:'Title size'});
+  for(const key of ['Home','End','ArrowLeft']){
+   await slider.focus();await slider.press(key);
+   const field=page.locator('.au-slider-field').first();
+   await expect(field.locator('.v-slider-track__background')).toHaveCSS('height','3px');
+   await expect(field.locator('.v-slider-track__fill')).toHaveCSS('height','3px');
+   const ripple=await field.locator('.v-slider-thumb__ripple').boundingBox();
+   expect(ripple!.width).toBeGreaterThanOrEqual(24);expect(ripple!.height).toBeGreaterThanOrEqual(24);
+  }
+ }
+});
