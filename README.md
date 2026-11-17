@@ -555,3 +555,9 @@ height, a48px illustration and the dropzone's `bg-control` surface in the compac
 profile. Defaults are preserved. The import wrapper can stretch within an equal-row
 grid; the consumer owns that layout and its translated separators. Both surfaces
 can grow to fit wrapping labels rather than clipping their content.
+
+### En-têtes et curseurs denses (0.34.0)
+
+`AuCard header-density="compact"` fournit un en-tête interactif de 32 px, avec ou sans le slot public `header-leading`. Les aperçus fournis dans le titre doivent tenir dans une hauteur de 16 px. Le comportement historique reste la valeur par défaut.
+
+`AuSlider layout="row"` réserve des colonnes stables pour le libellé, la piste et la valeur. Le libellé doit rester fixe pendant une manipulation. `valueText` remplace l'affichage final et `aria-valuetext`, sans modifier la valeur numérique, les bornes ou les événements. Cela permet de piloter une échelle de 0 à 100 tout en affichant une longueur physique localisée. Sans ces propriétés, le rendu et le contrat précédents sont conservés. Les traductions et conversions restent dans le consommateur.

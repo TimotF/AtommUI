@@ -431,3 +431,16 @@ test('illustrated action cards opt into the button shell without toggle semantic
  assert.doesNotMatch(ordinary,/au-example-action|au-button|aria-busy/);
  assert.match(ordinary,/v-btn--variant-text/);
 });
+
+
+test('slider physical readout has a stable opt-in composition without changing its numeric contract',async()=>{
+ const html=await render(h(AuSlider,{id:'physical',label:'Logo size',modelValue:35,valueText:'8,52 mm',layout:'row'}));
+ assert.match(html,/au-slider-field-row/);assert.match(html,/aria-valuenow="35"/);assert.match(html,/aria-valuetext="8,52 mm"/);assert.match(html,/id="physical-value"[^>]*>8,52 mm/);
+ const legacy=await render(h(AuSlider,{id:'legacy',label:'Size',modelValue:35}));assert.ok(!legacy.includes('au-slider-field-row'));assert.match(legacy,/id="legacy-value"[^>]*>35%/);
+});
+test('compact card headers are opt-in and keep the independent leading action outside the disclosure',async()=>{
+ const {AuCard}=await import('../dist/atomm-ui.js');
+ const dense=await render(h(AuCard,{id:'dense',title:'Text',headerDensity:'compact'},{'header-leading':()=>h(AuButton,{icon:true,'aria-label':'Move'},()=> '⋮'),default:()=> 'Body'}));
+ assert.match(dense,/au-card-compact-header/);assert.equal((dense.match(/<button/g)??[]).length,2);assert.ok(!/<button[^>]*>[\s\S]*?<button/.test(dense.split('</button>')[0]));assert.match(dense,/aria-controls="dense"/);
+ const legacy=await render(h(AuCard,{id:'legacy-card',title:'Text'}));assert.ok(!legacy.includes('au-card-compact-header'));
+});

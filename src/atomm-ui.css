@@ -355,3 +355,16 @@
 :is(.au-root,.au-overlay) .au-color-field-button .au-color-button{width:32px;min-width:32px;height:32px;padding:4px}
 .au-color-field-button .au-color-swatch{width:24px;height:24px;border-radius:4px}
 .au-color-spectrum{display:block;width:24px;height:24px;flex:none}
+
+/* Opt-in dense card headers. Preview slots must fit their 16 px content row;
+   the application's full artwork remains in its stage, not in panel chrome. */
+.au-root .au-card.au-card-compact-header > .au-card-title > .au-card-header,
+.au-root .au-card.au-card-compact-header > .au-card-heading {height:32px;min-height:32px;padding-block:0;}
+.au-root .au-card.au-card-compact-header > .au-card-heading {display:flex;align-items:center;}
+.au-root .au-card.au-card-compact-header > .au-card-title-with-leading {height:32px;border-bottom:0;}
+.au-root .au-card.au-card-compact-header > .au-card-title-with-leading.au-card-title-expanded + .au-card-body {border-top:var(--au-border-width) solid var(--color-stroke-divider);}
+/* Stable columns: changing a readout must never move the range under a pointer.
+   Long labels may wrap, but the physical value has a reserved, bounded column. */
+.au-root .au-slider-field-row {display:grid;grid-template-columns:minmax(0,1fr) 110px 8ch;}
+.au-root .au-slider-field-row .au-slider {width:100%;min-width:0;}
+.au-root .au-slider-field-row .au-slider-value {min-width:0;white-space:nowrap;}
