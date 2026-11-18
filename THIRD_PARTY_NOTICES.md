@@ -8,6 +8,9 @@ notices below with redistributed packages containing those components.
   MIT. Their original notices are included under `licenses/`.
 - Photographic material textures: CC0 1.0. Their sources, authors and licenses
   remain documented in `ASSET_LICENSES.md`; CC0 is not replaced by our license.
+- Clipper2 / clipper2-ts 2.0.1-18: Boost Software License 1.0. Used only by
+  the optional 3D artwork converter to resolve self-crossing filled contours.
+  Its original license and attribution are retained in `licenses/clipper2-ts/`.
 - AtommUI releases through 0.15.8: the unchanged historical MIT notice is in
   `licenses/AtommUI-MIT-through-0.15.8.txt`. It records the earlier grant and is
   not the default license for this new distribution.

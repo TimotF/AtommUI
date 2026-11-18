@@ -1,0 +1,2 @@
+# Preserve the upstream Boost license verbatim, including its trailing newline.
+licenses/clipper2-ts/LICENSE -whitespace

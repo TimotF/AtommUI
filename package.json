@@ -67,7 +67,8 @@
     "vuetify": "4.2.3"
   },
   "dependencies": {
-    "@xmldom/xmldom": "0.9.12"
+    "@xmldom/xmldom": "0.9.12",
+    "clipper2-ts": "2.0.1-18"
   },
   "peerDependenciesMeta": {
     "three": {

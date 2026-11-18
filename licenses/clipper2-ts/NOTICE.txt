@@ -1,0 +1,6 @@
+Clipper2 / clipper2-ts 2.0.1-18
+https://github.com/countertype/clipper2-ts
+Original Clipper2: Angus Johnson, copyright 2010-2025 (source headers).
+TypeScript port: Jeremy Tribby.
+Distributed under the Boost Software License 1.0; see LICENSE in this directory.
+No ownership of this third-party code is claimed by AtommUI.

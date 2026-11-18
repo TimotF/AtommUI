@@ -576,6 +576,12 @@ outside this API. The caller retains its production SVG and owns the resulting
 geometry, mesh, material and worker lifecycle. Existing `previewMeshes` defaults
 and its stock/engraving results are unchanged.
 
+Self-crossing font contours are normalized with Clipper2 before
+ShapePath.toShapes()/triangulation. Curves are sampled at the requested display
+resolution; clipping uses 1e-10 of the artwork extent (finer than Float32 output).
+This opt-in API adds the pinned `clipper2-ts` dependency to the optional 3D entry;
+it is not imported by the main controls entry and never changes production SVG.
+
 SVG and 3D viewports now paint a 2px accent inset ring, spaced 2px from the drawing edge, for keyboard focus above
 their drawing. Pointer appearance and drawing bounds do not change. Enabled
 compact-profile text fields keep placeholder text in the secondary text colour

@@ -1,5 +1,6 @@
 import { DOMParser as XmlDOMParser } from '@xmldom/xmldom';
-import { ExtrudeGeometry, ShapeGeometry, BufferGeometry, BufferAttribute } from 'three';
+import { ExtrudeGeometry, ShapeGeometry, ShapePath, BufferGeometry, BufferAttribute } from 'three';
+import {ClipperD,ClipType,FillRule,type PathsD} from 'clipper2-ts';
 import { SVGLoader, type StrokeStyle } from 'three/addons/loaders/SVGLoader.js';
 
 export type PreviewMeshData = {
@@ -67,6 +68,28 @@ export function geometryFromPreview(data:PreviewMeshData):BufferGeometry {
  if(data.index)geometry.setIndex(new BufferAttribute(data.index,1));for(const group of data.groups)geometry.addGroup(group.start,group.count,group.materialIndex);return geometry;
 }
 
+/** Font contours may cross themselves (e.g. Montserrat Light B/R). Earcut
+ * requires simple polygons; normalize SVGLoader's sampled curves using the
+ * SVG fill rule before its public ShapePath.toShapes() conversion. This is
+ * display tessellation only: the original production Beziers are untouched. */
+function artworkShapes(path:ShapePath,curveSegments:number){
+ const contours=path.subPaths.map(sub=>sub.getPoints(curveSegments)).filter(points=>points.length>=3);
+ let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+ for(const points of contours)for(const p of points){if(!Number.isFinite(p.x)||!Number.isFinite(p.y))throw Error('Invalid preview artwork coordinates');minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y);}
+ if(!contours.length)return[];
+ const extent=Math.max(maxX-minX,maxY-minY);if(extent===0)return[];
+ const scale=10_000/extent;if(!Number.isFinite(scale)||scale<=0)throw Error('Invalid preview artwork extent');
+ // Keep clipping integers safe regardless of physical mm. Its normalized
+ // precision is 1e-10 of the artwork extent, finer than Float32 display buffers.
+ const clipper=new ClipperD(6),solution:PathsD=[];
+ for(const points of contours)clipper.addSubject(points.map(p=>({x:(p.x-minX)*scale,y:(p.y-minY)*scale})));
+ const fillRule=(path.userData?.style as {fillRule?:string}|undefined)?.fillRule==='evenodd'?FillRule.EvenOdd:FillRule.NonZero;
+ if(!clipper.execute(ClipType.Union,fillRule,solution))throw Error('Preview artwork normalization failed');
+ const normalized=new ShapePath();normalized.userData={style:{fillRule:'nonzero'}};
+ for(const points of solution){if(points.length<3)continue;normalized.moveTo(points[0]!.x/scale+minX,points[0]!.y/scale+minY);for(const p of points.slice(1))normalized.lineTo(p.x/scale+minX,p.y/scale+minY);normalized.currentPath!.closePath();}
+ return normalized.toShapes();
+}
+
 /** Flat, single-ink artwork from a consumer-generated path-only SVG.
  * SVGLoader owns fill rules, counters and transforms; its stroke adapter owns
  * widths/joins/caps. No physical thickness is invented for an engraving.
@@ -91,7 +114,7 @@ export function previewSvgArtwork(svg:string,options:PreviewArtworkOptions={}):P
     // Follow the same SVGLoader -> Shapes -> ExtrudeGeometry path as stock.
     // A zero-depth extrusion supplies the flat engraving cap, without inventing
     // relief. The coincident reverse cap and degenerate side faces are omitted.
-    geometries.push(new ExtrudeGeometry(path.toShapes(),{depth:0,bevelEnabled:false,curveSegments}));
+    geometries.push(new ExtrudeGeometry(artworkShapes(path,curveSegments),{depth:0,bevelEnabled:false,curveSegments}));
    }
    if(style?.stroke&&style.stroke!=='none'&&style.strokeWidth>0&&style.strokeOpacity!==0){
     for(const subpath of path.subPaths){

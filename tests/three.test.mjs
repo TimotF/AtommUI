@@ -163,3 +163,13 @@ test('flat SVG artwork preserves counters, physical strokes and filled transform
  assert.throws(()=>make('<image href="https://example.test/ignored.png"/>'),/paths only/);
  assert.throws(()=>previewSvgArtwork('<svg/>',{curveSegments:1}),/curve segments/);
 });
+
+test('self-crossing Montserrat Light contours preserve SVG nonzero fill before triangulation',async()=>{
+ const{readFileSync}=await import('node:fs');const{SVGLoader}=await import('three/addons/loaders/SVGLoader.js');const{previewSvgArtwork}=await import('../dist/three.js');
+ const svg=readFileSync(new URL('./fixtures/montserrat-light-B.svg',import.meta.url),'utf8'),contours=new SVGLoader().parse(svg).paths[0].subPaths.map(path=>path.getPoints(16)),mesh=previewSvgArtwork(svg,{curveSegments:16});
+ const cross=(a,b,p)=>(b.x-a.x)*(p.y-a.y)-(p.x-a.x)*(b.y-a.y);
+ function insideSvg(p){let winding=0;for(const points of contours)for(let i=0;i<points.length;i++){const a=points[i],b=points[(i+1)%points.length];if(a.y<=p.y){if(b.y>p.y&&cross(a,b,p)>0)winding++;}else if(b.y<=p.y&&cross(a,b,p)<0)winding--;}return winding!==0;}
+ function insideMesh(p){const a=mesh.position;for(let i=0;i<a.length;i+=9){const x={x:a[i],y:a[i+1]},y={x:a[i+3],y:a[i+4]},z={x:a[i+6],y:a[i+7]},s=[cross(x,y,p),cross(y,z,p),cross(z,x,p)];if(s.every(v=>v>=-1e-8)||s.every(v=>v<=1e-8))return true;}return false;}
+ let holes=0,filled=0;for(let row=0;row<45;row++)for(let col=0;col<45;col++){const p={x:4.97+(col+.371)*4.58/45,y:4.39+(row+.619)*5.62/45},expected=insideSvg(p);assert.equal(insideMesh(p),expected,JSON.stringify(p));if(expected)filled++;else holes++;}assert(filled>100&&holes>100);
+ assert(topArea(mesh)>7.9&&topArea(mesh)<7.91,'normalize actual nonzero region, not the signed contour-area sum');
+});
