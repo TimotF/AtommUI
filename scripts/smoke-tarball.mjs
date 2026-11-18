@@ -84,8 +84,11 @@ try {
   `], { cwd: consumer, stdio: 'inherit' });
   execFileSync('npm', ['install', 'three@0.186.1', ...npmFlags], { cwd: consumer, stdio: 'inherit' });
   execFileSync(process.execPath, ['--input-type=module', '-e', `
-    const {previewMeshes,PreviewStage,PreviewMaterialLibrary,plywoodEdgeTexture,materialSurfaces}=await import('@timotf/atomm-ui/three');
+    const {previewMeshes,previewSvgArtwork,geometryFromPreview,PreviewStage,PreviewMaterialLibrary,plywoodEdgeTexture,materialSurfaces}=await import('@timotf/atomm-ui/three');
     const meshes=previewMeshes({path:'M0 0H10V10H0Z',thickness:3});
+    const artwork=previewSvgArtwork('<svg xmlns="http://www.w3.org/2000/svg"><path d="M0 0H10V10H0Z"/></svg>',{curveSegments:16});
+    if(!artwork?.position.length||!artwork.position.every(Number.isFinite))throw new Error('Public artwork conversion unavailable');
+    const geometry=geometryFromPreview(artwork);geometry.dispose();
     if(typeof PreviewStage!=='function'||meshes.length!==1||!meshes[0].position.every(Number.isFinite)) throw new Error('Optional 3D entry is invalid');
     if(typeof PreviewMaterialLibrary!=='function'||typeof plywoodEdgeTexture!=='function'||Object.keys(materialSurfaces).join(',')!=='pine,walnut') throw new Error('Missing public wood materials');
   `], { cwd: consumer, stdio: 'inherit' });

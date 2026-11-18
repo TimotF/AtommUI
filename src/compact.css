@@ -108,6 +108,9 @@
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) :where(button,[tabindex]):focus-visible { outline-offset: 2px; }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .v-field:has(input:focus-visible) { outline: none; }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .v-field--focused .v-field__outline { --v-field-border-width: 1px; }
+/* A placeholder can carry an automatically derived value. Do not fade it with
+   Vuetify's disabled opacity; disabled fields retain their existing appearance. */
+:is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .v-field:not(.v-field--disabled) :is(input,textarea)::placeholder { color:var(--color-text-secondary); opacity:1; }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .v-text-field__suffix { font-size: 10px; }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button-primary:not(:disabled):hover { background: var(--color-brand-hover) !important; }
 :is(.au-root.au-profile-compact,.au-overlay.au-profile-compact) .au-button-primary:not(:disabled):active { background: var(--color-brand-active) !important; }

@@ -561,3 +561,23 @@ can grow to fit wrapping labels rather than clipping their content.
 `AuCard header-density="compact"` fournit un en-tête interactif de 32 px, avec ou sans le slot public `header-leading`. Les aperçus fournis dans le titre doivent tenir dans une hauteur de 16 px. Le comportement historique reste la valeur par défaut.
 
 `AuSlider layout="row"` réserve des colonnes stables pour le libellé, la piste et la valeur. Le libellé doit rester fixe pendant une manipulation. `valueText` remplace l'affichage final et `aria-valuetext`, sans modifier la valeur numérique, les bornes ou les événements. Cela permet de piloter une échelle de 0 à 100 tout en affichant une longueur physique localisée. Sans ces propriétés, le rendu et le contrat précédents sont conservés. Les traductions et conversions restent dans le consommateur.
+
+## Flat vector engraving and keyboard focus — 0.35.0
+
+The optional `@timotf/atomm-ui/three` entry exports
+`previewSvgArtwork(svg, {curveSegments?: number})` for single-ink, consumer-generated
+SVG containing only `svg`, `g` and `path` elements. It returns transferable
+`PreviewMeshData | null`. SVGLoader handles fill rules, counters, transforms and
+physical stroke widths. A zero-depth ExtrudeGeometry supplies one flat cap at
+z=0; the coincident reverse cap and degenerate side faces are omitted, so no
+physical relief is added. Opacity, visibility and display attributes/styles are
+explicitly rejected: this API only accepts opaque, visible artwork. Images, fonts, CSS, references and arbitrary uploaded SVG are
+outside this API. The caller retains its production SVG and owns the resulting
+geometry, mesh, material and worker lifecycle. Existing `previewMeshes` defaults
+and its stock/engraving results are unchanged.
+
+SVG and 3D viewports now paint a 2px accent inset ring, spaced 2px from the drawing edge, for keyboard focus above
+their drawing. Pointer appearance and drawing bounds do not change. Enabled
+compact-profile text fields keep placeholder text in the secondary text colour
+at full opacity, including automatically derived values; disabled fields and
+the non-compact profile keep their existing placeholder appearance.

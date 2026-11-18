@@ -146,3 +146,20 @@ test('acrylic uses physical optics, no wood maps, and restores wood/solid withou
  set('pine');finishWood(true);await Promise.resolve();assert.equal(stage.face.transmission,0);assert.equal(stage.face.map,woodMap);assert.equal(stage.edge.map,stage.edgeTexture);assert(frames>0);
  for(const resource of [stage.face,stage.edge,stage.edgeTexture,woodMap])resource.dispose();
 });
+
+test('flat SVG artwork preserves counters, physical strokes and filled transforms without adding relief',async()=>{
+ const{previewSvgArtwork}=await import('../dist/three.js');
+ const make=content=>previewSvgArtwork('<svg xmlns="http://www.w3.org/2000/svg">'+content+'</svg>',{curveSegments:16});
+ const counter=make('<path d="M0 0H10V10H0Z M2 2V6H6V2Z" fill="black"/>');
+ assert.equal(topArea(counter),84);assert(counter.position.every(Number.isFinite));
+ assert([...counter.position].filter((_,i)=>i%3===2).every(v=>v===0),'engraving is flat');
+ const filled=make('<g transform="translate(10 20) scale(2)"><path d="M0 0H5V3H0Z" fill="black"/></g>');
+ assert.equal(topArea(filled),60);assert.equal(Math.min(...filled.position.filter((_,i)=>i%3===0)),10);
+ const stroke=make('<g transform="translate(10 20) scale(2)"><path d="M0 0H5" fill="none" stroke="black" stroke-width="0.2"/></g>');
+ const ys=stroke.position.filter((_,i)=>i%3===1);assert(Math.abs(Math.min(...ys)-19.8)<1e-5);assert(Math.abs(Math.max(...ys)-20.2)<1e-5);
+ assert.equal(make(''),null);assert.equal(make('<path d="M0 0H1V1Z" fill="none"/>'),null);
+ for(const attribute of ['opacity="0"','opacity="0.5"','visibility="hidden"','visibility="collapse"','display="none"','style="opacity:0"','fill-opacity="0"']){assert.throws(()=>make('<path d="M0 0H10V10H0Z" '+attribute+'/>'),/opaque and visible/);assert.throws(()=>make('<g '+attribute+'><path d="M0 0H10V10H0Z"/></g>'),/opaque and visible/);}
+ assert.throws(()=>previewSvgArtwork('<!DOCTYPE svg [<!ENTITY x "abc">]><svg/>'),/Invalid/);
+ assert.throws(()=>make('<image href="https://example.test/ignored.png"/>'),/paths only/);
+ assert.throws(()=>previewSvgArtwork('<svg/>',{curveSegments:1}),/curve segments/);
+});

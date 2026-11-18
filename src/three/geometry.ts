@@ -1,12 +1,13 @@
 import { DOMParser as XmlDOMParser } from '@xmldom/xmldom';
 import { ExtrudeGeometry, ShapeGeometry, BufferGeometry, BufferAttribute } from 'three';
-import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
+import { SVGLoader, type StrokeStyle } from 'three/addons/loaders/SVGLoader.js';
 
 export type PreviewMeshData = {
   position: Float32Array; normal: Float32Array; uv: Float32Array; index: Uint32Array | null;
   groups: { start: number; count: number; materialIndex?: number }[]; engraved: boolean;
 };
 export type PreviewOutline = { path: string; engraving?: readonly string[]; thickness: number; curveSegments?: number };
+export type PreviewArtworkOptions = {curveSegments?:number};
 
 /** SVGLoader uses DOMParser; a Worker has no native DOM. No network or SVG scripts are used. */
 if (typeof globalThis.DOMParser === 'undefined') {
@@ -64,4 +65,56 @@ export function geometryFromPreview(data:PreviewMeshData):BufferGeometry {
  const geometry=new BufferGeometry();
  geometry.setAttribute('position',new BufferAttribute(data.position,3));geometry.setAttribute('normal',new BufferAttribute(data.normal,3));geometry.setAttribute('uv',new BufferAttribute(data.uv,2));
  if(data.index)geometry.setIndex(new BufferAttribute(data.index,1));for(const group of data.groups)geometry.addGroup(group.start,group.count,group.materialIndex);return geometry;
+}
+
+/** Flat, single-ink artwork from a consumer-generated path-only SVG.
+ * SVGLoader owns fill rules, counters and transforms; its stroke adapter owns
+ * widths/joins/caps. No physical thickness is invented for an engraving.
+ * This does not load external SVGs, images, fonts, CSS or referenced elements. */
+export function previewSvgArtwork(svg:string,options:PreviewArtworkOptions={}):PreviewMeshData|null {
+ const curveSegments=options.curveSegments??64;
+ if(!Number.isInteger(curveSegments)||curveSegments<4||curveSegments>96)throw new Error('Invalid preview curve segments');
+ if(/<!DOCTYPE|<!ENTITY/i.test(svg))throw new Error('Invalid preview artwork');
+ const parsed=new SVGLoader().parse(svg);
+ for(const element of Array.from(parsed.xml.getElementsByTagName('*'))){
+  if(!['svg','g','path'].includes(element.localName||element.nodeName))throw new Error('Preview artwork must contain paths only');
+  // This mesh contains opaque single-ink geometry, not composited SVG paint.
+  // Reject unsupported presentation instead of silently displaying hidden or
+  // partially transparent content as a fully opaque engraving.
+  if(['opacity','visibility','display','fill-opacity','stroke-opacity'].some(name=>element.hasAttribute(name))||/(?:^|;)\s*(?:opacity|visibility|display|fill-opacity|stroke-opacity)\s*:/i.test(element.getAttribute('style')??''))throw new Error('Preview artwork must be opaque and visible');
+ }
+ const geometries:BufferGeometry[]=[];
+ try{
+  for(const path of parsed.paths){
+   const style=path.userData?.style as StrokeStyle&{fill?:string;stroke?:string;fillOpacity?:number;strokeOpacity?:number};
+   if(style?.fill!=='none'&&style?.fillOpacity!==0){
+    // Follow the same SVGLoader -> Shapes -> ExtrudeGeometry path as stock.
+    // A zero-depth extrusion supplies the flat engraving cap, without inventing
+    // relief. The coincident reverse cap and degenerate side faces are omitted.
+    geometries.push(new ExtrudeGeometry(path.toShapes(),{depth:0,bevelEnabled:false,curveSegments}));
+   }
+   if(style?.stroke&&style.stroke!=='none'&&style.strokeWidth>0&&style.strokeOpacity!==0){
+    for(const subpath of path.subPaths){
+     const stroke=SVGLoader.pointsToStroke(subpath.getPoints(curveSegments),style,12,0);
+     if(stroke)geometries.push(stroke);
+    }
+   }
+  }
+  const count=geometries.reduce((sum,g)=>{const n=g.getAttribute('normal');for(let i=0;i<n.count;i++)if(n.getZ(i)>.5)sum++;return sum;},0);
+  if(!count)return null;
+  const position=new Float32Array(count*3),normal=new Float32Array(count*3),uv=new Float32Array(count*2);
+  let offset=0;
+  for(const geometry of geometries){
+   const p=geometry.getAttribute('position'),n=geometry.getAttribute('normal');
+   for(let i=0;i<p.count;i++){
+    if(n.getZ(i)<=.5)continue;
+    const xyz=offset*3,xy=offset*2;
+    position[xyz]=p.getX(i);position[xyz+1]=p.getY(i);position[xyz+2]=p.getZ(i);
+    normal[xyz]=n.getX(i);normal[xyz+1]=n.getY(i);normal[xyz+2]=n.getZ(i);
+    uv[xy]=p.getX(i);uv[xy+1]=p.getY(i);
+    offset++;
+   }
+  }
+  return{position,normal,uv,index:null,groups:[],engraved:true};
+ }finally{for(const geometry of geometries)geometry.dispose();}
 }

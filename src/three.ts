@@ -1,6 +1,6 @@
 /** Optional entry: importing the ordinary UI never imports three.js. */
-export { previewMeshes, geometryFromPreview } from './three/geometry.js';
-export type { PreviewMeshData, PreviewOutline } from './three/geometry.js';
+export { previewMeshes, geometryFromPreview, previewSvgArtwork } from './three/geometry.js';
+export type { PreviewMeshData, PreviewOutline, PreviewArtworkOptions } from './three/geometry.js';
 export { PreviewStage, springStep } from './three/stage.js';
 export type { PreviewSize, PreviewAppearance, PreviewDiagnostics, PreviewStageOptions, PreviewStageContext, PreviewStageExtension } from './three/stage.js';
 
